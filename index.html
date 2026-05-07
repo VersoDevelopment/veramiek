@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veramiek — Handgemaakt Keramiek</title>
+  <meta name="description" content="Veramiek maakt en verkoopt uniek handgemaakt keramiek vanuit Etten-Leur. Ontdek de collectie of boek een workshop." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --terracotta: #c2714f;
+      --terracotta-dark: #a05a3b;
+      --terracotta-light: #e8a882;
+      --cream: #f5f0e8;
+      --warm-white: #faf7f2;
+      --brown: #5c3d2e;
+      --brown-light: #8b6151;
+      --sage: #7a8c6e;
+      --text: #2d1f17;
+      --text-muted: #7a6259;
+      --border: #ddd0c4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--warm-white);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── NAVIGATION ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 4rem;
+      background: rgba(250, 247, 242, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(92,61,46,0.08); }
+
+    .nav-logo img {
+      height: 64px;
+      width: auto;
+      mix-blend-mode: multiply;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--terracotta); }
+
+    .nav-cart {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s;
+      letter-spacing: 0.05em;
+      background: none;
+      border: none;
+      font-family: 'Lato', sans-serif;
+    }
+    .nav-cart:hover { color: var(--terracotta); }
+    .nav-cart svg { width: 20px; height: 20px; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--brown);
+      transition: 0.3s;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 6rem 6rem;
+    }
+
+    .hero-tag {
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 4.5vw, 4.2rem);
+      line-height: 1.15;
+      color: var(--brown);
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--terracotta);
+    }
+
+    .hero-motto {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--terracotta);
+      margin-bottom: 1.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--terracotta);
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+    }
+    .btn-primary:hover {
+      background: var(--terracotta-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: transparent;
+      color: var(--brown);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border: 1.5px solid var(--brown);
+      transition: all 0.2s;
+      font-family: 'Lato', sans-serif;
+    }
+    .btn-secondary:hover {
+      background: var(--brown);
+      color: white;
+    }
+
+    .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .hero-image {
+      background: var(--cream);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-image .clay-art {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ceramic-hero-svg { width: 100%; height: 100%; min-height: 600px; }
+
+    /* ── SECTION BASICS ── */
+    section { padding: 6rem 4rem; }
+
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      color: var(--brown);
+      margin-bottom: 1.2rem;
+      line-height: 1.25;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    .centered { text-align: center; }
+    .centered .section-sub { margin: 0 auto; }
+
+    /* ── CATEGORY TABS ── */
+    .cat-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .cat-tab {
+      padding: 0.5rem 1.2rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: none;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      transition: all 0.2s;
+    }
+    .cat-tab:hover { border-color: var(--terracotta); color: var(--terracotta); }
+    .cat-tab.active {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: white;
+    }
+
+    /* ── PRODUCTS ── */
+    #producten { background: var(--warm-white); }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .products-filter {
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: var(--cream);
+      cursor: pointer;
+      transition: transform 0.25s;
+    }
+    .product-card:hover { transform: translateY(-4px); }
+    .product-card[hidden] { display: none; }
+
+    .product-image {
+      aspect-ratio: 1;
+      background: #e8ddd4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 0.7rem; left: 0.7rem;
+      background: var(--terracotta);
+      color: white;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+    }
+
+    .product-info { padding: 1rem 1.1rem 1.2rem; }
+    .product-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--brown);
+      margin-bottom: 0.2rem;
+    }
+    .product-info .product-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-bottom: 0.7rem;
+    }
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-price {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--brown);
+    }
+    .add-to-cart {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      font-weight: 700;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+      font-family: 'Lato', sans-serif;
+    }
+    .add-to-cart:hover { color: var(--terracotta-dark); }
+
+    .prod-svg { width: 75%; height: 75%; }
+
+    /* ── OVER MIJ ── */
+    #over-mij {
+      background: var(--cream);
+      padding: 0;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 560px;
+    }
+
+    .about-image {
+      background: #c9b8ab;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .about-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem;
+    }
+
+    .about-content p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── PROCESS ── */
+    #process {
+      background: var(--brown);
+      color: white;
+      text-align: center;
+    }
+    #process .section-title { color: var(--cream); }
+    #process .section-sub { color: rgba(245,240,232,0.7); margin: 0 auto 3.5rem; }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 2rem;
+      left: calc(12.5% + 1rem);
+      right: calc(12.5% + 1rem);
+      height: 1px;
+      background: rgba(245,240,232,0.2);
+    }
+
+    .step { position: relative; padding-top: 1rem; }
+    .step-number {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: var(--terracotta);
+      color: white;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .step h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 0.7rem;
+    }
+    .step p {
+      font-size: 0.88rem;
+      color: rgba(245,240,232,0.65);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── WORKSHOPS ── */
+    #workshops { background: var(--warm-white); }
+
+    .workshop-single {
+      max-width: 860px;
+      margin: 3.5rem auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      border: 1px solid var(--border);
+      background: white;
+      overflow: hidden;
+    }
+
+    .workshop-img {
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 340px;
+    }
+
+    .workshop-body { padding: 2.5rem; }
+    .workshop-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--terracotta);
+      margin-bottom: 0.6rem;
+    }
+    .workshop-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--brown);
+      margin-bottom: 0.8rem;
+      line-height: 1.25;
+    }
+    .workshop-body p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .workshop-meta {
+      display: flex;
+      gap: 1.8rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+    }
+    .workshop-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .workshop-meta svg { width: 15px; height: 15px; color: var(--terracotta); flex-shrink: 0; }
+    .workshop-price-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .workshop-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--brown);
+      font-weight: 600;
+    }
+    .workshop-price small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      display: block;
+      line-height: 1.4;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--cream); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 5rem;
+      max-width: 1000px;
+      margin: 3.5rem auto 0;
+    }
+
+    .contact-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--brown);
+      margin-bottom: 0.8rem;
+    }
+    .contact-info > p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .contact-details { list-style: none; }
+    .contact-details li {
+      display: flex;
+      gap: 0.8rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .contact-details li svg {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--terracotta);
+    }
+    .contact-details a { color: inherit; text-decoration: none; }
+    .contact-details a:hover { color: var(--terracotta); }
+    .contact-details strong { color: var(--brown); }
+
+    .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brown);
+      font-weight: 700;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--warm-white);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--terracotta); }
+    .form-group textarea { min-height: 130px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text);
+      color: rgba(245,240,232,0.6);
+      padding: 4rem 4rem 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+    }
+
+    .footer-logo img {
+      height: 80px;
+      width: auto;
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .footer-brand p {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .footer-col h4 {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cream);
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.6rem; }
+    .footer-col ul a {
+      text-decoration: none;
+      font-size: 0.88rem;
+      color: rgba(245,240,232,0.55);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--terracotta-light); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(245,240,232,0.1);
+      font-size: 0.8rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .social-links { display: flex; gap: 1rem; }
+    .social-links a {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(245,240,232,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: rgba(245,240,232,0.5);
+      transition: all 0.2s;
+    }
+    .social-links a:hover {
+      border-color: var(--terracotta-light);
+      color: var(--terracotta-light);
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45,31,23,0.6);
+      z-index: 200;
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--warm-white);
+      max-width: 560px;
+      width: 90%;
+      padding: 2.5rem;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--brown);
+      margin-bottom: 0.5rem;
+    }
+    .modal > p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--brown);
+      color: var(--cream);
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      transform: translateY(120%);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .toast.show { transform: translateY(0); }
+    .toast svg { width: 18px; height: 18px; color: var(--terracotta-light); flex-shrink: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .product-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1024px) {
+      nav { padding: 0.6rem 2rem; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-image { display: none; }
+      .hero-content { padding: 5rem 2rem 4rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-image { min-height: 300px; }
+      .about-content { padding: 4rem 2rem; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-steps::before { display: none; }
+      .workshop-single { grid-template-columns: 1fr; }
+      .workshop-img { min-height: 220px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      section { padding: 4rem 2rem; }
+    }
+    @media (max-width: 768px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 0.6rem 1.5rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        inset: 0;
+        background: var(--warm-white);
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        z-index: 99;
+      }
+      .nav-links.open a { font-size: 1.2rem; }
+      .products-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      section { padding: 3rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .product-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ── -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <img src="logo.jpeg" alt="Veramiek" />
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#producten">Collectie</a></li>
+    <li><a href="#over-mij">Over mij</a></li>
+    <li><a href="#workshops">Workshop</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cart" id="cartBtn" onclick="openCart()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+    Winkelwagen <span id="cartCount" style="background:var(--terracotta);color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">0</span>
+  </button>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu openen">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <p class="hero-tag">Handgemaakt keramiek · Etten-Leur</p>
+    <h1>Keramiek dat<br /><em>verhalen</em> vertelt</h1>
+    <p class="hero-motto">"Met de hand gevormd, met het hart gebakken"</p>
+    <p>Elk stuk dat ik maak is uniek — met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie of kom draaien tijdens een workshop.</p>
+    <div class="hero-buttons">
+      <a href="#producten" class="btn-primary">Bekijk collectie</a>
+      <a href="#workshops" class="btn-secondary">Workshop boeken</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="clay-art">
+      <svg class="ceramic-hero-svg" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="700" fill="#e0d0c4"/>
+        <ellipse cx="300" cy="560" rx="130" ry="18" fill="#b8a090" opacity="0.4"/>
+        <path d="M200 560 Q170 400 190 300 Q210 200 300 180 Q390 200 410 300 Q430 400 400 560 Z" fill="#c2714f" opacity="0.9"/>
+        <path d="M220 545 Q195 395 208 305 Q225 215 300 198" fill="none" stroke="#e8a882" stroke-width="2" opacity="0.5"/>
+        <path d="M250 200 Q260 170 280 158 Q300 150 320 158 Q340 170 350 200" fill="#a05a3b" opacity="0.85"/>
+        <ellipse cx="300" cy="155" rx="52" ry="12" fill="#8b4a2f"/>
+        <ellipse cx="140" cy="460" rx="60" ry="10" fill="#8b6151" opacity="0.35"/>
+        <path d="M88 460 Q85 400 100 380 Q120 365 140 365 Q160 365 180 380 Q195 400 192 460 Z" fill="#7a8c6e" opacity="0.85"/>
+        <ellipse cx="140" cy="365" rx="52" ry="9" fill="#5e6e56"/>
+        <ellipse cx="430" cy="500" rx="40" ry="7" fill="#8b6151" opacity="0.3"/>
+        <path d="M394 500 Q392 455 400 440 Q415 428 430 428 Q445 428 460 440 Q468 455 466 500 Z" fill="#c9a882" opacity="0.9"/>
+        <ellipse cx="430" cy="430" rx="36" ry="7" fill="#b8926a"/>
+        <path d="M466 455 Q485 455 485 470 Q485 485 466 485" fill="none" stroke="#b8926a" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="280" cy="360" r="4" fill="#e8c4a0" opacity="0.6"/>
+        <circle cx="300" cy="340" r="3" fill="#e8c4a0" opacity="0.6"/>
+        <circle cx="320" cy="360" r="4" fill="#e8c4a0" opacity="0.6"/>
+        <path d="M300 155 Q295 120 285 105" fill="none" stroke="#7a8c6e" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M285 105 Q270 90 278 78 Q292 88 285 105" fill="#7a8c6e"/>
+        <path d="M287 118 Q272 108 272 95 Q285 98 287 118" fill="#7a8c6e"/>
+        <circle cx="80" cy="150" r="3" fill="#c9b8ab" opacity="0.4"/>
+        <circle cx="520" cy="200" r="5" fill="#c9b8ab" opacity="0.3"/>
+        <circle cx="540" cy="580" r="3" fill="#c9b8ab" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRODUCTEN ── -->
+<section id="producten">
+  <div class="products-header">
+    <div>
+      <p class="section-label">Mijn collectie</p>
+      <h2 class="section-title">Handgemaakt met zorg</h2>
+    </div>
+    <a href="#contact" class="btn-secondary" style="white-space:nowrap;">Maatwerk aanvragen</a>
+  </div>
+  <div class="products-filter">
+    <div class="cat-tabs" id="catTabs">
+      <button class="cat-tab active" onclick="filterCat('alles', this)">Alles</button>
+      <button class="cat-tab" onclick="filterCat('kopjes', this)">Kopjes & Mokken</button>
+      <button class="cat-tab" onclick="filterCat('borden', this)">Borden & Kommen</button>
+      <button class="cat-tab" onclick="filterCat('schalen', this)">Schalen</button>
+      <button class="cat-tab" onclick="filterCat('overige', this)">Overige</button>
+    </div>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<!-- ── OVER MIJ ── -->
+<section id="over-mij">
+  <div class="about-grid">
+    <div class="about-image">
+      <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:90%;">
+        <rect width="500" height="600" fill="#c9b8ab"/>
+        <ellipse cx="250" cy="420" rx="100" ry="20" fill="#a08070" opacity="0.4"/>
+        <ellipse cx="250" cy="340" rx="90" ry="15" fill="#b09080" opacity="0.3"/>
+        <path d="M175 340 Q165 260 180 220 Q210 180 250 175 Q290 180 320 220 Q335 260 325 340 Z" fill="#c2714f" opacity="0.85"/>
+        <ellipse cx="250" cy="440" rx="130" ry="22" fill="#8b6151" opacity="0.5"/>
+        <rect x="180" y="440" width="140" height="30" fill="#7a5040" rx="2"/>
+        <path d="M148 300 Q140 280 145 265 Q155 250 165 255 Q160 270 158 285 Q162 295 168 305 L155 315 Z" fill="#d4a882"/>
+        <path d="M145 285 Q135 275 138 262 Q148 255 155 265 L153 280 Z" fill="#d4a882"/>
+        <path d="M155 265 Q148 252 153 240 Q163 238 167 252 L162 265 Z" fill="#d4a882"/>
+        <path d="M352 300 Q360 280 355 265 Q345 250 335 255 Q340 270 342 285 Q338 295 332 305 L345 315 Z" fill="#d4a882"/>
+        <path d="M355 285 Q365 275 362 262 Q352 255 345 265 L347 280 Z" fill="#d4a882"/>
+        <path d="M345 265 Q352 252 347 240 Q337 238 333 252 L338 265 Z" fill="#d4a882"/>
+        <path d="M225 250 Q235 240 250 238 Q265 240 275 250" fill="none" stroke="#a05a3b" stroke-width="1.5" opacity="0.4"/>
+        <path d="M215 280 Q235 268 250 267 Q265 268 285 280" fill="none" stroke="#a05a3b" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="150" cy="380" r="5" fill="#a05a3b" opacity="0.35"/>
+        <circle cx="340" cy="375" r="4" fill="#a05a3b" opacity="0.3"/>
+        <circle cx="360" cy="395" r="6" fill="#a05a3b" opacity="0.2"/>
+        <text x="250" y="550" font-family="Georgia,serif" font-size="14" fill="#7a6050" opacity="0.7" text-anchor="middle">Handgemaakt met liefde</text>
+      </svg>
+    </div>
+    <div class="about-content">
+      <p class="section-label">Over Veramiek</p>
+      <h2 class="section-title">Het verhaal<br />achter het klei</h2>
+      <p>Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei — van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.</p>
+      <p>Elk stuk dat ik maak is uniek. Kleine onvolkomenheden zijn geen fouten, maar het bewijs van vakmanschap. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.</p>
+      <p>Naast mijn eigen collectie organiseer ik ook workshops voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section id="process">
+  <p class="section-label" style="color:var(--terracotta-light)">Van klei tot keuken</p>
+  <h2 class="section-title">Hoe ik werk</h2>
+  <p class="section-sub">Elk stuk doorloopt een zorgvuldig ambachtelijk proces van meerdere weken.</p>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <h3>Vormen</h3>
+      <p>Met de hand of op de draaischijf geef ik de klei zijn eerste vorm. Dit is waar het verhaal begint.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <h3>Drogen</h3>
+      <p>Het stuk droogt langzaam totdat het de perfecte stevigheid heeft voor verdere bijwerking.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <h3>Bisque branden</h3>
+      <p>De eerste brand op 1000°C maakt het stuk duurzaam en klaar voor glazuur.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <h3>Glazuren & branden</h3>
+      <p>Na zorgvuldig aanbrengen van glazuur volgt de tweede brand op 1240°C voor het eindresultaat.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKSHOPS ── -->
+<section id="workshops">
+  <div style="max-width:860px;margin:0 auto;">
+    <p class="section-label">Leer het ambacht</p>
+    <h2 class="section-title">Workshop</h2>
+    <div class="workshop-single">
+      <div class="workshop-img">
+        <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+          <rect width="380" height="340" fill="#e8ddd4"/>
+          <!-- Hand building + glazing combo -->
+          <!-- Vase being built -->
+          <path d="M130 270 Q118 200 128 160 Q148 125 190 120 Q232 125 252 160 Q262 200 250 270Z" fill="#c2714f" opacity="0.8"/>
+          <ellipse cx="190" cy="270" rx="62" ry="11" fill="#a05a3b" opacity="0.4"/>
+          <!-- Glaze drips on right side -->
+          <rect x="250" y="180" width="70" height="90" rx="3" fill="#7a8c6e" opacity="0.75"/>
+          <ellipse cx="285" cy="180" rx="35" ry="8" fill="#5e6e56" opacity="0.8"/>
+          <path d="M262 180 Q260 210 263 240" fill="none" stroke="#a8c090" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+          <path d="M280 180 Q278 220 281 248" fill="none" stroke="#a8c090" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+          <path d="M300 180 Q298 205 300 228" fill="none" stroke="#a8c090" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+          <!-- Hands -->
+          <path d="M100 200 Q92 182 96 168 Q106 155 115 160 Q111 174 109 188 Q113 197 118 206 L106 214 Z" fill="#d4a882"/>
+          <path d="M96 185 Q87 176 90 163 Q100 156 107 165 L105 180 Z" fill="#d4a882"/>
+          <!-- Small tools -->
+          <rect x="60" y="240" width="6" height="50" rx="3" fill="#b09080" transform="rotate(-15 63 265)"/>
+          <rect x="85" y="245" width="5" height="42" rx="2.5" fill="#b09080" transform="rotate(10 87 266)"/>
+          <!-- Text label -->
+          <text x="190" y="318" font-family="Georgia,serif" font-size="13" fill="#7a6050" opacity="0.7" text-anchor="middle">Handvormen · Opbouwen · Glazuren</text>
+        </svg>
+      </div>
+      <div class="workshop-body">
+        <p class="workshop-tag">Alle niveaus · Vanaf 4 personen</p>
+        <h3>Keramiek Workshop</h3>
+        <p>In deze workshop maak je kennis met het volledige keramiekproces: handvormen, opbouwen én glazuren. Je leert hoe je klei in een vorm kneedt, hoe je een stuk opbouwt en hoe je glazuur aanbrengt voor de uiteindelijke look. Je neemt je eigen gemaakte stuk mee naar huis — na het branden bezorg ik het op een afgesproken moment.</p>
+        <div class="workshop-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            ~4 uur
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Vanaf 4 personen
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Etten-Leur
+          </span>
+        </div>
+        <div class="workshop-price-row">
+          <div>
+            <div class="workshop-price">€ 30</div>
+            <small>per persoon</small>
+          </div>
+          <button class="btn-primary" onclick="openWorkshopModal()">Workshop boeken</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div style="max-width:1000px;margin:0 auto;">
+    <p class="section-label">Neem contact op</p>
+    <h2 class="section-title">Contact</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Vragen of bestellen?</h3>
+        <p>Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in — ik reageer zo snel mogelijk.</p>
+        <ul class="contact-details">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            <span>
+              <strong>WhatsApp / Bellen</strong><br />
+              <a href="https://wa.me/31648145413">+31 6 48 14 54 13</a>
+            </span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:vera.kraker@gmail.com">vera.kraker@gmail.com</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Etten-Leur, Noord-Brabant</span>
+          </li>
+        </ul>
+        <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);">
+          <p class="section-label" style="margin-bottom:0.6rem;">Volg mij</p>
+          <div style="display:flex;gap:1rem;margin-top:0.6rem;">
+            <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener"
+               style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;"
+               onmouseover="this.style.color='var(--terracotta)'" onmouseout="this.style.color='var(--text-muted)'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              @veramiekk
+            </a>
+            <a href="https://www.tiktok.com/@veramiek" target="_blank" rel="noopener"
+               style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;"
+               onmouseover="this.style.color='var(--terracotta)'" onmouseout="this.style.color='var(--text-muted)'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+              @veramiek
+            </a>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form" onsubmit="sendMessage(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="naam">Naam</label>
+            <input type="text" id="naam" name="naam" placeholder="Jouw naam" required />
+          </div>
+          <div class="form-group">
+            <label for="email">E-mailadres</label>
+            <input type="email" id="email" name="email" placeholder="jij@voorbeeld.nl" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="onderwerp">Onderwerp</label>
+          <select id="onderwerp" name="onderwerp">
+            <option value="">Kies een onderwerp...</option>
+            <option>Vraag over een product</option>
+            <option>Maatwerk bestelling</option>
+            <option>Workshop boeken</option>
+            <option>Overig</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bericht">Bericht</label>
+          <textarea id="bericht" name="bericht" placeholder="Schrijf je bericht hier..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="align-self:flex-start;">Verstuur bericht</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="logo.jpeg" alt="Veramiek" />
+      </div>
+      <p>Handgemaakt keramiek met ziel — elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
+      <div class="social-links" style="margin-top:1.5rem;">
+        <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@veramiek" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Collectie</h4>
+      <ul>
+        <li><a href="#producten" onclick="filterCat('kopjes')">Kopjes & Mokken</a></li>
+        <li><a href="#producten" onclick="filterCat('borden')">Borden & Kommen</a></li>
+        <li><a href="#producten" onclick="filterCat('schalen')">Schalen</a></li>
+        <li><a href="#producten" onclick="filterCat('overige')">Overige</a></li>
+        <li><a href="#contact">Maatwerk</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Workshop</h4>
+      <ul>
+        <li><a href="#workshops">Keramiek workshop</a></li>
+        <li><a href="#contact">Groep boeken</a></li>
+        <li><a href="#contact">Vragen</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Informatie</h4>
+      <ul>
+        <li><a href="#over-mij">Over Veramiek</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#">Verzending & retour</a></li>
+        <li><a href="#">Privacybeleid</a></li>
+        <li><a href="#">Algemene voorwaarden</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Veramiek. Alle rechten voorbehouden.</span>
+    <span>Met liefde gemaakt in Etten-Leur</span>
+  </div>
+</footer>
+
+<!-- ── WORKSHOP MODAL ── -->
+<div class="modal-overlay" id="workshopModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('workshopModal')">&times;</button>
+    <h2>Workshop boeken</h2>
+    <p>€ 30 per persoon · Vanaf 4 personen · ~4 uur. Vul je gegevens in en ik neem contact op om de datum te bevestigen.</p>
+    <form onsubmit="submitWorkshop(event)">
+      <div class="form-row" style="margin-bottom:1.2rem;">
+        <div class="form-group">
+          <label>Naam</label>
+          <input type="text" placeholder="Jouw naam" required />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" placeholder="jij@voorbeeld.nl" required />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1.2rem;">
+        <label>Aantal personen</label>
+        <select>
+          <option>4 personen</option>
+          <option>5 personen</option>
+          <option>6 personen</option>
+          <option>7 personen</option>
+          <option>8+ personen</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:1.5rem;">
+        <label>Gewenste datum (optioneel)</label>
+        <input type="date" />
+      </div>
+      <button type="submit" class="btn-primary">Aanmelding versturen</button>
+    </form>
+  </div>
+</div>
+
+<!-- ── CART MODAL ── -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('cartModal')">&times;</button>
+    <h2>Winkelwagen</h2>
+    <div id="cartItems" style="margin:1.5rem 0;min-height:60px;">
+      <p style="color:var(--text-muted);font-weight:300;">Je winkelwagen is leeg.</p>
+    </div>
+    <div id="cartTotal" style="padding-top:1rem;border-top:1px solid var(--border);display:none;">
+      <div style="display:flex;justify-content:space-between;font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--brown);margin-bottom:1.2rem;">
+        <span>Totaal</span>
+        <span id="totalPrice">€ 0,00</span>
+      </div>
+      <button class="btn-primary" style="width:100%;text-align:center;" onclick="checkout()">Afrekenen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">Toegevoegd aan winkelwagen</span>
+</div>
+
+<script>
+  // ── Products ──
+  const products = [
+    // Kopjes & Mokken
+    { name: "Koffiekopje", desc: "Handgevormd keramiek", price: 9.95, cat: "kopjes", type: "espresso", color: ["#c2714f","#a05a3b"] },
+    { name: "(Thee)mok", desc: "Ruime mok voor thee of koffie", price: 14.95, cat: "kopjes", type: "mug", color: ["#7a8c6e","#5e6e56"] },
+    // Borden & Kommen
+    { name: "Gebaksbordje", desc: "Klein bordje voor gebak of hapjes", price: 9.95, cat: "borden", type: "plate-sm", color: ["#d4a882","#b09070"] },
+    { name: "Diepbord", desc: "Voor soep, pasta of salade", price: 14.95, cat: "borden", type: "bowl-plate", color: ["#c2714f","#a05a3b"] },
+    { name: "Lunchbord", desc: "Ideaal voor lunch", price: 14.95, cat: "borden", type: "plate", color: ["#8b6151","#6b4a3b"] },
+    { name: "Dinerbord", desc: "Het complete dinnerbord", price: 17.95, cat: "borden", type: "plate-lg", color: ["#5c3d2e","#3d2518"] },
+    { name: "Kom 15cm", desc: "Veelzijdige kom", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"] },
+    // Schalen
+    { name: "Schaaltje 10cm", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"] },
+    { name: "Schaal 25cm", desc: "Middelgrote serveerschaal", price: 29.95, cat: "schalen", type: "dish", color: ["#c2714f","#a05a3b"] },
+    { name: "Schaal 35cm", desc: "Grote serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"] },
+    { name: "Chip & Dip Bowl", desc: "Grote schaal met dipdoosje", price: 39.95, cat: "schalen", badge: "Favoriet", type: "chipdip", color: ["#5c3d2e","#3d2518"] },
+    // Overige
+    { name: "Naamletters", desc: "Per stuk — laat je naam weten", price: 4.95, suffix: "p.s.", cat: "overige", type: "letters", color: ["#c2714f","#a05a3b"] },
+    { name: "Berry Bowl", desc: "Spoelkom voor fruit of groente", price: 17.95, cat: "overige", type: "berry", color: ["#7a8c6e","#5e6e56"] },
+    { name: "Asbak", desc: "Handgevormd keramiek", price: 17.95, cat: "overige", type: "ashtray", color: ["#d4a882","#b09070"] },
+    { name: "Matcha Set", desc: "Kom en garde — compleet setje", price: 39.95, cat: "overige", badge: "Set", type: "matcha", color: ["#7a8c6e","#5e6e56"] },
+  ];
+
+  function fmtPrice(p) {
+    return '€ ' + p.toFixed(2).replace('.', ',');
+  }
+
+  function productSVG(type, c) {
+    const [c1, c2] = c;
+    const s = {
+      espresso: `<svg viewBox="0 0 180 180" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="85" cy="155" rx="52" ry="8" fill="${c2}" opacity="0.3"/>
+        <path d="M44 80 L47 155 Q49 162 85 162 Q121 162 123 155 L126 80Z" fill="${c1}"/>
+        <ellipse cx="85" cy="80" rx="41" ry="8" fill="${c2}"/>
+        <path d="M126 96 Q144 96 144 108 Q144 120 126 120" fill="none" stroke="${c2}" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="85" cy="166" rx="60" ry="7" fill="${c2}" opacity="0.35"/>
+      </svg>`,
+      mug: `<svg viewBox="0 0 180 200" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="86" cy="168" rx="56" ry="9" fill="${c2}" opacity="0.3"/>
+        <path d="M40 66 L44 168 Q46 176 86 176 Q126 176 128 168 L132 66Z" fill="${c1}"/>
+        <ellipse cx="86" cy="66" rx="46" ry="9" fill="${c2}"/>
+        <path d="M132 88 Q154 88 154 106 Q154 124 132 124" fill="none" stroke="${c2}" stroke-width="8" stroke-linecap="round"/>
+        <path d="M58 112 Q78 103 86 101 Q94 103 114 112" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+      </svg>`,
+      'plate-sm': `<svg viewBox="0 0 180 160" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="90" cy="128" rx="72" ry="11" fill="${c2}" opacity="0.25"/>
+        <ellipse cx="90" cy="95" rx="72" ry="33" fill="${c1}"/>
+        <ellipse cx="90" cy="91" rx="58" ry="24" fill="${c2}" opacity="0.22"/>
+        <ellipse cx="90" cy="87" rx="38" ry="15" fill="${c1}" opacity="0.5"/>
+      </svg>`,
+      'bowl-plate': `<svg viewBox="0 0 180 170" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="90" cy="138" rx="76" ry="12" fill="${c2}" opacity="0.28"/>
+        <path d="M24 115 Q18 65 36 42 Q58 20 90 18 Q122 20 144 42 Q162 65 156 115Z" fill="${c1}"/>
+        <ellipse cx="90" cy="115" rx="66" ry="11" fill="${c2}"/>
+        <path d="M44 72 Q68 58 90 56 Q112 58 136 72" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+      </svg>`,
+      plate: `<svg viewBox="0 0 190 165" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="95" cy="132" rx="80" ry="12" fill="${c2}" opacity="0.25"/>
+        <ellipse cx="95" cy="100" rx="80" ry="36" fill="${c1}"/>
+        <ellipse cx="95" cy="95" rx="65" ry="27" fill="${c2}" opacity="0.22"/>
+        <ellipse cx="95" cy="90" rx="44" ry="17" fill="${c1}" opacity="0.5"/>
+      </svg>`,
+      'plate-lg': `<svg viewBox="0 0 200 170" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="135" rx="88" ry="13" fill="${c2}" opacity="0.25"/>
+        <ellipse cx="100" cy="102" rx="88" ry="38" fill="${c1}"/>
+        <ellipse cx="100" cy="97" rx="72" ry="29" fill="${c2}" opacity="0.22"/>
+        <ellipse cx="100" cy="92" rx="48" ry="19" fill="${c1}" opacity="0.5"/>
+      </svg>`,
+      bowl: `<svg viewBox="0 0 180 175" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="90" cy="145" rx="68" ry="11" fill="${c2}" opacity="0.3"/>
+        <path d="M30 120 Q22 62 42 38 Q62 16 90 14 Q118 16 138 38 Q158 62 150 120Z" fill="${c1}"/>
+        <ellipse cx="90" cy="120" rx="60" ry="10" fill="${c2}"/>
+        <path d="M48 76 Q68 62 90 60 Q112 62 132 76" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+      </svg>`,
+      'dish-sm': `<svg viewBox="0 0 160 140" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="112" rx="56" ry="9" fill="${c2}" opacity="0.28"/>
+        <path d="M32 100 Q26 68 36 52 Q52 36 80 34 Q108 36 124 52 Q134 68 128 100Z" fill="${c1}"/>
+        <ellipse cx="80" cy="100" rx="48" ry="9" fill="${c2}"/>
+      </svg>`,
+      dish: `<svg viewBox="0 0 200 160" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="128" rx="82" ry="12" fill="${c2}" opacity="0.28"/>
+        <path d="M26 112 Q18 72 30 52 Q54 30 100 28 Q146 30 170 52 Q182 72 174 112Z" fill="${c1}"/>
+        <ellipse cx="100" cy="112" rx="74" ry="11" fill="${c2}"/>
+        <path d="M42 78 Q68 62 100 60 Q132 62 158 78" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+      </svg>`,
+      'dish-lg': `<svg viewBox="0 0 210 155" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="105" cy="124" rx="90" ry="12" fill="${c2}" opacity="0.28"/>
+        <path d="M22 108 Q14 68 28 48 Q54 26 105 24 Q156 26 182 48 Q196 68 188 108Z" fill="${c1}"/>
+        <ellipse cx="105" cy="108" rx="83" ry="12" fill="${c2}"/>
+        <path d="M38 76 Q68 60 105 58 Q142 60 172 76" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+      </svg>`,
+      chipdip: `<svg viewBox="0 0 200 175" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="140" rx="80" ry="12" fill="${c2}" opacity="0.28"/>
+        <path d="M28 118 Q20 70 34 48 Q58 26 100 24 Q142 26 166 48 Q180 70 172 118Z" fill="${c1}"/>
+        <ellipse cx="100" cy="118" rx="72" ry="11" fill="${c2}"/>
+        <!-- Dip cup in center -->
+        <ellipse cx="100" cy="80" rx="26" ry="5" fill="${c2}" opacity="0.5"/>
+        <path d="M77 80 Q74 52 80 40 Q88 30 100 29 Q112 30 120 40 Q126 52 123 80Z" fill="${c2}" opacity="0.7"/>
+        <ellipse cx="100" cy="29" rx="21" ry="5" fill="${c2}"/>
+      </svg>`,
+      letters: `<svg viewBox="0 0 180 160" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <text x="28" y="110" font-family="Georgia,serif" font-size="72" font-weight="bold" fill="${c1}" opacity="0.9">V</text>
+        <text x="78" y="115" font-family="Georgia,serif" font-size="60" font-weight="bold" fill="${c2}" opacity="0.75">e</text>
+        <text x="122" y="108" font-family="Georgia,serif" font-size="52" font-weight="bold" fill="${c1}" opacity="0.55">r</text>
+        <ellipse cx="90" cy="128" rx="68" ry="8" fill="${c2}" opacity="0.2"/>
+      </svg>`,
+      berry: `<svg viewBox="0 0 180 175" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="90" cy="148" rx="68" ry="10" fill="${c2}" opacity="0.3"/>
+        <path d="M30 122 Q22 64 42 40 Q62 18 90 16 Q118 18 138 40 Q158 64 150 122Z" fill="${c1}"/>
+        <ellipse cx="90" cy="122" rx="60" ry="10" fill="${c2}"/>
+        <!-- holes -->
+        <circle cx="70" cy="72" r="5" fill="${c2}" opacity="0.7"/>
+        <circle cx="90" cy="65" r="5" fill="${c2}" opacity="0.7"/>
+        <circle cx="110" cy="72" r="5" fill="${c2}" opacity="0.7"/>
+        <circle cx="78" cy="90" r="5" fill="${c2}" opacity="0.7"/>
+        <circle cx="102" cy="90" r="5" fill="${c2}" opacity="0.7"/>
+        <circle cx="90" cy="108" r="5" fill="${c2}" opacity="0.7"/>
+      </svg>`,
+      ashtray: `<svg viewBox="0 0 180 155" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="90" cy="122" rx="72" ry="12" fill="${c2}" opacity="0.28"/>
+        <path d="M24 104 Q20 72 30 56 Q50 36 90 34 Q130 36 150 56 Q160 72 156 104Z" fill="${c1}"/>
+        <ellipse cx="90" cy="104" rx="66" ry="11" fill="${c2}"/>
+        <ellipse cx="90" cy="80" rx="44" ry="18" fill="${c2}" opacity="0.2"/>
+        <!-- notches -->
+        <rect x="155" y="88" width="8" height="24" rx="4" fill="${c2}" opacity="0.6" transform="rotate(12 159 100)"/>
+        <rect x="17" y="88" width="8" height="24" rx="4" fill="${c2}" opacity="0.6" transform="rotate(-12 21 100)"/>
+      </svg>`,
+      matcha: `<svg viewBox="0 0 200 175" class="prod-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Matcha bowl -->
+        <ellipse cx="78" cy="148" rx="58" ry="9" fill="${c2}" opacity="0.3"/>
+        <path d="M26 124 Q18 74 34 52 Q52 30 78 28 Q104 30 122 52 Q138 74 130 124Z" fill="${c1}"/>
+        <ellipse cx="78" cy="124" rx="52" ry="9" fill="${c2}"/>
+        <ellipse cx="78" cy="85" rx="38" ry="14" fill="${c2}" opacity="0.2"/>
+        <!-- Whisk -->
+        <line x1="148" y1="30" x2="130" y2="125" stroke="${c2}" stroke-width="5" stroke-linecap="round"/>
+        <line x1="158" y1="35" x2="140" y2="118" stroke="${c2}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <line x1="138" y1="38" x2="122" y2="118" stroke="${c2}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <path d="M120 118 Q130 125 140 118" fill="none" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="148" cy="26" rx="10" ry="5" fill="${c2}" opacity="0.5" transform="rotate(-20 148 26)"/>
+      </svg>`,
+    };
+    return s[type] || s.bowl;
+  }
+
+  const cart = [];
+
+  function renderProducts(cat = 'alles') {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = products.map((p, i) => {
+      const visible = cat === 'alles' || p.cat === cat;
+      return `<div class="product-card" data-cat="${p.cat}" ${visible ? '' : 'hidden'}>
+        <div class="product-image">
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+          ${productSVG(p.type, p.color)}
+        </div>
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="product-desc">${p.desc}</p>
+          <div class="product-footer">
+            <span class="product-price">${fmtPrice(p.price)}${p.suffix ? ' <small style="font-size:0.65rem;font-weight:400;color:var(--text-muted)">'+p.suffix+'</small>' : ''}</span>
+            <button class="add-to-cart" onclick="addToCart(${i})">+ Toevoegen</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function filterCat(cat, btn) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    else {
+      const tabs = document.querySelectorAll('.cat-tab');
+      const map = { alles: 0, kopjes: 1, borden: 2, schalen: 3, overige: 4 };
+      if (map[cat] !== undefined) tabs[map[cat]].classList.add('active');
+    }
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.hidden = cat !== 'alles' && card.dataset.cat !== cat;
+    });
+  }
+
+  function addToCart(i) {
+    const p = products[i];
+    const ex = cart.find(x => x.name === p.name);
+    ex ? ex.qty++ : cart.push({ ...p, qty: 1 });
+    document.getElementById('cartCount').textContent = cart.reduce((s, x) => s + x.qty, 0);
+    showToast(`"${p.name}" toegevoegd`);
+  }
+
+  function openCart() {
+    const el = document.getElementById('cartItems');
+    const tot = document.getElementById('cartTotal');
+    if (!cart.length) {
+      el.innerHTML = '<p style="color:var(--text-muted);font-weight:300;">Je winkelwagen is leeg.</p>';
+      tot.style.display = 'none';
+    } else {
+      const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+      el.innerHTML = cart.map(x => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-family:'Playfair Display',serif;color:var(--brown);">${x.name}</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Aantal: ${x.qty}</div>
+          </div>
+          <span style="font-weight:700;color:var(--brown);">${fmtPrice(x.price * x.qty)}</span>
+        </div>`).join('');
+      document.getElementById('totalPrice').textContent = fmtPrice(total);
+      tot.style.display = 'block';
+    }
+    document.getElementById('cartModal').classList.add('open');
+  }
+
+  function checkout() {
+    closeModal('cartModal');
+    cart.length = 0;
+    document.getElementById('cartCount').textContent = 0;
+    showToast('Bedankt voor je bestelling! Vera neemt contact op.');
+  }
+
+  function openWorkshopModal() {
+    document.getElementById('workshopModal').classList.add('open');
+  }
+
+  function submitWorkshop(e) {
+    e.preventDefault();
+    closeModal('workshopModal');
+    showToast('Aanmelding ontvangen! Vera neemt snel contact op.');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  });
+
+  function sendMessage(e) {
+    e.preventDefault();
+    e.target.reset();
+    showToast('Bericht verzonden! Reactie volgt binnen 2 werkdagen.');
+  }
+
+  let toastT;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', scrollY > 20);
+  });
+
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+  });
+
+  renderProducts();
+</script>
+</body>
+</html>
