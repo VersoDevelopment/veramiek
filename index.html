@@ -1525,8 +1525,15 @@
     closeModal('cartModal');
     const list = document.getElementById('orderProductList');
     const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
-    list.innerHTML = cart.map(x => `<div>${x.name} ×${x.qty} — ${fmtPrice(x.price * x.qty)}</div>`).join('') +
-      `<div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;font-weight:700;">Totaal: ${fmtPrice(total)}</div>`;
+    list.innerHTML = cart.map(x => `
+      <div style="display:flex;align-items:center;gap:0.8rem;padding:0.4rem 0;">
+        ${x.images && x.images[0]
+          ? `<img src="${x.images[0]}" style="width:48px;height:48px;object-fit:cover;border-radius:2px;flex-shrink:0;" />`
+          : `<div style="width:48px;height:48px;background:var(--border);border-radius:2px;flex-shrink:0;"></div>`}
+        <span style="flex:1;">${x.name} ×${x.qty}</span>
+        <span>${fmtPrice(x.price * x.qty)}</span>
+      </div>`).join('') +
+      `<div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;font-weight:700;text-align:right;">Totaal: ${fmtPrice(total)}</div>`;
     document.getElementById('orderModal').classList.add('open');
   }
 
