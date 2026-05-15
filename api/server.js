@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cors({ origin: ['https://veramiek.nl', 'http://localhost:8082'] }));
 
 const transporter = nodemailer.createTransport({
-  host: 'smtppro.zoho.eu',
+  host: 'smtp.zoho.eu',
   port: 587,
   secure: false,
   requireTLS: true,
@@ -123,14 +123,16 @@ app.post('/send-order', async (req, res) => {
     }
 
     await transporter.sendMail({
-      from: '"Veramiek Webshop" <info@veramiek.nl>',
+      from: '"Veramiek Webshop" <info@versodevelopment.nl>',
+      replyTo: 'info@veramiek.nl',
       to: 'info@veramiek.nl',
       subject: `Nieuwe bestelling — ${naam}`,
       html: buildVeraEmail({ naam, email, tel, adres, items, totaal }),
     });
 
     await transporter.sendMail({
-      from: '"Vera — Veramiek" <info@veramiek.nl>',
+      from: '"Vera — Veramiek" <info@versodevelopment.nl>',
+      replyTo: 'info@veramiek.nl',
       to: email,
       subject: 'Bedankt voor je bestelling bij Veramiek!',
       html: buildBuyerEmail({ naam, items, totaal }),
