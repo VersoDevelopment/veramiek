@@ -1062,7 +1062,7 @@
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <a href="mailto:vera.kraker@gmail.com">vera.kraker@gmail.com</a>
+            <a href="mailto:info@veramiek.nl">info@veramiek.nl</a>
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -1204,6 +1204,33 @@
   </div>
 </div>
 
+<!-- ── ORDER MODAL ── -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+    <h2>Bestelling afronden</h2>
+    <p>Vul je gegevens in — Vera neemt contact op om de bestelling te bevestigen.</p>
+    <div id="orderProductList" style="background:var(--cream);padding:0.8rem 1rem;margin-bottom:1.2rem;border-radius:2px;font-size:0.88rem;color:var(--brown);line-height:1.9;"></div>
+    <form id="orderForm" onsubmit="submitOrder(event)">
+      <div class="form-row" style="margin-bottom:1.2rem;">
+        <div class="form-group">
+          <label>Naam</label>
+          <input type="text" id="orderNaam" placeholder="Jouw naam" required />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="orderEmail" placeholder="jij@voorbeeld.nl" required />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1.5rem;">
+        <label>Telefoonnummer</label>
+        <input type="tel" id="orderTel" placeholder="+31 6 00 00 00 00" required />
+      </div>
+      <button type="submit" class="btn-primary" id="orderSubmitBtn" style="width:100%;text-align:center;">Bestelling bevestigen</button>
+    </form>
+  </div>
+</div>
+
 <!-- ── CART MODAL ── -->
 <div class="modal-overlay" id="cartModal">
   <div class="modal">
@@ -1217,7 +1244,7 @@
         <span>Totaal</span>
         <span id="totalPrice">€ 0,00</span>
       </div>
-      <button class="btn-primary" style="width:100%;text-align:center;" onclick="checkout()">Afrekenen</button>
+      <button class="btn-primary" style="width:100%;text-align:center;" onclick="openOrderForm()">Afrekenen</button>
     </div>
   </div>
 </div>
@@ -1471,11 +1498,44 @@
     document.getElementById('cartModal').classList.add('open');
   }
 
-  function checkout() {
+  function openOrderForm() {
     closeModal('cartModal');
-    cart.length = 0;
-    document.getElementById('cartCount').textContent = 0;
-    showToast('Bedankt voor je bestelling! Vera neemt contact op.');
+    const list = document.getElementById('orderProductList');
+    const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+    list.innerHTML = cart.map(x => `<div>${x.name} ×${x.qty} — ${fmtPrice(x.price * x.qty)}</div>`).join('') +
+      `<div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;font-weight:700;">Totaal: ${fmtPrice(total)}</div>`;
+    document.getElementById('orderModal').classList.add('open');
+  }
+
+  async function submitOrder(e) {
+    e.preventDefault();
+    const btn = document.getElementById('orderSubmitBtn');
+    btn.textContent = 'Versturen...';
+    btn.disabled = true;
+    const naam  = document.getElementById('orderNaam').value;
+    const email = document.getElementById('orderEmail').value;
+    const tel   = document.getElementById('orderTel').value;
+    const bestelling = cart.map(x => `${x.name} ×${x.qty}: ${fmtPrice(x.price * x.qty)}`).join('\n');
+    const totaal = fmtPrice(cart.reduce((s, x) => s + x.price * x.qty, 0));
+    try {
+      // Vervang FORMSPREE_ENDPOINT door jouw endpoint van formspree.io
+      const res = await fetch('https://formspree.io/f/FORMSPREE_ENDPOINT', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ naam, email, telefoon: tel, bestelling, totaal })
+      });
+      if (!res.ok) throw new Error();
+      closeModal('orderModal');
+      cart.length = 0;
+      document.getElementById('cartCount').textContent = 0;
+      document.getElementById('orderForm').reset();
+      showToast('Bestelling ontvangen! Vera neemt snel contact op.');
+    } catch {
+      showToast('Er ging iets mis. Mail naar info@veramiek.nl');
+    } finally {
+      btn.textContent = 'Bestelling bevestigen';
+      btn.disabled = false;
+    }
   }
 
   function openWorkshopModal() {
