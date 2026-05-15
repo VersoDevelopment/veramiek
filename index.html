@@ -50,11 +50,13 @@
     }
     nav.scrolled { box-shadow: 0 2px 20px rgba(92,61,46,0.08); }
 
-    .nav-logo img {
-      height: 64px;
-      width: auto;
-      mix-blend-mode: multiply;
-      display: block;
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--brown);
+      text-decoration: none;
+      letter-spacing: 0.02em;
     }
 
     .nav-links {
@@ -365,6 +367,67 @@
 
     .prod-svg { width: 75%; height: 75%; }
 
+    /* ── PHOTO GALLERY IN PRODUCT TILE ── */
+    .product-gallery {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .product-gallery::-webkit-scrollbar { display: none; }
+    .product-gallery img {
+      min-width: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      display: block;
+    }
+    .gallery-dots {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+      pointer-events: none;
+    }
+    .gallery-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      transition: background 0.2s;
+    }
+    .gallery-dot.active { background: white; }
+    .gallery-prev, .gallery-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.8);
+      border: none;
+      cursor: pointer;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-size: 1rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.2s;
+      color: var(--brown);
+      padding: 0;
+    }
+    .gallery-prev:hover, .gallery-next:hover { background: white; }
+    .gallery-prev { left: 0.4rem; }
+    .gallery-next { right: 0.4rem; }
+
     /* ── OVER MIJ ── */
     #over-mij {
       background: var(--cream);
@@ -623,13 +686,12 @@
       margin: 0 auto 3rem;
     }
 
-    .footer-logo img {
-      height: 80px;
-      width: auto;
-      mix-blend-mode: screen;
-      opacity: 0.9;
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--cream);
       margin-bottom: 1rem;
-      display: block;
     }
 
     .footer-brand p {
@@ -794,9 +856,7 @@
 
 <!-- ── NAVIGATION ── -->
 <nav id="navbar">
-  <a href="#" class="nav-logo">
-    <img src="logo.jpeg" alt="Veramiek" />
-  </a>
+  <a href="#" class="nav-logo">Veramiek</a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#producten">Collectie</a></li>
     <li><a href="#over-mij">Over mij</a></li>
@@ -883,26 +943,7 @@
 <section id="over-mij">
   <div class="about-grid">
     <div class="about-image">
-      <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:90%;">
-        <rect width="500" height="600" fill="#c9b8ab"/>
-        <ellipse cx="250" cy="420" rx="100" ry="20" fill="#a08070" opacity="0.4"/>
-        <ellipse cx="250" cy="340" rx="90" ry="15" fill="#b09080" opacity="0.3"/>
-        <path d="M175 340 Q165 260 180 220 Q210 180 250 175 Q290 180 320 220 Q335 260 325 340 Z" fill="#c2714f" opacity="0.85"/>
-        <ellipse cx="250" cy="440" rx="130" ry="22" fill="#8b6151" opacity="0.5"/>
-        <rect x="180" y="440" width="140" height="30" fill="#7a5040" rx="2"/>
-        <path d="M148 300 Q140 280 145 265 Q155 250 165 255 Q160 270 158 285 Q162 295 168 305 L155 315 Z" fill="#d4a882"/>
-        <path d="M145 285 Q135 275 138 262 Q148 255 155 265 L153 280 Z" fill="#d4a882"/>
-        <path d="M155 265 Q148 252 153 240 Q163 238 167 252 L162 265 Z" fill="#d4a882"/>
-        <path d="M352 300 Q360 280 355 265 Q345 250 335 255 Q340 270 342 285 Q338 295 332 305 L345 315 Z" fill="#d4a882"/>
-        <path d="M355 285 Q365 275 362 262 Q352 255 345 265 L347 280 Z" fill="#d4a882"/>
-        <path d="M345 265 Q352 252 347 240 Q337 238 333 252 L338 265 Z" fill="#d4a882"/>
-        <path d="M225 250 Q235 240 250 238 Q265 240 275 250" fill="none" stroke="#a05a3b" stroke-width="1.5" opacity="0.4"/>
-        <path d="M215 280 Q235 268 250 267 Q265 268 285 280" fill="none" stroke="#a05a3b" stroke-width="1.5" opacity="0.4"/>
-        <circle cx="150" cy="380" r="5" fill="#a05a3b" opacity="0.35"/>
-        <circle cx="340" cy="375" r="4" fill="#a05a3b" opacity="0.3"/>
-        <circle cx="360" cy="395" r="6" fill="#a05a3b" opacity="0.2"/>
-        <text x="250" y="550" font-family="Georgia,serif" font-size="14" fill="#7a6050" opacity="0.7" text-anchor="middle">Handgemaakt met liefde</text>
-      </svg>
+      <img src="Foto's keramiek/Over mij.jpeg" alt="Vera aan de draaischijf in haar atelier" style="width:75%;height:85%;object-fit:cover;object-position:center top;border-radius:2px;" />
     </div>
     <div class="about-content">
       <p class="section-label">Over Veramiek</p>
@@ -979,7 +1020,7 @@
         <div class="workshop-meta">
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            ~4 uur
+            ~2 uur
           </span>
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1081,9 +1122,7 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="footer-logo">
-        <img src="logo.jpeg" alt="Veramiek" />
-      </div>
+      <div class="footer-logo">Veramiek</div>
       <p>Handgemaakt keramiek met ziel — elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
       <div class="social-links" style="margin-top:1.5rem;">
         <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1134,7 +1173,7 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('workshopModal')">&times;</button>
     <h2>Workshop boeken</h2>
-    <p>€ 30 per persoon · Vanaf 4 personen · ~4 uur. Vul je gegevens in en ik neem contact op om de datum te bevestigen.</p>
+    <p>€ 30 per persoon · Vanaf 4 personen · ~2 uur. Vul je gegevens in en ik neem contact op om de datum te bevestigen.</p>
     <form onsubmit="submitWorkshop(event)">
       <div class="form-row" style="margin-bottom:1.2rem;">
         <div class="form-group">
@@ -1193,24 +1232,26 @@
   // ── Products ──
   const products = [
     // Kopjes & Mokken
-    { name: "Koffiekopje", desc: "Handgevormd keramiek", price: 9.95, cat: "kopjes", type: "espresso", color: ["#c2714f","#a05a3b"] },
-    { name: "(Thee)mok", desc: "Ruime mok voor thee of koffie", price: 14.95, cat: "kopjes", type: "mug", color: ["#7a8c6e","#5e6e56"] },
+    { name: "Kopjes", desc: "Handgevormd keramiek", price: 9.95, cat: "kopjes", type: "espresso", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Kopjes.png"] },
+    { name: "(Thee)mok", desc: "Ruime mok voor thee of koffie", price: 14.95, cat: "kopjes", type: "mug", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/(Thee)mok.png"] },
+    { name: "Bubble Cups", desc: "Handgevormd met een speelse look", price: 14.95, cat: "kopjes", type: "espresso", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Bubble cups.png"] },
     // Borden & Kommen
     { name: "Gebaksbordje", desc: "Klein bordje voor gebak of hapjes", price: 9.95, cat: "borden", type: "plate-sm", color: ["#d4a882","#b09070"] },
-    { name: "Diepbord", desc: "Voor soep, pasta of salade", price: 14.95, cat: "borden", type: "bowl-plate", color: ["#c2714f","#a05a3b"] },
+    { name: "Diepbord", desc: "Voor soep, pasta of salade", price: 14.95, cat: "borden", type: "bowl-plate", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Diep bord.png"] },
     { name: "Lunchbord", desc: "Ideaal voor lunch", price: 14.95, cat: "borden", type: "plate", color: ["#8b6151","#6b4a3b"] },
     { name: "Dinerbord", desc: "Het complete dinnerbord", price: 17.95, cat: "borden", type: "plate-lg", color: ["#5c3d2e","#3d2518"] },
-    { name: "Kom 15cm", desc: "Veelzijdige kom", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"] },
+    { name: "Kom 15cm", desc: "Veelzijdige kom", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/Schaaltje 2.png"] },
     // Schalen
-    { name: "Schaaltje 10cm", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"] },
-    { name: "Schaal 25cm", desc: "Middelgrote serveerschaal", price: 29.95, cat: "schalen", type: "dish", color: ["#c2714f","#a05a3b"] },
-    { name: "Schaal 35cm", desc: "Grote serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"] },
-    { name: "Chip & Dip Bowl", desc: "Grote schaal met dipdoosje", price: 39.95, cat: "schalen", badge: "Favoriet", type: "chipdip", color: ["#5c3d2e","#3d2518"] },
+    { name: "Schaaltje", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Schaaltje 1.png"] },
+    { name: "Schaal", desc: "Serveerschaal", price: 29.95, cat: "schalen", type: "dish", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Schaal 2.png"] },
+    { name: "Schaal 35cm", desc: "Grote serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"], images: ["Foto's keramiek/Schaal 1.png"] },
+    { name: "Chip & Dip Bowl", desc: "Grote schaal met dipdoosje", price: 39.95, cat: "schalen", badge: "Favoriet", type: "chipdip", color: ["#5c3d2e","#3d2518"], images: ["Foto's keramiek/Chip and dip 1.png", "Foto's keramiek/Chip and dip 2.png"] },
     // Overige
-    { name: "Naamletters", desc: "Per stuk — laat je naam weten", price: 4.95, suffix: "p.s.", cat: "overige", type: "letters", color: ["#c2714f","#a05a3b"] },
+    { name: "Naamletters", desc: "Per stuk — laat je naam weten", price: 4.95, suffix: "p.s.", cat: "overige", type: "letters", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Letters.png"] },
     { name: "Berry Bowl", desc: "Spoelkom voor fruit of groente", price: 17.95, cat: "overige", type: "berry", color: ["#7a8c6e","#5e6e56"] },
-    { name: "Asbak", desc: "Handgevormd keramiek", price: 17.95, cat: "overige", type: "ashtray", color: ["#d4a882","#b09070"] },
+    { name: "Asbak", desc: "Handgevormd keramiek", price: 17.95, cat: "overige", type: "ashtray", color: ["#d4a882","#b09070"], images: ["Foto's keramiek/Asbak 1.png", "Foto's keramiek/Asbak 2.png"] },
     { name: "Matcha Set", desc: "Kom en garde — compleet setje", price: 39.95, cat: "overige", badge: "Set", type: "matcha", color: ["#7a8c6e","#5e6e56"] },
+    { name: "Spatelhouder", desc: "Handgevormde keramiek lepels", price: 12.95, cat: "overige", type: "bowl", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Lepel dingen.png"] },
   ];
 
   function fmtPrice(p) {
@@ -1340,10 +1381,24 @@
     const grid = document.getElementById('productGrid');
     grid.innerHTML = products.map((p, i) => {
       const visible = cat === 'alles' || p.cat === cat;
+      let mediaContent;
+      if (p.images && p.images.length) {
+        const imgs = p.images.map(src => `<img src="${src}" alt="${p.name}" loading="lazy">`).join('');
+        const multi = p.images.length > 1;
+        const dots = multi
+          ? `<div class="gallery-dots">${p.images.map((_, j) => `<span class="gallery-dot${j === 0 ? ' active' : ''}"></span>`).join('')}</div>`
+          : '';
+        const arrows = multi
+          ? `<button class="gallery-prev" onclick="galleryNav(this,-1)" aria-label="Vorige">&#8249;</button><button class="gallery-next" onclick="galleryNav(this,1)" aria-label="Volgende">&#8250;</button>`
+          : '';
+        mediaContent = `<div class="product-gallery"${multi ? ' data-gallery="true"' : ''}>${imgs}</div>${arrows}${dots}`;
+      } else {
+        mediaContent = productSVG(p.type, p.color);
+      }
       return `<div class="product-card" data-cat="${p.cat}" ${visible ? '' : 'hidden'}>
         <div class="product-image">
           ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
-          ${productSVG(p.type, p.color)}
+          ${mediaContent}
         </div>
         <div class="product-info">
           <h3>${p.name}</h3>
@@ -1355,6 +1410,22 @@
         </div>
       </div>`;
     }).join('');
+    initGalleries();
+  }
+
+  function galleryNav(btn, dir) {
+    const gallery = btn.parentElement.querySelector('.product-gallery');
+    gallery.scrollBy({ left: dir * gallery.offsetWidth, behavior: 'smooth' });
+  }
+
+  function initGalleries() {
+    document.querySelectorAll('.product-gallery[data-gallery]').forEach(gallery => {
+      gallery.addEventListener('scroll', () => {
+        const idx = Math.round(gallery.scrollLeft / gallery.offsetWidth);
+        const dots = gallery.parentElement.querySelectorAll('.gallery-dot');
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+      }, { passive: true });
+    });
   }
 
   function filterCat(cat, btn) {
