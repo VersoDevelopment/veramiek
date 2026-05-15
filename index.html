@@ -1519,7 +1519,7 @@
     const totaal = fmtPrice(cart.reduce((s, x) => s + x.price * x.qty, 0));
     try {
       // Vervang FORMSPREE_ENDPOINT door jouw endpoint van formspree.io
-      const res = await fetch('https://formspree.io/f/FORMSPREE_ENDPOINT', {
+      const res = await fetch('https://formspree.io/f/xojrgqep', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ naam, email, telefoon: tel, bestelling, totaal })
