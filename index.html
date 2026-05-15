@@ -1222,9 +1222,29 @@
           <input type="email" id="orderEmail" placeholder="jij@voorbeeld.nl" required />
         </div>
       </div>
-      <div class="form-group" style="margin-bottom:1.5rem;">
+      <div class="form-group" style="margin-bottom:1.2rem;">
         <label>Telefoonnummer</label>
         <input type="tel" id="orderTel" placeholder="+31 6 00 00 00 00" required />
+      </div>
+      <div class="form-row" style="margin-bottom:1.2rem;">
+        <div class="form-group">
+          <label>Straat</label>
+          <input type="text" id="orderStraat" placeholder="Straatnaam" required />
+        </div>
+        <div class="form-group">
+          <label>Huisnummer</label>
+          <input type="text" id="orderHuisnr" placeholder="12A" required />
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:1.5rem;">
+        <div class="form-group">
+          <label>Postcode</label>
+          <input type="text" id="orderPostcode" placeholder="1234 AB" required />
+        </div>
+        <div class="form-group">
+          <label>Stad</label>
+          <input type="text" id="orderStad" placeholder="Amsterdam" required />
+        </div>
       </div>
       <button type="submit" class="btn-primary" id="orderSubmitBtn" style="width:100%;text-align:center;">Bestelling bevestigen</button>
     </form>
@@ -1512,17 +1532,21 @@
     const btn = document.getElementById('orderSubmitBtn');
     btn.textContent = 'Versturen...';
     btn.disabled = true;
-    const naam  = document.getElementById('orderNaam').value;
-    const email = document.getElementById('orderEmail').value;
-    const tel   = document.getElementById('orderTel').value;
+    const naam     = document.getElementById('orderNaam').value;
+    const email    = document.getElementById('orderEmail').value;
+    const tel      = document.getElementById('orderTel').value;
+    const straat   = document.getElementById('orderStraat').value;
+    const huisnr   = document.getElementById('orderHuisnr').value;
+    const postcode = document.getElementById('orderPostcode').value;
+    const stad     = document.getElementById('orderStad').value;
+    const adres    = `${straat} ${huisnr}, ${postcode} ${stad}`;
     const bestelling = cart.map(x => `${x.name} ×${x.qty}: ${fmtPrice(x.price * x.qty)}`).join('\n');
     const totaal = fmtPrice(cart.reduce((s, x) => s + x.price * x.qty, 0));
     try {
-      // Vervang FORMSPREE_ENDPOINT door jouw endpoint van formspree.io
       const res = await fetch('https://formspree.io/f/xojrgqep', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ naam, email, telefoon: tel, bestelling, totaal })
+        body: JSON.stringify({ naam, email, telefoon: tel, adres, bestelling, totaal })
       });
       if (!res.ok) throw new Error();
       closeModal('orderModal');
