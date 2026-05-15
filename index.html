@@ -844,7 +844,13 @@
     @media (max-width: 640px) {
       nav { padding: 0.6rem 1.5rem; }
       .nav-links { display: none; }
-      .hamburger { display: flex; }
+      .hamburger {
+        display: flex;
+        position: fixed;
+        top: 0.75rem;
+        right: 1.5rem;
+        z-index: 9999;
+      }
       .nav-links.open {
         display: flex;
         flex-direction: column;
@@ -854,7 +860,7 @@
         align-items: center;
         justify-content: center;
         gap: 2rem;
-        z-index: 99;
+        z-index: 200;
       }
       .nav-links.open a { font-size: 1.2rem; }
       .products-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
@@ -1713,10 +1719,21 @@
   });
 
   function toggleMenu() {
-    document.getElementById('navLinks').classList.toggle('open');
+    const open = document.getElementById('navLinks').classList.toggle('open');
+    const spans = document.querySelectorAll('.hamburger span');
+    if (open) {
+      spans[0].style.cssText = 'transform:translateY(7px) rotate(45deg)';
+      spans[1].style.cssText = 'opacity:0';
+      spans[2].style.cssText = 'transform:translateY(-7px) rotate(-45deg)';
+    } else {
+      spans.forEach(s => s.style.cssText = '');
+    }
   }
   document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+    a.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+      document.querySelectorAll('.hamburger span').forEach(s => s.style.cssText = '');
+    });
   });
 
   renderProducts();
