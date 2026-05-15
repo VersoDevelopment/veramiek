@@ -1528,6 +1528,15 @@
     }
   }
 
+  function changeQty(name, delta) {
+    const idx = cart.findIndex(x => x.name === name);
+    if (idx === -1) return;
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+    document.getElementById('cartCount').textContent = cart.reduce((s, x) => s + x.qty, 0);
+    openCart();
+  }
+
   function flyToCart(sourceEl, imgSrc) {
     const cartBtn = document.getElementById('cartBtn');
     const src = sourceEl.getBoundingClientRect();
@@ -1588,9 +1597,14 @@
             : `<div style="width:56px;height:56px;background:var(--cream);border-radius:2px;flex-shrink:0;"></div>`}
           <div style="flex:1;min-width:0;">
             <div style="font-family:'Playfair Display',serif;color:var(--brown);">${x.name}</div>
-            <div style="font-size:0.82rem;color:var(--text-muted);">Aantal: ${x.qty}</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);display:flex;align-items:center;gap:0.6rem;margin-top:2px;">
+              <button onclick="changeQty('${x.name}',-1)" style="background:none;border:1px solid var(--border);border-radius:2px;width:20px;height:20px;cursor:pointer;font-size:0.9rem;line-height:1;color:var(--text-muted);">−</button>
+              <span>${x.qty}</span>
+              <button onclick="changeQty('${x.name}',1)" style="background:none;border:1px solid var(--border);border-radius:2px;width:20px;height:20px;cursor:pointer;font-size:0.9rem;line-height:1;color:var(--text-muted);">+</button>
+            </div>
           </div>
           <span style="font-weight:700;color:var(--brown);flex-shrink:0;">${fmtPrice(x.price * x.qty)}</span>
+          <button onclick="changeQty('${x.name}',-999)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;line-height:1;padding:0 0 0 0.3rem;flex-shrink:0;" title="Verwijderen">&times;</button>
         </div>`).join('');
       document.getElementById('totalPrice').textContent = fmtPrice(total);
       tot.style.display = 'block';
