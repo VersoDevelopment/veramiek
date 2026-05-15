@@ -1540,13 +1540,18 @@
     const postcode = document.getElementById('orderPostcode').value;
     const stad     = document.getElementById('orderStad').value;
     const adres    = `${straat} ${huisnr}, ${postcode} ${stad}`;
-    const bestelling = cart.map(x => `${x.name} ×${x.qty}: ${fmtPrice(x.price * x.qty)}`).join('\n');
     const totaal = fmtPrice(cart.reduce((s, x) => s + x.price * x.qty, 0));
+    const items = cart.map(x => ({
+      name: x.name,
+      qty: x.qty,
+      subtotal: fmtPrice(x.price * x.qty),
+      images: x.images || []
+    }));
     try {
-      const res = await fetch('https://formspree.io/f/xojrgqep', {
+      const res = await fetch('/api/send-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ naam, email, telefoon: tel, adres, bestelling, totaal })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ naam, email, tel, adres, items, totaal })
       });
       if (!res.ok) throw new Error();
       closeModal('orderModal');
