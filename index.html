@@ -108,8 +108,6 @@
       background: none;
       border: none;
       padding: 4px;
-      position: relative;
-      z-index: 101;
     }
     .hamburger span {
       display: block;
@@ -846,25 +844,22 @@
       nav { padding: 0.5rem 1.5rem; }
       .nav-links { display: none; }
       .nav-logo { display: none; }
-      .hamburger {
-        display: flex;
-        position: fixed;
-        top: 0.75rem;
-        right: 1.5rem;
-        z-index: 9999;
-      }
+      .hamburger { display: flex; }
       .nav-links.open {
         display: flex;
         flex-direction: column;
         position: fixed;
-        inset: 0;
+        top: 52px;
+        left: 0; right: 0;
         background: var(--warm-white);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 20px rgba(77,14,19,0.08);
+        padding: 2rem;
         align-items: center;
-        justify-content: center;
-        gap: 2rem;
-        z-index: 200;
+        gap: 1.8rem;
+        z-index: 99;
       }
-      .nav-links.open a { font-size: 1.2rem; }
+      .nav-links.open a { font-size: 1.1rem; }
       .products-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
       .form-row { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
@@ -896,10 +891,10 @@
     </svg>
     Winkelwagen <span id="cartCount" style="background:var(--terracotta);color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">0</span>
   </button>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu openen">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
-<button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu openen">
-  <span></span><span></span><span></span>
-</button>
 
 <!-- ── HERO ── -->
 <section class="hero" id="home">
