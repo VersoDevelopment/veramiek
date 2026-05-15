@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Veramiek — Handgemaakt Keramiek</title>
+  <title>Veramiek, Handgemaakt Keramiek</title>
   <meta name="description" content="Veramiek maakt en verkoopt uniek handgemaakt keramiek vanuit Etten-Leur. Ontdek de collectie of boek een workshop." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@100;300;400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --terracotta: #c2714f;
-      --terracotta-dark: #a05a3b;
-      --terracotta-light: #e8a882;
-      --cream: #f5f0e8;
-      --warm-white: #faf7f2;
-      --brown: #5c3d2e;
-      --brown-light: #8b6151;
+      --terracotta: #C8A49F;
+      --terracotta-dark: #A8807A;
+      --terracotta-light: #DEC0BC;
+      --cream: #D8C4AC;
+      --warm-white: #EEE4DA;
+      --brown: #4D0E13;
+      --brown-light: #7D3E43;
       --sage: #7a8c6e;
-      --text: #2d1f17;
-      --text-muted: #7a6259;
-      --border: #ddd0c4;
+      --text: #4D0E13;
+      --text-muted: #8A6055;
+      --border: #C8B0A4;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 100;
       background: var(--warm-white);
       color: var(--text);
       line-height: 1.7;
@@ -51,7 +52,7 @@
     nav.scrolled { box-shadow: 0 2px 20px rgba(92,61,46,0.08); }
 
     .nav-logo {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.5rem;
       font-weight: 600;
       color: var(--brown);
@@ -86,7 +87,7 @@
       letter-spacing: 0.05em;
       background: none;
       border: none;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
     }
     .nav-cart:hover { color: var(--terracotta); }
     .nav-cart svg { width: 20px; height: 20px; }
@@ -107,6 +108,8 @@
       background: none;
       border: none;
       padding: 4px;
+      position: relative;
+      z-index: 101;
     }
     .hamburger span {
       display: block;
@@ -141,11 +144,13 @@
     }
 
     .hero h1 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
       font-size: clamp(2.8rem, 4.5vw, 4.2rem);
       line-height: 1.15;
       color: var(--brown);
       margin-bottom: 1.2rem;
+      letter-spacing: 0.03em;
     }
     .hero h1 em {
       font-style: italic;
@@ -153,7 +158,7 @@
     }
 
     .hero-motto {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 1.05rem;
       color: var(--terracotta);
@@ -183,7 +188,7 @@
       transition: background 0.2s, transform 0.2s;
       border: none;
       cursor: pointer;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
     }
     .btn-primary:hover {
       background: var(--terracotta-dark);
@@ -202,7 +207,7 @@
       font-weight: 700;
       border: 1.5px solid var(--brown);
       transition: all 0.2s;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
     }
     .btn-secondary:hover {
       background: var(--brown);
@@ -238,11 +243,13 @@
     }
 
     .section-title {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
       font-size: clamp(2rem, 3vw, 2.8rem);
       color: var(--brown);
       margin-bottom: 1.2rem;
       line-height: 1.25;
+      letter-spacing: 0.03em;
     }
 
     .section-sub {
@@ -272,7 +279,7 @@
       border: 1.5px solid var(--border);
       color: var(--text-muted);
       cursor: pointer;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
       transition: all 0.2s;
     }
     .cat-tab:hover { border-color: var(--terracotta); color: var(--terracotta); }
@@ -338,7 +345,7 @@
 
     .product-info { padding: 1rem 1.1rem 1.2rem; }
     .product-info h3 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
       color: var(--brown);
       margin-bottom: 0.2rem;
@@ -369,7 +376,7 @@
       background: none;
       border: none;
       transition: color 0.2s;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
     }
     .add-to-cart:hover { color: var(--terracotta-dark); }
 
@@ -506,7 +513,7 @@
       border-radius: 50%;
       background: var(--terracotta);
       color: white;
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.3rem;
       display: flex;
       align-items: center;
@@ -516,7 +523,7 @@
       z-index: 1;
     }
     .step h3 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       color: var(--cream);
       margin-bottom: 0.7rem;
@@ -559,7 +566,7 @@
       margin-bottom: 0.6rem;
     }
     .workshop-body h3 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.7rem;
       color: var(--brown);
       margin-bottom: 0.8rem;
@@ -593,7 +600,7 @@
       flex-wrap: wrap;
     }
     .workshop-price {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.8rem;
       color: var(--brown);
       font-weight: 600;
@@ -601,7 +608,7 @@
     .workshop-price small {
       font-size: 0.75rem;
       color: var(--text-muted);
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
       font-weight: 300;
       display: block;
       line-height: 1.4;
@@ -619,7 +626,7 @@
     }
 
     .contact-info h3 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.4rem;
       color: var(--brown);
       margin-bottom: 0.8rem;
@@ -667,7 +674,7 @@
       padding: 0.85rem 1rem;
       border: 1px solid var(--border);
       background: var(--warm-white);
-      font-family: 'Lato', sans-serif;
+      font-family: 'Raleway', sans-serif;
       font-size: 0.95rem;
       color: var(--text);
       transition: border-color 0.2s;
@@ -695,7 +702,7 @@
     }
 
     .footer-logo {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.6rem;
       font-weight: 600;
       color: var(--cream);
@@ -782,7 +789,7 @@
       color: var(--text-muted);
     }
     .modal h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.5rem;
       color: var(--brown);
       margin-bottom: 0.5rem;
@@ -890,7 +897,7 @@
     <p class="hero-tag">Handgemaakt keramiek · Etten-Leur</p>
     <h1>Keramiek dat<br /><em>verhalen</em> vertelt</h1>
     <p class="hero-motto">"Met de hand gevormd, met het hart gebakken"</p>
-    <p>Elk stuk dat ik maak is uniek — met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie of kom draaien tijdens een workshop.</p>
+    <p>Elk stuk dat ik maak is uniek. Met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie, maak kennis met het vak tijdens een workshop.</p>
     <div class="hero-buttons">
       <a href="#producten" class="btn-primary">Bekijk collectie</a>
       <a href="#workshops" class="btn-secondary">Workshop boeken</a>
@@ -956,9 +963,9 @@
     <div class="about-content">
       <p class="section-label">Over Veramiek</p>
       <h2 class="section-title">Het verhaal<br />achter het klei</h2>
-      <p>Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei — van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.</p>
-      <p>Elk stuk dat ik maak is uniek. Kleine onvolkomenheden zijn geen fouten, maar het bewijs van vakmanschap. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.</p>
-      <p>Naast mijn eigen collectie organiseer ik ook workshops voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.</p>
+      <p>Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei, van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.</p>
+      <p>Elk stuk dat ik maak is uniek. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.</p>
+      <p>Naast mijn eigen collectie organiseer ik ook workshops op locatie voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.</p>
     </div>
   </div>
 </section>
@@ -967,7 +974,7 @@
 <section id="process">
   <p class="section-label" style="color:var(--terracotta-light)">Van klei tot keuken</p>
   <h2 class="section-title">Hoe ik werk</h2>
-  <p class="section-sub">Elk stuk doorloopt een zorgvuldig ambachtelijk proces van meerdere weken.</p>
+  <p class="section-sub">Elk stuk doorloopt een zorgvuldig ambachtelijk proces.</p>
   <div class="process-steps">
     <div class="step">
       <div class="step-number">1</div>
@@ -982,12 +989,12 @@
     <div class="step">
       <div class="step-number">3</div>
       <h3>Bisque branden</h3>
-      <p>De eerste brand op 1000°C maakt het stuk duurzaam en klaar voor glazuur.</p>
+      <p>De eerste brand op circa 1000°C maakt het stuk duurzaam en klaar voor glazuur.</p>
     </div>
     <div class="step">
       <div class="step-number">4</div>
       <h3>Glazuren & branden</h3>
-      <p>Na zorgvuldig aanbrengen van glazuur volgt de tweede brand op 1240°C voor het eindresultaat.</p>
+      <p>Na zorgvuldig aanbrengen van glazuur volgt de tweede brand op circa 1240°C voor het eindresultaat.</p>
     </div>
   </div>
 </section>
@@ -1024,11 +1031,12 @@
       <div class="workshop-body">
         <p class="workshop-tag">Alle niveaus · Vanaf 4 personen</p>
         <h3>Keramiek Workshop</h3>
-        <p>In deze workshop maak je kennis met het volledige keramiekproces: handvormen, opbouwen én glazuren. Je leert hoe je klei in een vorm kneedt, hoe je een stuk opbouwt en hoe je glazuur aanbrengt voor de uiteindelijke look. Je neemt je eigen gemaakte stuk mee naar huis — na het branden bezorg ik het op een afgesproken moment.</p>
+        <p>Ik kom bij jullie langs op locatie en neem alles mee: van klei en gereedschap tot verf. Jullie maken onder mijn begeleiding je eigen keramiekstukken, die je daarna ook zelf kunt beschilderen. Als iedereen klaar is, neem ik alles mee om te bakken en te glazuren. Zo heb je binnen no-time je eigen handgemaakte creatie in huis, om op te halen of te laten bezorgen.</p>
+        <p style="font-size:0.9rem;color:var(--terracotta);font-weight:400;margin-bottom:0.5rem;">De perfecte activiteit voor een verjaardag, babyshower, vrijgezellenavond of gewoon een gezellige middag met vrienden. Laat je creativiteit de vrije loop!</p>
         <div class="workshop-meta">
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            ~2 uur
+            ~2,5 uur
           </span>
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1036,12 +1044,12 @@
           </span>
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Etten-Leur
+            Op locatie
           </span>
         </div>
         <div class="workshop-price-row">
           <div>
-            <div class="workshop-price">€ 30</div>
+            <div class="workshop-price">Vanaf € 30</div>
             <small>per persoon</small>
           </div>
           <button class="btn-primary" onclick="openWorkshopModal()">Workshop boeken</button>
@@ -1059,7 +1067,7 @@
     <div class="contact-grid">
       <div class="contact-info">
         <h3>Vragen of bestellen?</h3>
-        <p>Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in — ik reageer zo snel mogelijk.</p>
+        <p>Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in. Ik reageer zo snel mogelijk.</p>
         <ul class="contact-details">
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
@@ -1131,7 +1139,7 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="footer-logo">Veramiek</div>
-      <p>Handgemaakt keramiek met ziel — elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
+      <p>Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
       <div class="social-links" style="margin-top:1.5rem;">
         <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -1181,7 +1189,7 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('workshopModal')">&times;</button>
     <h2>Workshop boeken</h2>
-    <p>€ 30 per persoon · Vanaf 4 personen · ~2 uur. Vul je gegevens in en ik neem contact op om de datum te bevestigen.</p>
+    <p>Vanaf € 30 per persoon · Vanaf 4 personen · ~2,5 uur. Vul je gegevens in en ik neem contact op om de datum te bevestigen.</p>
     <form onsubmit="submitWorkshop(event)">
       <div class="form-row" style="margin-bottom:1.2rem;">
         <div class="form-group">
@@ -1217,7 +1225,7 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
     <h2>Bestelling afronden</h2>
-    <p>Vul je gegevens in — Vera neemt contact op om de bestelling te bevestigen.</p>
+    <p>Vul je gegevens in. Vera neemt contact op om de bestelling te bevestigen.</p>
     <div id="orderProductList" style="background:var(--cream);padding:0.8rem 1rem;margin-bottom:1.2rem;border-radius:2px;font-size:0.88rem;color:var(--brown);line-height:1.9;"></div>
     <form id="orderForm" onsubmit="submitOrder(event)">
       <div class="form-row" style="margin-bottom:1.2rem;">
@@ -1295,18 +1303,16 @@
     { name: "Diepbord", desc: "Voor soep, pasta of salade", price: 14.95, cat: "borden", type: "bowl-plate", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Diep bord.png"] },
     { name: "Lunchbord", desc: "Ideaal voor lunch", price: 14.95, cat: "borden", type: "plate", color: ["#8b6151","#6b4a3b"] },
     { name: "Dinerbord", desc: "Het complete dinnerbord", price: 17.95, cat: "borden", type: "plate-lg", color: ["#5c3d2e","#3d2518"] },
-    { name: "Kom 15cm", desc: "Veelzijdige kom", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/Schaaltje 2.png"] },
+    { name: "Pot", desc: "Veelzijdige pot", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/Schaaltje 2.png"] },
     // Schalen
-    { name: "Schaaltje", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Schaaltje 1.png"] },
-    { name: "Schaal", desc: "Serveerschaal", price: 29.95, cat: "schalen", type: "dish", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Schaal 2.png"] },
-    { name: "Schaal 35cm", desc: "Grote serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"], images: ["Foto's keramiek/Schaal 1.png"] },
+    { name: "Kom", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Schaaltje 1.png"] },
+    { name: "Schaal", desc: "Serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"], images: ["Foto's keramiek/Schaal 1.png", "Foto's keramiek/Schaal 2.png"] },
     { name: "Chip & Dip Bowl", desc: "Grote schaal met dipdoosje", price: 39.95, cat: "schalen", badge: "Favoriet", type: "chipdip", color: ["#5c3d2e","#3d2518"], images: ["Foto's keramiek/Chip and dip 1.png", "Foto's keramiek/Chip and dip 2.png"] },
     // Overige
-    { name: "Naamletters", desc: "Per stuk — laat je naam weten", price: 4.95, suffix: "p.s.", cat: "overige", type: "letters", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Letters.png"] },
     { name: "Berry Bowl", desc: "Spoelkom voor fruit of groente", price: 17.95, cat: "overige", type: "berry", color: ["#7a8c6e","#5e6e56"] },
     { name: "Asbak", desc: "Handgevormd keramiek", price: 17.95, cat: "overige", type: "ashtray", color: ["#d4a882","#b09070"], images: ["Foto's keramiek/Asbak 1.png", "Foto's keramiek/Asbak 2.png"] },
-    { name: "Matcha Set", desc: "Kom en garde — compleet setje", price: 39.95, cat: "overige", badge: "Set", type: "matcha", color: ["#7a8c6e","#5e6e56"] },
-    { name: "Spatelhouder", desc: "Handgevormde keramiek lepels", price: 12.95, cat: "overige", type: "bowl", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Lepel dingen.png"] },
+    { name: "Matcha Set", desc: "Kom en houder - compleet setje", price: 39.95, cat: "overige", badge: "Set", type: "matcha", color: ["#7a8c6e","#5e6e56"] },
+    { name: "Lepelhouder", desc: "Handgevormde keramiek lepelhouders", price: 12.95, cat: "overige", type: "bowl", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Lepel dingen.png"] },
   ];
 
   function fmtPrice(p) {
