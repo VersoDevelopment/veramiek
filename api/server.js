@@ -77,12 +77,18 @@ function buildBuyerEmail({ naam, items, totaal }) {
   const hero = items.find(i => i.images && i.images[0]);
   const heroSrc = hero ? imgUrl(hero.images[0]) : null;
 
-  const rows = items.map(item => `
+  const rows = items.map(item => {
+    const img = item.images && item.images[0] ? imgUrl(item.images[0]) : null;
+    return `
     <tr style="border-bottom:1px solid #ede5db;">
-      <td style="padding:10px 0;font-family:Georgia,serif;color:#5c3d2e;font-size:14px;">${item.name}</td>
-      <td style="padding:10px 0;text-align:center;color:#7a6259;font-size:13px;">×${item.qty}</td>
-      <td style="padding:10px 0;text-align:right;color:#5c3d2e;font-size:14px;">${item.subtotal}</td>
-    </tr>`).join('');
+      <td style="padding:10px 8px;">
+        ${img ? `<img src="${img}" width="56" height="56" style="display:block;border-radius:3px;object-fit:cover;" />` : '<div style="width:56px;height:56px;background:#f0e8e0;border-radius:3px;"></div>'}
+      </td>
+      <td style="padding:10px 8px;font-family:Georgia,serif;color:#5c3d2e;font-size:14px;">${item.name}</td>
+      <td style="padding:10px 8px;text-align:center;color:#7a6259;font-size:13px;">×${item.qty}</td>
+      <td style="padding:10px 8px;text-align:right;color:#5c3d2e;font-size:14px;">${item.subtotal}</td>
+    </tr>`;
+  }).join('');
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
