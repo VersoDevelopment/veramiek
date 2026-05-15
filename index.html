@@ -365,18 +365,24 @@
       color: var(--brown);
     }
     .add-to-cart {
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--terracotta);
-      font-weight: 700;
-      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--terracotta);
       background: none;
-      border: none;
-      transition: color 0.2s;
+      color: var(--terracotta);
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
       font-family: 'Raleway', sans-serif;
+      padding: 0;
+      flex-shrink: 0;
     }
-    .add-to-cart:hover { color: var(--terracotta-dark); }
+    .add-to-cart:hover { background: var(--terracotta); color: white; }
 
     .prod-svg { width: 75%; height: 75%; }
 
@@ -1474,7 +1480,7 @@
           <p class="product-desc">${p.desc}</p>
           <div class="product-footer">
             <span class="product-price">${fmtPrice(p.price)}${p.suffix ? ' <small style="font-size:0.65rem;font-weight:400;color:var(--text-muted)">'+p.suffix+'</small>' : ''}</span>
-            <button class="add-to-cart" onclick="addToCart(${i}, this)">+ Toevoegen</button>
+            <button class="add-to-cart" onclick="addToCart(${i}, this)">+</button>
           </div>
         </div>
       </div>`;
