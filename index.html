@@ -806,6 +806,35 @@
     }
 
     /* ── TOAST ── */
+    .markt-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .markt-overlay.open { display: flex; }
+    .markt-modal {
+      background: var(--cream);
+      color: var(--brown-dark);
+      border-radius: 4px;
+      padding: 2.5rem 2rem;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    }
+    .markt-close {
+      position: absolute; top: 0.8rem; right: 1rem;
+      background: none; border: none;
+      font-size: 1.1rem; cursor: pointer;
+      color: var(--text-muted);
+    }
+    .markt-icon { font-size: 2.4rem; margin-bottom: 0.8rem; }
+    .markt-modal h3 { font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 0.7rem; }
+    .markt-modal p { font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); }
     .toast {
       position: fixed;
       bottom: 2rem; right: 2rem;
@@ -1300,6 +1329,16 @@
   </div>
 </div>
 
+<!-- ── MARKT POPUP ── -->
+<div class="markt-overlay" id="marktOverlay" onclick="sluitMarktPopup()">
+  <div class="markt-modal" onclick="event.stopPropagation()">
+    <button class="markt-close" onclick="sluitMarktPopup()" aria-label="Sluiten">&#10005;</button>
+    <div class="markt-icon">🏪</div>
+    <h3>Momenteel niet beschikbaar</h3>
+    <p>Deze producten zijn op dit moment gereserveerd voor de markt. Kom snel langs of houd onze pagina in de gaten!</p>
+  </div>
+</div>
+
 <!-- ── TOAST ── -->
 <div class="toast" id="toast">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -1517,7 +1556,14 @@
     });
   }
 
+  function sluitMarktPopup() {
+    document.getElementById('marktOverlay').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') sluitMarktPopup(); });
+
   function addToCart(i, btn) {
+    document.getElementById('marktOverlay').classList.add('open');
+    return;
     const p = products[i];
 
     // Determine which photo is currently visible
