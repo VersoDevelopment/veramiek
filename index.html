@@ -806,32 +806,100 @@
     }
 
     /* ── TOAST ── */
-    .lightbox-overlay {
+    /* ── CART DROPDOWN ── */
+    .cart-wrap { position: relative; }
+    .cart-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 280px;
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      z-index: 400;
+      padding: 0.8rem;
+    }
+    .cart-dropdown.open { display: block; }
+    .cart-empty { font-size: 0.85rem; color: var(--text-muted); text-align: center; padding: 0.5rem 0; }
+    .cart-drop-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-drop-item:last-child { border-bottom: none; }
+    .cart-drop-thumb {
+      width: 40px; height: 40px;
+      object-fit: cover;
+      border-radius: 2px;
+      flex-shrink: 0;
+      background: var(--cream);
+    }
+    .cart-drop-name { font-size: 0.82rem; color: var(--text); flex: 1; line-height: 1.3; }
+    .cart-drop-price { font-size: 0.82rem; font-weight: 700; color: var(--brown); flex-shrink: 0; }
+
+    /* ── PRODUCT DETAIL POPUP ── */
+    .detail-overlay {
       display: none;
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.55);
       z-index: 600;
       align-items: center;
       justify-content: center;
-      cursor: zoom-out;
     }
-    .lightbox-overlay.open { display: flex; }
-    .lightbox-img {
-      max-width: 92vw;
-      max-height: 90vh;
-      object-fit: contain;
-      border-radius: 3px;
-      box-shadow: 0 8px 60px rgba(0,0,0,0.5);
+    .detail-overlay.open { display: flex; }
+    .detail-modal {
+      background: var(--warm-white);
+      border-radius: 4px;
+      display: flex;
+      max-width: 760px;
+      width: 92vw;
+      max-height: 88vh;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 60px rgba(0,0,0,0.2);
     }
-    .lightbox-close {
-      position: fixed; top: 1.2rem; right: 1.4rem;
+    .detail-foto {
+      width: 55%;
+      flex-shrink: 0;
+      background: var(--cream);
+    }
+    .detail-foto img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .detail-info {
+      padding: 2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      overflow-y: auto;
+    }
+    .detail-info h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--brown); }
+    .detail-prijs { font-size: 1.2rem; font-weight: 700; color: var(--terracotta-dark); }
+    .detail-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; flex: 1; }
+    .detail-plus {
+      width: 38px; height: 38px;
+      font-size: 1.4rem;
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    .detail-close {
+      position: absolute; top: 0.8rem; right: 1rem;
       background: none; border: none;
-      color: #fff; font-size: 1.6rem;
-      cursor: pointer; line-height: 1;
-      opacity: 0.8;
+      font-size: 1.1rem; cursor: pointer;
+      color: var(--text-muted);
+      z-index: 1;
     }
-    .lightbox-close:hover { opacity: 1; }
-    .product-gallery img { cursor: zoom-in; }
+    @media(max-width: 600px) {
+      .detail-modal { flex-direction: column; max-height: 92vh; }
+      .detail-foto { width: 100%; height: 220px; }
+    }
+    .product-gallery img { cursor: pointer; }
     .markt-overlay {
       display: none;
       position: fixed; inset: 0;
@@ -945,14 +1013,19 @@
     <li><a href="#workshops">Workshop</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="nav-cart" id="cartBtn" onclick="openCart()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 0 1-8 0"/>
-    </svg>
-    Winkelwagen <span id="cartCount" style="background:var(--terracotta);color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">0</span>
-  </button>
+  <div class="cart-wrap" id="cartWrap">
+    <button class="nav-cart" id="cartBtn" onclick="toggleCartDropdown()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+      Winkelwagen <span id="cartCount" style="background:var(--terracotta);color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">0</span>
+    </button>
+    <div class="cart-dropdown" id="cartDropdown">
+      <div id="cartDropdownItems"><p class="cart-empty">Je winkelwagen is leeg.</p></div>
+    </div>
+  </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu openen">
     <span></span><span></span><span></span>
   </button>
@@ -1354,10 +1427,20 @@
   </div>
 </div>
 
-<!-- ── LIGHTBOX ── -->
-<div class="lightbox-overlay" id="lightboxOverlay" onclick="sluitLightbox()">
-  <button class="lightbox-close" onclick="sluitLightbox()" aria-label="Sluiten">&#10005;</button>
-  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+<!-- ── PRODUCT DETAIL POPUP ── -->
+<div class="detail-overlay" id="detailOverlay" onclick="sluitDetail()">
+  <div class="detail-modal" onclick="event.stopPropagation()">
+    <button class="detail-close" onclick="sluitDetail()" aria-label="Sluiten">&#10005;</button>
+    <div class="detail-foto">
+      <img id="detailImg" src="" alt="">
+    </div>
+    <div class="detail-info">
+      <h3 id="detailNaam"></h3>
+      <div class="detail-prijs" id="detailPrijs"></div>
+      <p class="detail-desc" id="detailDesc"></p>
+      <button class="add-to-cart detail-plus" id="detailPlus" onclick="addToCartFromDetail()">+</button>
+    </div>
+  </div>
 </div>
 
 <!-- ── MARKT POPUP ── -->
@@ -1528,7 +1611,7 @@
       const visible = cat === 'alles' || p.cat === cat;
       let mediaContent;
       if (p.images && p.images.length) {
-        const imgs = p.images.map(src => `<img src="${src}" alt="${p.name}" loading="lazy" onclick="openLightbox('${src}','${p.name}')">`).join('');
+        const imgs = p.images.map(src => `<img src="${src}" alt="${p.name}" loading="lazy" onclick="openDetail(${i})">`).join('');
         const multi = p.images.length > 1;
         const dots = multi
           ? `<div class="gallery-dots">${p.images.map((_, j) => `<span class="gallery-dot${j === 0 ? ' active' : ''}"></span>`).join('')}</div>`
@@ -1586,16 +1669,52 @@
     });
   }
 
-  function sluitLightbox() {
-    document.getElementById('lightboxOverlay').classList.remove('open');
+  // ── DETAIL POPUP ──
+  let detailIndex = null;
+  function openDetail(i) {
+    const p = products[i];
+    detailIndex = i;
+    document.getElementById('detailImg').src = (p.images && p.images[0]) || '';
+    document.getElementById('detailImg').style.display = (p.images && p.images[0]) ? 'block' : 'none';
+    document.getElementById('detailNaam').textContent = p.name;
+    document.getElementById('detailPrijs').textContent = fmtPrice(p.price);
+    document.getElementById('detailDesc').textContent = p.desc;
+    document.getElementById('detailOverlay').classList.add('open');
   }
-  function openLightbox(src, alt) {
-    const img = document.getElementById('lightboxImg');
-    img.src = src; img.alt = alt;
-    document.getElementById('lightboxOverlay').classList.add('open');
+  function sluitDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
+    detailIndex = null;
   }
+  function addToCartFromDetail() {
+    sluitDetail();
+    document.getElementById('marktOverlay').classList.add('open');
+  }
+
+  // ── CART DROPDOWN ──
+  function toggleCartDropdown() {
+    document.getElementById('cartDropdown').classList.toggle('open');
+  }
+  function renderCartDropdown() {
+    const el = document.getElementById('cartDropdownItems');
+    if (!cart.length) {
+      el.innerHTML = '<p class="cart-empty">Je winkelwagen is leeg.</p>';
+      return;
+    }
+    el.innerHTML = cart.map(x => {
+      const thumb = (x.activeImage || (x.images && x.images[0]))
+        ? `<img class="cart-drop-thumb" src="${x.activeImage || x.images[0]}" alt="${x.name}">`
+        : `<div class="cart-drop-thumb"></div>`;
+      return `<div class="cart-drop-item">${thumb}<span class="cart-drop-name">${x.name} ×${x.qty}</span><span class="cart-drop-price">${fmtPrice(x.price * x.qty)}</span></div>`;
+    }).join('');
+  }
+  document.addEventListener('click', e => {
+    if (!document.getElementById('cartWrap').contains(e.target)) {
+      document.getElementById('cartDropdown').classList.remove('open');
+    }
+  });
+
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { sluitLightbox(); sluitMarktPopup(); }
+    if (e.key === 'Escape') { sluitDetail(); sluitMarktPopup(); document.getElementById('cartDropdown').classList.remove('open'); }
   });
 
   function sluitMarktPopup() {
@@ -1625,6 +1744,7 @@
       cart.push({ ...p, qty: 1, activeImage });
     }
     document.getElementById('cartCount').textContent = cart.reduce((s, x) => s + x.qty, 0);
+    renderCartDropdown();
     showToast(`"${p.name}" toegevoegd`);
 
     // Fly animation
@@ -1641,7 +1761,7 @@
     cart[idx].qty += delta;
     if (cart[idx].qty <= 0) cart.splice(idx, 1);
     document.getElementById('cartCount').textContent = cart.reduce((s, x) => s + x.qty, 0);
-    openCart();
+    renderCartDropdown();
   }
 
   function flyToCart(sourceEl, imgSrc) {
