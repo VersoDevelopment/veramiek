@@ -1499,16 +1499,9 @@
   const SANITY_PROJECT = '9frmabsj'
   const SANITY_DATASET = 'production'
 
-  function sanityImgUrl(ref) {
-    if (!ref) return null
-    const id = ref.replace('image-', '').replace(/-(\w+)$/, '.$1').replace(/-/g, '/')
-    return `https://cdn.sanity.io/images/${SANITY_PROJECT}/${SANITY_DATASET}/${id}`
-  }
-
   // Categorie-mapping Sanity → filter waarden
   const catMap = { mokken: 'kopjes', schalen: 'schalen', overige: 'overige' }
 
-  // SVG-type per productnaam (fallback als er geen foto is)
   const svgTypes = {
     'Kopjes': 'espresso', '(Thee)mok': 'mug', 'Bubble Cups': 'espresso',
     'Gebaksbordje': 'plate-sm', 'Diepbord': 'bowl-plate', 'Lunchbord': 'plate',
@@ -1530,7 +1523,7 @@
   let products = []
 
   async function loadProducts() {
-    const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->_id }')
+    const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->url }')
     const url = `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
     try {
       const res = await fetch(url)
@@ -1543,7 +1536,7 @@
         badge: p.badge || null,
         type: svgTypes[p.name] || 'bowl',
         color: svgColors[p.name] || ["#c9a882","#b09070"],
-        images: p.images ? p.images.map(id => sanityImgUrl(id)) : null
+        images: p.images && p.images.length ? p.images : null
       }))
     } catch (e) {
       console.error('Sanity laden mislukt, fallback naar lege lijst', e)
