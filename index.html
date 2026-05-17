@@ -1495,28 +1495,63 @@
 </div>
 
 <script>
-  // ── Products ──
-  const products = [
-    // Kopjes & Mokken
-    { name: "Kopjes", desc: "Handgevormd keramiek", price: 9.95, cat: "kopjes", type: "espresso", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Kopjes.png"] },
-    { name: "(Thee)mok", desc: "Ruime mok voor thee of koffie", price: 14.95, cat: "kopjes", type: "mug", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/(Thee)mok.png"] },
-    { name: "Bubble Cups", desc: "Handgevormd met een speelse look", price: 14.95, cat: "kopjes", type: "espresso", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Bubble cups.png"] },
-    // Borden & Kommen
-    { name: "Gebaksbordje", desc: "Klein bordje voor gebak of hapjes", price: 9.95, cat: "borden", type: "plate-sm", color: ["#d4a882","#b09070"] },
-    { name: "Diepbord", desc: "Voor soep, pasta of salade", price: 14.95, cat: "borden", type: "bowl-plate", color: ["#c2714f","#a05a3b"], images: ["Foto's keramiek/Diep bord.png"] },
-    { name: "Lunchbord", desc: "Ideaal voor lunch", price: 14.95, cat: "borden", type: "plate", color: ["#8b6151","#6b4a3b"] },
-    { name: "Dinerbord", desc: "Het complete dinnerbord", price: 17.95, cat: "borden", type: "plate-lg", color: ["#5c3d2e","#3d2518"] },
-    { name: "Pot", desc: "Veelzijdige pot", price: 17.95, cat: "borden", type: "bowl", color: ["#7a8c6e","#5e6e56"], images: ["Foto's keramiek/Schaaltje 2.png"] },
-    // Schalen
-    { name: "Kom", desc: "Sausbakje of tapasschaaltje", price: 9.95, cat: "schalen", type: "dish-sm", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Schaaltje 1.png"] },
-    { name: "Schaal", desc: "Serveerschaal", price: 39.95, cat: "schalen", type: "dish-lg", color: ["#8b6151","#6b4a3b"], images: ["Foto's keramiek/Schaal 1.png", "Foto's keramiek/Schaal 2.png"] },
-    { name: "Chip & Dip Bowl", desc: "Grote schaal met dipdoosje", price: 39.95, cat: "schalen", badge: "Favoriet", type: "chipdip", color: ["#5c3d2e","#3d2518"], images: ["Foto's keramiek/Chip and dip 1.png", "Foto's keramiek/Chip and dip 2.png"] },
-    // Overige
-    { name: "Berry Bowl", desc: "Spoelkom voor fruit of groente", price: 17.95, cat: "overige", type: "berry", color: ["#7a8c6e","#5e6e56"] },
-    { name: "Asbak", desc: "Handgevormd keramiek", price: 17.95, cat: "overige", type: "ashtray", color: ["#d4a882","#b09070"], images: ["Foto's keramiek/Asbak 1.png", "Foto's keramiek/Asbak 2.png"] },
-    { name: "Matcha Set", desc: "Kom en houder - compleet setje", price: 39.95, cat: "overige", badge: "Set", type: "matcha", color: ["#7a8c6e","#5e6e56"], images: ["Foto%27s%20keramiek/Matcha%20set.png"] },
-    { name: "Lepelhouder", desc: "Handgevormde keramiek lepelhouders", price: 12.95, cat: "overige", type: "bowl", color: ["#c9a882","#b09070"], images: ["Foto's keramiek/Lepel dingen.png"] },
-  ];
+  // ── Sanity config ──
+  const SANITY_PROJECT = '9frmabsj'
+  const SANITY_DATASET = 'production'
+
+  function sanityImgUrl(ref) {
+    if (!ref) return null
+    const id = ref.replace('image-', '').replace(/-(\w+)$/, '.$1').replace(/-/g, '/')
+    return `https://cdn.sanity.io/images/${SANITY_PROJECT}/${SANITY_DATASET}/${id}`
+  }
+
+  // Categorie-mapping Sanity → filter waarden
+  const catMap = { mokken: 'kopjes', schalen: 'schalen', overige: 'overige' }
+
+  // SVG-type per productnaam (fallback als er geen foto is)
+  const svgTypes = {
+    'Kopjes': 'espresso', '(Thee)mok': 'mug', 'Bubble Cups': 'espresso',
+    'Gebaksbordje': 'plate-sm', 'Diepbord': 'bowl-plate', 'Lunchbord': 'plate',
+    'Dinerbord': 'plate-lg', 'Pot': 'bowl', 'Kom': 'dish-sm', 'Schaal': 'dish-lg',
+    'Chip & Dip Bowl': 'chipdip', 'Berry Bowl': 'berry', 'Asbak': 'ashtray',
+    'Matcha Set': 'matcha', 'Lepelhouder': 'bowl'
+  }
+  const svgColors = {
+    'Kopjes': ["#c2714f","#a05a3b"], '(Thee)mok': ["#7a8c6e","#5e6e56"],
+    'Bubble Cups': ["#c9a882","#b09070"], 'Gebaksbordje': ["#d4a882","#b09070"],
+    'Diepbord': ["#c2714f","#a05a3b"], 'Lunchbord': ["#8b6151","#6b4a3b"],
+    'Dinerbord': ["#5c3d2e","#3d2518"], 'Pot': ["#7a8c6e","#5e6e56"],
+    'Kom': ["#c9a882","#b09070"], 'Schaal': ["#8b6151","#6b4a3b"],
+    'Chip & Dip Bowl': ["#5c3d2e","#3d2518"], 'Berry Bowl': ["#7a8c6e","#5e6e56"],
+    'Asbak': ["#d4a882","#b09070"], 'Matcha Set': ["#7a8c6e","#5e6e56"],
+    'Lepelhouder': ["#c9a882","#b09070"]
+  }
+
+  let products = []
+
+  async function loadProducts() {
+    const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->_id }')
+    const url = `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+      products = data.result.map(p => ({
+        name: p.name,
+        desc: p.desc,
+        price: p.price,
+        cat: catMap[p.category] || p.category,
+        badge: p.badge || null,
+        type: svgTypes[p.name] || 'bowl',
+        color: svgColors[p.name] || ["#c9a882","#b09070"],
+        images: p.images ? p.images.map(id => sanityImgUrl(id)) : null
+      }))
+    } catch (e) {
+      console.error('Sanity laden mislukt, fallback naar lege lijst', e)
+      products = []
+    }
+    renderProducts()
+    initFilters()
+  }
 
   function fmtPrice(p) {
     return '€ ' + p.toFixed(2).replace('.', ',');
@@ -1987,7 +2022,7 @@
     });
   });
 
-  renderProducts();
+  loadProducts();
 </script>
 </body>
 </html>
