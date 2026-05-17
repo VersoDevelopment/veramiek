@@ -806,6 +806,32 @@
     }
 
     /* ── TOAST ── */
+    .lightbox-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-img {
+      max-width: 92vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 3px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.5);
+    }
+    .lightbox-close {
+      position: fixed; top: 1.2rem; right: 1.4rem;
+      background: none; border: none;
+      color: #fff; font-size: 1.6rem;
+      cursor: pointer; line-height: 1;
+      opacity: 0.8;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .product-gallery img { cursor: zoom-in; }
     .markt-overlay {
       display: none;
       position: fixed; inset: 0;
@@ -1329,6 +1355,12 @@
   </div>
 </div>
 
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="sluitLightbox()">
+  <button class="lightbox-close" onclick="sluitLightbox()" aria-label="Sluiten">&#10005;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+</div>
+
 <!-- ── MARKT POPUP ── -->
 <div class="markt-overlay" id="marktOverlay" onclick="sluitMarktPopup()">
   <div class="markt-modal" onclick="event.stopPropagation()">
@@ -1498,7 +1530,7 @@
       const visible = cat === 'alles' || p.cat === cat;
       let mediaContent;
       if (p.images && p.images.length) {
-        const imgs = p.images.map(src => `<img src="${src}" alt="${p.name}" loading="lazy">`).join('');
+        const imgs = p.images.map(src => `<img src="${src}" alt="${p.name}" loading="lazy" onclick="openLightbox('${src}','${p.name}')">`).join('');
         const multi = p.images.length > 1;
         const dots = multi
           ? `<div class="gallery-dots">${p.images.map((_, j) => `<span class="gallery-dot${j === 0 ? ' active' : ''}"></span>`).join('')}</div>`
@@ -1556,11 +1588,21 @@
     });
   }
 
+  function sluitLightbox() {
+    document.getElementById('lightboxOverlay').classList.remove('open');
+  }
+  function openLightbox(src, alt) {
+    const img = document.getElementById('lightboxImg');
+    img.src = src; img.alt = alt;
+    document.getElementById('lightboxOverlay').classList.add('open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { sluitLightbox(); sluitMarktPopup(); }
+  });
+
   function sluitMarktPopup() {
     document.getElementById('marktOverlay').classList.remove('open');
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') sluitMarktPopup(); });
-
   function addToCart(i, btn) {
     document.getElementById('marktOverlay').classList.add('open');
     return;
