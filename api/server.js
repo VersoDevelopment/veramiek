@@ -17,6 +17,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function imgUrl(path) {
   return 'https://veramiek.nl/' + path.split('/').map(encodeURIComponent).join('/');
 }
@@ -29,9 +38,9 @@ function buildVeraEmail({ naam, email, tel, adres, items, totaal }) {
         <td style="padding:12px 8px;">
           ${img ? `<img src="${img}" width="72" height="72" style="display:block;border-radius:3px;object-fit:cover;" />` : '<div style="width:72px;height:72px;background:#f0e8e0;border-radius:3px;"></div>'}
         </td>
-        <td style="padding:12px 8px;font-family:Georgia,serif;color:#5c3d2e;font-size:15px;">${item.name}</td>
-        <td style="padding:12px 8px;text-align:center;color:#7a6259;font-size:14px;">×${item.qty}</td>
-        <td style="padding:12px 8px;text-align:right;color:#5c3d2e;font-size:14px;font-weight:bold;">${item.subtotal}</td>
+        <td style="padding:12px 8px;font-family:Georgia,serif;color:#5c3d2e;font-size:15px;">${escapeHtml(item.name)}</td>
+        <td style="padding:12px 8px;text-align:center;color:#7a6259;font-size:14px;">×${escapeHtml(item.qty)}</td>
+        <td style="padding:12px 8px;text-align:right;color:#5c3d2e;font-size:14px;font-weight:bold;">${escapeHtml(item.subtotal)}</td>
       </tr>`;
   }).join('');
 
@@ -50,10 +59,10 @@ function buildVeraEmail({ naam, email, tel, adres, items, totaal }) {
   <tr><td style="padding:24px 40px 8px;">
     <h3 style="margin:0 0 10px;color:#5c3d2e;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;">Klantgegevens</h3>
     <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#2d1f17;">
-      <tr><td style="padding:3px 0;color:#7a6259;width:90px;">Naam</td><td style="padding:3px 0;font-weight:bold;">${naam}</td></tr>
-      <tr><td style="padding:3px 0;color:#7a6259;">E-mail</td><td style="padding:3px 0;"><a href="mailto:${email}" style="color:#c2714f;text-decoration:none;">${email}</a></td></tr>
-      <tr><td style="padding:3px 0;color:#7a6259;">Telefoon</td><td style="padding:3px 0;">${tel}</td></tr>
-      <tr><td style="padding:3px 0;color:#7a6259;">Adres</td><td style="padding:3px 0;">${adres}</td></tr>
+      <tr><td style="padding:3px 0;color:#7a6259;width:90px;">Naam</td><td style="padding:3px 0;font-weight:bold;">${escapeHtml(naam)}</td></tr>
+      <tr><td style="padding:3px 0;color:#7a6259;">E-mail</td><td style="padding:3px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#c2714f;text-decoration:none;">${escapeHtml(email)}</a></td></tr>
+      <tr><td style="padding:3px 0;color:#7a6259;">Telefoon</td><td style="padding:3px 0;">${escapeHtml(tel)}</td></tr>
+      <tr><td style="padding:3px 0;color:#7a6259;">Adres</td><td style="padding:3px 0;">${escapeHtml(adres)}</td></tr>
     </table>
   </td></tr>
   <tr><td style="padding:8px 40px 28px;">
@@ -84,9 +93,9 @@ function buildBuyerEmail({ naam, items, totaal }) {
       <td style="padding:10px 8px;">
         ${img ? `<img src="${img}" width="56" height="56" style="display:block;border-radius:3px;object-fit:cover;" />` : '<div style="width:56px;height:56px;background:#f0e8e0;border-radius:3px;"></div>'}
       </td>
-      <td style="padding:10px 8px;font-family:Georgia,serif;color:#5c3d2e;font-size:14px;">${item.name}</td>
-      <td style="padding:10px 8px;text-align:center;color:#7a6259;font-size:13px;">×${item.qty}</td>
-      <td style="padding:10px 8px;text-align:right;color:#5c3d2e;font-size:14px;">${item.subtotal}</td>
+      <td style="padding:10px 8px;font-family:Georgia,serif;color:#5c3d2e;font-size:14px;">${escapeHtml(item.name)}</td>
+      <td style="padding:10px 8px;text-align:center;color:#7a6259;font-size:13px;">×${escapeHtml(item.qty)}</td>
+      <td style="padding:10px 8px;text-align:right;color:#5c3d2e;font-size:14px;">${escapeHtml(item.subtotal)}</td>
     </tr>`;
   }).join('');
 
@@ -100,7 +109,7 @@ function buildBuyerEmail({ naam, items, totaal }) {
   </td></tr>
   ${heroSrc ? `<tr><td style="padding:0;"><img src="${heroSrc}" width="600" style="display:block;width:100%;height:220px;object-fit:cover;" /></td></tr>` : ''}
   <tr><td style="padding:32px 40px 20px;">
-    <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:22px;">Bedankt voor je bestelling, ${naam}!</h2>
+    <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:22px;">Bedankt voor je bestelling, ${escapeHtml(naam)}!</h2>
     <p style="margin:0;color:#7a6259;font-size:14px;line-height:1.8;">Je bestelling is goed ontvangen. Vera neemt zo snel mogelijk contact op om de bestelling te bevestigen en de verdere details te bespreken.</p>
   </td></tr>
   <tr><td style="padding:0 40px 32px;">
