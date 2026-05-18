@@ -1539,26 +1539,50 @@
 
   let products = []
 
+  const CACHE_KEY = 'veramiek-products-v1'
+  const CACHE_TTL = 24 * 60 * 60 * 1000
+
+  function mapProducts(raw) {
+    return raw.map(p => ({
+      name: p.name,
+      desc: p.desc,
+      price: p.price,
+      cat: catMap[p.category] || p.category || 'overige',
+      badge: p.badge || null,
+      type: svgTypes[p.name] || 'bowl',
+      color: svgColors[p.name] || ["#c9a882","#b09070"],
+      images: p.images && p.images.length ? p.images : null
+    }))
+  }
+
+  async function fetchWithRetry(url, tries = 3) {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error('HTTP ' + res.status)
+        return await res.json()
+      } catch (e) {
+        if (i === tries - 1) throw e
+        await new Promise(r => setTimeout(r, 800 * (i + 1)))
+      }
+    }
+  }
+
   async function loadProducts() {
     const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->url }')
     const url = `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
     try {
-      const res = await fetch(url)
-      const data = await res.json()
-      products = data.result.map(p => ({
-        name: p.name,
-        desc: p.desc,
-        price: p.price,
-        cat: catMap[p.category] || p.category || 'overige',
-        badge: p.badge || null,
-        type: svgTypes[p.name] || 'bowl',
-        color: svgColors[p.name] || ["#c9a882","#b09070"],
-        images: p.images && p.images.length ? p.images : null
-      }))
-      console.log('Producten geladen:', products.map(p => p.name + ' → cat: ' + p.cat))
+      const data = await fetchWithRetry(url)
+      products = mapProducts(data.result)
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products })) } catch (_) {}
     } catch (e) {
-      console.error('Sanity laden mislukt, fallback naar lege lijst', e)
-      products = []
+      console.warn('Sanity niet bereikbaar, cache proberen…', e)
+      try {
+        const cached = JSON.parse(localStorage.getItem(CACHE_KEY))
+        if (cached && Date.now() - cached.ts < CACHE_TTL) {
+          products = cached.products
+        }
+      } catch (_) {}
     }
     renderProducts()
   }
