@@ -1139,7 +1139,8 @@
     <div class="cat-tabs" id="catTabs">
       <button class="cat-tab active" onclick="filterCat('alles', this)">Alles</button>
       <button class="cat-tab" onclick="filterCat('kopjes', this)">Kopjes & Mokken</button>
-      <button class="cat-tab" onclick="filterCat('schalen', this)">Schalen & Borden</button>
+      <button class="cat-tab" onclick="filterCat('borden', this)">Borden & Kommen</button>
+      <button class="cat-tab" onclick="filterCat('schalen', this)">Schalen</button>
       <button class="cat-tab" onclick="filterCat('overige', this)">Overige</button>
     </div>
   </div>
@@ -1347,7 +1348,8 @@
       <h4>Collectie</h4>
       <ul>
         <li><a href="#producten" onclick="filterCat('kopjes')">Kopjes & Mokken</a></li>
-        <li><a href="#producten" onclick="filterCat('schalen')">Schalen & Borden</a></li>
+        <li><a href="#producten" onclick="filterCat('borden')">Borden & Kommen</a></li>
+        <li><a href="#producten" onclick="filterCat('schalen')">Schalen</a></li>
         <li><a href="#producten" onclick="filterCat('overige')">Overige</a></li>
         <li><a href="#contact">Maatwerk</a></li>
       </ul>
@@ -1515,7 +1517,7 @@
   const SANITY_DATASET = 'production'
 
   // Categorie-mapping Sanity → filter waarden
-  const catMap = { mokken: 'kopjes', kopjes: 'kopjes', schalen: 'schalen', borden: 'schalen', kommen: 'schalen', overige: 'overige' }
+  const catMap = { mokken: 'kopjes', kopjes: 'kopjes', borden: 'borden', kommen: 'borden', schalen: 'schalen', overige: 'overige' }
 
   const svgTypes = {
     'Kopjes': 'espresso', '(Thee)mok': 'mug', 'Bubble Cups': 'espresso',
@@ -1740,7 +1742,7 @@
     if (btn) btn.classList.add('active');
     else {
       const tabs = document.querySelectorAll('.cat-tab');
-      const map = { alles: 0, kopjes: 1, schalen: 2, overige: 3 };
+      const map = { alles: 0, kopjes: 1, borden: 2, schalen: 3, overige: 4 };
       if (map[cat] !== undefined) tabs[map[cat]].classList.add('active');
     }
     document.querySelectorAll('.product-card').forEach(card => {
