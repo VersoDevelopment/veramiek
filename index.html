@@ -4,8 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Veramiek, Handgemaakt Keramiek</title>
-  <link rel="icon" type="image/png" href="Foto%27s%20keramiek/Logo%20rond.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <meta name="google-site-verification" content="raQYZq24jGUZ3ey3igdvBLjqZo31irVOl1s8InyFM54" />
   <meta name="description" content="Veramiek maakt en verkoopt uniek handgemaakt keramiek vanuit Etten-Leur. Ontdek de collectie of boek een workshop." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Veramiek",
+    "url": "https://veramiek.nl",
+    "logo": "https://veramiek.nl/favicon.png",
+    "description": "Handgemaakt keramiek vanuit Etten-Leur",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Etten-Leur",
+      "addressCountry": "NL"
+    }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@100;300;400;700&display=swap" rel="stylesheet" />
@@ -1122,8 +1139,7 @@
     <div class="cat-tabs" id="catTabs">
       <button class="cat-tab active" onclick="filterCat('alles', this)">Alles</button>
       <button class="cat-tab" onclick="filterCat('kopjes', this)">Kopjes & Mokken</button>
-      <button class="cat-tab" onclick="filterCat('borden', this)">Borden & Kommen</button>
-      <button class="cat-tab" onclick="filterCat('schalen', this)">Schalen</button>
+      <button class="cat-tab" onclick="filterCat('schalen', this)">Schalen & Borden</button>
       <button class="cat-tab" onclick="filterCat('overige', this)">Overige</button>
     </div>
   </div>
@@ -1331,8 +1347,7 @@
       <h4>Collectie</h4>
       <ul>
         <li><a href="#producten" onclick="filterCat('kopjes')">Kopjes & Mokken</a></li>
-        <li><a href="#producten" onclick="filterCat('borden')">Borden & Kommen</a></li>
-        <li><a href="#producten" onclick="filterCat('schalen')">Schalen</a></li>
+        <li><a href="#producten" onclick="filterCat('schalen')">Schalen & Borden</a></li>
         <li><a href="#producten" onclick="filterCat('overige')">Overige</a></li>
         <li><a href="#contact">Maatwerk</a></li>
       </ul>
@@ -1500,7 +1515,7 @@
   const SANITY_DATASET = 'production'
 
   // Categorie-mapping Sanity → filter waarden
-  const catMap = { mokken: 'kopjes', schalen: 'schalen', overige: 'overige' }
+  const catMap = { mokken: 'kopjes', kopjes: 'kopjes', schalen: 'schalen', borden: 'schalen', kommen: 'schalen', overige: 'overige' }
 
   const svgTypes = {
     'Kopjes': 'espresso', '(Thee)mok': 'mug', 'Bubble Cups': 'espresso',
@@ -1532,18 +1547,18 @@
         name: p.name,
         desc: p.desc,
         price: p.price,
-        cat: catMap[p.category] || p.category,
+        cat: catMap[p.category] || p.category || 'overige',
         badge: p.badge || null,
         type: svgTypes[p.name] || 'bowl',
         color: svgColors[p.name] || ["#c9a882","#b09070"],
         images: p.images && p.images.length ? p.images : null
       }))
+      console.log('Producten geladen:', products.map(p => p.name + ' → cat: ' + p.cat))
     } catch (e) {
       console.error('Sanity laden mislukt, fallback naar lege lijst', e)
       products = []
     }
     renderProducts()
-    initFilters()
   }
 
   function fmtPrice(p) {
@@ -1725,7 +1740,7 @@
     if (btn) btn.classList.add('active');
     else {
       const tabs = document.querySelectorAll('.cat-tab');
-      const map = { alles: 0, kopjes: 1, borden: 2, schalen: 3, overige: 4 };
+      const map = { alles: 0, kopjes: 1, schalen: 2, overige: 3 };
       if (map[cat] !== undefined) tabs[map[cat]].classList.add('active');
     }
     document.querySelectorAll('.product-card').forEach(card => {
