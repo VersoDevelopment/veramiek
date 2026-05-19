@@ -446,6 +446,70 @@ function buildBuyerEmail({ naam, items, totaal }) {
 </body></html>`;
 }
 
+app.post('/send-contact', async (req, res) => {
+  try {
+    const { naam, email, onderwerp, bericht } = req.body;
+    if (!naam || !email || !bericht) {
+      return res.status(400).json({ error: 'Ontbrekende velden' });
+    }
+    await transporter.sendMail({
+      from: '"Veramiek Website" <info@versodevelopment.nl>',
+      replyTo: email,
+      to: 'info@veramiek.nl',
+      subject: `Nieuw bericht — ${naam}`,
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:white;border-radius:4px;overflow:hidden;border:1px solid #ede5db;">
+  <tr><td style="background:#c2714f;padding:24px 40px;">
+    <h1 style="margin:0;font-family:Georgia,serif;color:white;font-size:22px;letter-spacing:3px;">VERAMIEK</h1>
+  </td></tr>
+  <tr><td style="padding:28px 40px;">
+    <h2 style="margin:0 0 20px;color:#5c3d2e;font-family:Georgia,serif;font-size:18px;">Nieuw contactbericht</h2>
+    <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#2d1f17;margin-bottom:20px;">
+      <tr><td style="padding:4px 0;color:#7a6259;width:90px;">Naam</td><td style="padding:4px 0;font-weight:bold;">${escapeHtml(naam)}</td></tr>
+      <tr><td style="padding:4px 0;color:#7a6259;">E-mail</td><td style="padding:4px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#c2714f;">${escapeHtml(email)}</a></td></tr>
+      <tr><td style="padding:4px 0;color:#7a6259;">Onderwerp</td><td style="padding:4px 0;">${escapeHtml(onderwerp || '—')}</td></tr>
+    </table>
+    <div style="background:#faf7f2;border-left:3px solid #c2714f;padding:14px 18px;font-size:14px;color:#2d1f17;line-height:1.7;white-space:pre-wrap;">${escapeHtml(bericht)}</div>
+  </td></tr>
+  <tr><td style="background:#f5f0e8;padding:16px 40px;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#7a6259;">veramiek.nl · info@veramiek.nl</p>
+  </td></tr>
+</table></td></tr></table>
+</body></html>`
+    });
+    await transporter.sendMail({
+      from: '"Vera — Veramiek" <info@versodevelopment.nl>',
+      replyTo: 'info@veramiek.nl',
+      to: email,
+      subject: `Bedankt voor je bericht, ${escapeHtml(naam)}!`,
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:white;border-radius:4px;overflow:hidden;border:1px solid #ede5db;">
+  <tr><td style="background:#c2714f;padding:24px 40px;">
+    <h1 style="margin:0;font-family:Georgia,serif;color:white;font-size:22px;letter-spacing:3px;">VERAMIEK</h1>
+  </td></tr>
+  <tr><td style="padding:32px 40px;">
+    <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:20px;">Bedankt voor je bericht!</h2>
+    <p style="margin:0 0 16px;color:#7a6259;font-size:14px;line-height:1.8;">Hoi ${escapeHtml(naam)}, ik heb je bericht goed ontvangen en neem zo snel mogelijk contact met je op — meestal binnen 1 à 2 werkdagen.</p>
+    <div style="background:#faf7f2;border-left:3px solid #c2714f;padding:14px 18px;font-size:13px;color:#7a6259;line-height:1.7;white-space:pre-wrap;">${escapeHtml(bericht)}</div>
+  </td></tr>
+  <tr><td style="background:#f5f0e8;padding:18px 40px;text-align:center;">
+    <p style="margin:0 0 4px;font-family:Georgia,serif;font-style:italic;font-size:13px;color:#5c3d2e;">Met liefde gemaakt in Etten-Leur</p>
+    <p style="margin:0;font-size:12px;color:#7a6259;">veramiek.nl · info@veramiek.nl</p>
+  </td></tr>
+</table></td></tr></table>
+</body></html>`
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Mail mislukt' });
+  }
+});
+
 app.post('/send-order', async (req, res) => {
   try {
     const { naam, email, tel, adres, items, totaal } = req.body;

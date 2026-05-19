@@ -2015,10 +2015,31 @@
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
 
-  function sendMessage(e) {
+  async function sendMessage(e) {
     e.preventDefault();
-    e.target.reset();
-    showToast('Bericht verzonden! Reactie volgt binnen 2 werkdagen.');
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    const origText = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Versturen...';
+    try {
+      const res = await fetch('/api/send-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          naam:      form.naam.value,
+          email:     form.email.value,
+          onderwerp: form.onderwerp.value,
+          bericht:   form.bericht.value
+        })
+      });
+      if (!res.ok) throw new Error();
+      form.reset();
+      showToast('Bericht verzonden! Je ontvangt een bevestiging per mail.');
+    } catch {
+      showToast('Er ging iets mis. Mail naar info@veramiek.nl');
+    } finally {
+      btn.disabled = false; btn.textContent = origText;
+    }
   }
 
   let toastT;
