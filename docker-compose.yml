@@ -10,6 +10,9 @@ services:
     restart: unless-stopped
     depends_on:
       - api
+    networks:
+      - default
+      - npm_default
 
   api:
     build: ./api
@@ -20,7 +23,14 @@ services:
     volumes:
       - api_data:/app/data
       - api_uploads:/app/uploads
+    networks:
+      - default
+      - npm_default
 
 volumes:
   api_data:
   api_uploads:
+
+networks:
+  npm_default:
+    external: true
