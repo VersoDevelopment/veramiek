@@ -65,8 +65,8 @@ const DEFAULT_CONTENT = {
     whatsappUrl: 'https://wa.me/31648145413',
     email: 'info@veramiek.nl',
     location: 'Etten-Leur, Noord-Brabant',
-    instagramUrl: 'https://www.instagram.com/veramiekk/?hl=en',
-    instagramHandle: '@veramiekk',
+    instagramUrl: 'https://www.instagram.com/veramiek.nl',
+    instagramHandle: '@veramiek.nl',
     tiktokUrl: 'https://www.tiktok.com/@veramiek',
     tiktokHandle: '@veramiek'
   },
