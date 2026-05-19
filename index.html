@@ -1087,10 +1087,10 @@
 <!-- ── HERO ── -->
 <section class="hero" id="home">
   <div class="hero-content">
-    <p class="hero-tag">Handgemaakt keramiek · Etten-Leur</p>
-    <h1>Keramiek dat<br /><em>verhalen</em> vertelt</h1>
-    <p class="hero-motto">"Met de hand gevormd, met het hart gebakken"</p>
-    <p>Elk stuk dat ik maak is uniek. Met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie, maak kennis met het vak tijdens een workshop.</p>
+    <p class="hero-tag" id="heroTag">Handgemaakt keramiek · Etten-Leur</p>
+    <h1 id="heroTitle">Keramiek dat<br /><em>verhalen</em> vertelt</h1>
+    <p class="hero-motto" id="heroMotto">"Met de hand gevormd, met het hart gebakken"</p>
+    <p id="heroBody">Elk stuk dat ik maak is uniek. Met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie, maak kennis met het vak tijdens een workshop.</p>
     <div class="hero-buttons">
       <a href="#producten" class="btn-primary">Bekijk collectie</a>
       <a href="#workshops" class="btn-secondary">Workshop boeken</a>
@@ -1155,10 +1155,10 @@
     </div>
     <div class="about-content">
       <p class="section-label">Over Veramiek</p>
-      <h2 class="section-title">Het verhaal<br />achter het klei</h2>
-      <p>Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei, van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.</p>
-      <p>Elk stuk dat ik maak is uniek. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.</p>
-      <p>Naast mijn eigen collectie organiseer ik ook workshops op locatie voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.</p>
+      <h2 class="section-title" id="aboutTitle">Het verhaal<br />achter het klei</h2>
+      <p id="aboutP1">Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei, van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.</p>
+      <p id="aboutP2">Elk stuk dat ik maak is uniek. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.</p>
+      <p id="aboutP3">Naast mijn eigen collectie organiseer ik ook workshops op locatie voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.</p>
     </div>
   </div>
 </section>
@@ -1222,28 +1222,28 @@
         </svg>
       </div>
       <div class="workshop-body">
-        <p class="workshop-tag">Alle niveaus · Vanaf 4 personen</p>
-        <h3>Keramiek Workshop</h3>
-        <p>Ik kom bij jullie langs op locatie en neem alles mee: van klei en gereedschap tot verf. Jullie maken onder mijn begeleiding je eigen keramiekstukken, die je daarna ook zelf kunt beschilderen. Als iedereen klaar is, neem ik alles mee om te bakken en te glazuren. Zo heb je binnen no-time je eigen handgemaakte creatie in huis, om op te halen of te laten bezorgen.</p>
-        <p style="font-size:0.9rem;color:var(--terracotta);font-weight:400;margin-bottom:0.5rem;">De perfecte activiteit voor een verjaardag, babyshower, vrijgezellenavond of gewoon een gezellige middag met vrienden. Laat je creativiteit de vrije loop!</p>
+        <p class="workshop-tag" id="workshopTag">Alle niveaus · Vanaf 4 personen</p>
+        <h3 id="workshopTitle">Keramiek Workshop</h3>
+        <p id="workshopDesc">Ik kom bij jullie langs op locatie en neem alles mee: van klei en gereedschap tot verf. Jullie maken onder mijn begeleiding je eigen keramiekstukken, die je daarna ook zelf kunt beschilderen. Als iedereen klaar is, neem ik alles mee om te bakken en te glazuren. Zo heb je binnen no-time je eigen handgemaakte creatie in huis, om op te halen of te laten bezorgen.</p>
+        <p id="workshopHighlight" style="font-size:0.9rem;color:var(--terracotta);font-weight:400;margin-bottom:0.5rem;">De perfecte activiteit voor een verjaardag, babyshower, vrijgezellenavond of gewoon een gezellige middag met vrienden. Laat je creativiteit de vrije loop!</p>
         <div class="workshop-meta">
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            ~2,5 uur
+            <span id="workshopDuration">~2,5 uur</span>
           </span>
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Vanaf 4 personen
+            <span id="workshopGroupSize">Vanaf 4 personen</span>
           </span>
           <span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Op locatie
+            <span id="workshopLocation">Op locatie</span>
           </span>
         </div>
         <div class="workshop-price-row">
           <div>
-            <div class="workshop-price">Vanaf € 30</div>
-            <small>per persoon</small>
+            <div class="workshop-price" id="workshopPrice">Vanaf € 30</div>
+            <small id="workshopPriceLabel">per persoon</small>
           </div>
           <button class="btn-primary" onclick="openWorkshopModal()">Workshop boeken</button>
         </div>
@@ -1259,39 +1259,39 @@
     <h2 class="section-title">Contact</h2>
     <div class="contact-grid">
       <div class="contact-info">
-        <h3>Vragen of bestellen?</h3>
-        <p>Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in. Ik reageer zo snel mogelijk.</p>
+        <h3 id="contactTitle">Vragen of bestellen?</h3>
+        <p id="contactDesc">Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in. Ik reageer zo snel mogelijk.</p>
         <ul class="contact-details">
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
             <span>
               <strong>WhatsApp / Bellen</strong><br />
-              <a href="https://wa.me/31648145413">+31 6 48 14 54 13</a>
+              <a href="https://wa.me/31648145413" id="contactPhoneLink">+31 6 48 14 54 13</a>
             </span>
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <a href="mailto:info@veramiek.nl">info@veramiek.nl</a>
+            <a href="mailto:info@veramiek.nl" id="contactEmailLink">info@veramiek.nl</a>
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>Etten-Leur, Noord-Brabant</span>
+            <span id="contactLocation">Etten-Leur, Noord-Brabant</span>
           </li>
         </ul>
         <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);">
           <p class="section-label" style="margin-bottom:0.6rem;">Volg mij</p>
           <div style="display:flex;gap:1rem;margin-top:0.6rem;">
-            <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener"
+            <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener" id="contactInstagramLink"
                style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;"
                onmouseover="this.style.color='var(--terracotta)'" onmouseout="this.style.color='var(--text-muted)'">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-              @veramiekk
+              <span id="contactInstagramHandle">@veramiekk</span>
             </a>
-            <a href="https://www.tiktok.com/@veramiek" target="_blank" rel="noopener"
+            <a href="https://www.tiktok.com/@veramiek" target="_blank" rel="noopener" id="contactTiktokLink"
                style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;"
                onmouseover="this.style.color='var(--terracotta)'" onmouseout="this.style.color='var(--text-muted)'">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-              @veramiek
+              <span id="contactTiktokHandle">@veramiek</span>
             </a>
           </div>
         </div>
@@ -1334,7 +1334,7 @@
       <div class="footer-logo">
         <img src="Foto's keramiek/Logo rond.png" alt="Veramiek" style="height:52px;width:auto;opacity:0.75;filter:brightness(0) invert(1);" />
       </div>
-      <p>Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
+      <p id="footerTagline">Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.</p>
       <div class="social-links" style="margin-top:1.5rem;">
         <a href="https://www.instagram.com/veramiekk/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -2045,7 +2045,46 @@
     });
   });
 
-  loadProducts();
+  async function loadContent() {
+    try {
+      const r = await fetch('/api/content')
+      if (!r.ok) return
+      const c = await r.json()
+      const setText = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.textContent = v }
+      const setHtml = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.innerHTML = v }
+      const h = c.hero || {}
+      setText('heroTag', h.tag); setHtml('heroTitle', h.title)
+      setText('heroMotto', h.motto); setText('heroBody', h.body)
+      const a = c.about || {}
+      setHtml('aboutTitle', a.title)
+      setText('aboutP1', a.p1); setText('aboutP2', a.p2); setText('aboutP3', a.p3)
+      const w = c.workshop || {}
+      setText('workshopTag', w.tag); setText('workshopTitle', w.title)
+      setText('workshopDesc', w.desc); setText('workshopHighlight', w.highlight)
+      setText('workshopDuration', w.duration); setText('workshopGroupSize', w.groupSize)
+      setText('workshopLocation', w.location)
+      setText('workshopPrice', w.price); setText('workshopPriceLabel', w.priceLabel)
+      const ct = c.contact || {}
+      setText('contactTitle', ct.title); setText('contactDesc', ct.desc)
+      const ph = document.getElementById('contactPhoneLink')
+      if (ph) { if (ct.phone) ph.textContent = ct.phone; if (ct.whatsappUrl) ph.href = ct.whatsappUrl }
+      const em = document.getElementById('contactEmailLink')
+      if (em) { if (ct.email) { em.textContent = ct.email; em.href = 'mailto:' + ct.email } }
+      setText('contactLocation', ct.location)
+      const ig = document.getElementById('contactInstagramLink')
+      if (ig && ct.instagramUrl) ig.href = ct.instagramUrl
+      setText('contactInstagramHandle', ct.instagramHandle)
+      const tt = document.getElementById('contactTiktokLink')
+      if (tt && ct.tiktokUrl) tt.href = ct.tiktokUrl
+      setText('contactTiktokHandle', ct.tiktokHandle)
+      setText('footerTagline', c.footer && c.footer.tagline)
+    } catch (e) {
+      console.warn('Content laden mislukt:', e)
+    }
+  }
+
+  loadProducts()
+  loadContent()
 </script>
 </body>
 </html>

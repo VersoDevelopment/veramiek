@@ -14,6 +14,7 @@ const path       = require('path');
 // ── Paths ──
 const DATA_DIR    = path.join(__dirname, 'data');
 const PRODUCTS_F  = path.join(DATA_DIR, 'products.json');
+const CONTENT_F   = path.join(DATA_DIR, 'site_content.json');
 const TOTP_F      = path.join(DATA_DIR, 'totp_secret.txt');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
@@ -30,6 +31,63 @@ if (fs.existsSync(PRODUCTS_F)) {
 }
 function saveProducts() {
   fs.writeFileSync(PRODUCTS_F, JSON.stringify(products, null, 2));
+}
+
+// ── Site content ──
+const DEFAULT_CONTENT = {
+  hero: {
+    tag: 'Handgemaakt keramiek · Etten-Leur',
+    title: 'Keramiek dat<br /><em>verhalen</em> vertelt',
+    motto: '"Met de hand gevormd, met het hart gebakken"',
+    body: 'Elk stuk dat ik maak is uniek. Met de hand gevormd, liefdevol afgewerkt en bedoeld om generaties mee te gaan. Ontdek mijn collectie, maak kennis met het vak tijdens een workshop.'
+  },
+  about: {
+    title: 'Het verhaal<br />achter het klei',
+    p1: 'Veramiek is opgericht vanuit een diepe passie voor het ambacht van keramiek. Ik werk dagelijks met klei, van de eerste vorming op de draaischijf tot de glanzende afwerking na het brandproces.',
+    p2: 'Elk stuk dat ik maak is uniek. Ik geloof dat echte schoonheid zit in het handgemaakte, in het spoor dat de handen van de maker achterlaten.',
+    p3: 'Naast mijn eigen collectie organiseer ik ook workshops op locatie voor iedereen die zelf wil ontdekken hoe bijzonder het is om met klei te werken.'
+  },
+  workshop: {
+    tag: 'Alle niveaus · Vanaf 4 personen',
+    title: 'Keramiek Workshop',
+    desc: 'Ik kom bij jullie langs op locatie en neem alles mee: van klei en gereedschap tot verf. Jullie maken onder mijn begeleiding je eigen keramiekstukken, die je daarna ook zelf kunt beschilderen. Als iedereen klaar is, neem ik alles mee om te bakken en te glazuren. Zo heb je binnen no-time je eigen handgemaakte creatie in huis, om op te halen of te laten bezorgen.',
+    highlight: 'De perfecte activiteit voor een verjaardag, babyshower, vrijgezellenavond of gewoon een gezellige middag met vrienden. Laat je creativiteit de vrije loop!',
+    duration: '~2,5 uur',
+    groupSize: 'Vanaf 4 personen',
+    location: 'Op locatie',
+    price: 'Vanaf € 30',
+    priceLabel: 'per persoon'
+  },
+  contact: {
+    title: 'Vragen of bestellen?',
+    desc: 'Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of de workshop boeken? Stuur me gerust een appje, bel me op of vul het formulier in. Ik reageer zo snel mogelijk.',
+    phone: '+31 6 48 14 54 13',
+    whatsappUrl: 'https://wa.me/31648145413',
+    email: 'info@veramiek.nl',
+    location: 'Etten-Leur, Noord-Brabant',
+    instagramUrl: 'https://www.instagram.com/veramiekk/?hl=en',
+    instagramHandle: '@veramiekk',
+    tiktokUrl: 'https://www.tiktok.com/@veramiek',
+    tiktokHandle: '@veramiek'
+  },
+  footer: {
+    tagline: 'Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.'
+  }
+};
+
+let siteContent = JSON.parse(JSON.stringify(DEFAULT_CONTENT));
+if (fs.existsSync(CONTENT_F)) {
+  try {
+    const saved = JSON.parse(fs.readFileSync(CONTENT_F, 'utf8'));
+    for (const section of Object.keys(DEFAULT_CONTENT)) {
+      if (saved[section] && typeof saved[section] === 'object') {
+        siteContent[section] = { ...DEFAULT_CONTENT[section], ...saved[section] };
+      }
+    }
+  } catch (_) {}
+}
+function saveContent() {
+  fs.writeFileSync(CONTENT_F, JSON.stringify(siteContent, null, 2));
 }
 
 // ── TOTP secret ──
@@ -205,9 +263,13 @@ app.post('/admin/login', rateLimit, async (req, res) => {
   res.json({ token });
 });
 
-// ── Publieke producten (voor de website) ──
+// ── Publieke producten & content (voor de website) ──
 app.get('/products', (req, res) => {
   res.json(products.filter(p => p.available !== false));
+});
+
+app.get('/content', (req, res) => {
+  res.json(siteContent);
 });
 
 // ── Admin: producten CRUD ──
@@ -258,6 +320,18 @@ app.delete('/admin/products/:id', auth, (req, res) => {
   products.splice(idx, 1);
   saveProducts();
   res.json({ ok: true });
+});
+
+// ── Admin: content bijwerken ──
+app.put('/admin/content', auth, (req, res) => {
+  const { hero, about, workshop, contact, footer } = req.body || {};
+  if (hero)     siteContent.hero     = { ...siteContent.hero,     ...hero };
+  if (about)    siteContent.about    = { ...siteContent.about,    ...about };
+  if (workshop) siteContent.workshop = { ...siteContent.workshop, ...workshop };
+  if (contact)  siteContent.contact  = { ...siteContent.contact,  ...contact };
+  if (footer)   siteContent.footer   = { ...siteContent.footer,   ...footer };
+  saveContent();
+  res.json(siteContent);
 });
 
 // ── Foto upload ──

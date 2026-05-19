@@ -259,6 +259,35 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    /* ── TABS ── */
+    .tab-bar {
+      display: flex; border-bottom: 2px solid var(--border); margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: .7rem 1.5rem; background: none; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; font-family: 'Raleway', sans-serif; font-size: .78rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+      cursor: pointer; transition: color .2s, border-color .2s;
+    }
+    .tab-btn:hover { color: var(--brown); }
+    .tab-btn.active { color: var(--brown); border-bottom-color: var(--brown); }
+
+    /* ── CONTENT FORM ── */
+    .content-section {
+      background: var(--white); border: 1px solid var(--border); border-radius: 3px;
+      padding: 1.5rem 1.75rem; margin-bottom: 1.25rem;
+    }
+    .content-section-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400;
+      color: var(--brown); margin-bottom: 1.25rem; padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .content-save-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .content-save-bottom { text-align: right; margin-top: .5rem; padding-bottom: 2rem; }
+
     @media (max-width: 600px) {
       main { padding: 1.5rem 1rem; }
       .form-row { grid-template-columns: 1fr; }
@@ -296,14 +325,180 @@
     <button class="btn-outline" onclick="logout()">Uitloggen</button>
   </header>
   <main>
-    <div class="page-header">
-      <h1 class="page-title" id="pageTitle">Producten</h1>
-      <button class="btn-add" onclick="openModal()">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
-        Nieuw product
-      </button>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabProducts" onclick="showTab('products')">Producten</button>
+      <button class="tab-btn" id="tabContent" onclick="showTab('content')">Website teksten</button>
     </div>
-    <div id="productGrid"></div>
+
+    <!-- ── PRODUCTS VIEW ── -->
+    <div id="productsView">
+      <div class="page-header">
+        <h1 class="page-title" id="pageTitle">Producten</h1>
+        <button class="btn-add" onclick="openModal()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+          Nieuw product
+        </button>
+      </div>
+      <div id="productGrid"></div>
+    </div>
+
+    <!-- ── CONTENT VIEW ── -->
+    <div id="contentView" style="display:none;">
+      <div class="content-save-bar">
+        <h1 class="page-title">Website teksten</h1>
+        <button class="btn-add" id="contentSaveBtn" onclick="saveContent()">Opslaan</button>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Hero</h2>
+        <div class="form-group">
+          <label for="cHeroTag">Subtitel</label>
+          <input class="form-control" type="text" id="cHeroTag" />
+        </div>
+        <div class="form-group">
+          <label for="cHeroTitle">Titel <span class="opt">HTML toegestaan: &lt;br&gt;, &lt;em&gt;</span></label>
+          <input class="form-control" type="text" id="cHeroTitle" />
+        </div>
+        <div class="form-group">
+          <label for="cHeroMotto">Citaat / motto</label>
+          <input class="form-control" type="text" id="cHeroMotto" />
+        </div>
+        <div class="form-group">
+          <label for="cHeroBody">Body tekst</label>
+          <textarea class="form-control" id="cHeroBody" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Over mij</h2>
+        <div class="form-group">
+          <label for="cAboutTitle">Titel <span class="opt">HTML toegestaan: &lt;br&gt;</span></label>
+          <input class="form-control" type="text" id="cAboutTitle" />
+        </div>
+        <div class="form-group">
+          <label for="cAboutP1">Alinea 1</label>
+          <textarea class="form-control" id="cAboutP1" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cAboutP2">Alinea 2</label>
+          <textarea class="form-control" id="cAboutP2" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cAboutP3">Alinea 3</label>
+          <textarea class="form-control" id="cAboutP3" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Workshop</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cWorkshopTag">Tag regel</label>
+            <input class="form-control" type="text" id="cWorkshopTag" />
+          </div>
+          <div class="form-group">
+            <label for="cWorkshopTitle">Titel</label>
+            <input class="form-control" type="text" id="cWorkshopTitle" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cWorkshopDesc">Beschrijving</label>
+          <textarea class="form-control" id="cWorkshopDesc" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cWorkshopHighlight">Highlight tekst</label>
+          <textarea class="form-control" id="cWorkshopHighlight" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cWorkshopDuration">Duur</label>
+            <input class="form-control" type="text" id="cWorkshopDuration" />
+          </div>
+          <div class="form-group">
+            <label for="cWorkshopGroupSize">Groepsgrootte</label>
+            <input class="form-control" type="text" id="cWorkshopGroupSize" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cWorkshopLocation">Locatie omschrijving</label>
+            <input class="form-control" type="text" id="cWorkshopLocation" />
+          </div>
+          <div class="form-group">
+            <label for="cWorkshopPrice">Prijs</label>
+            <input class="form-control" type="text" id="cWorkshopPrice" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cWorkshopPriceLabel">Prijs label</label>
+          <input class="form-control" type="text" id="cWorkshopPriceLabel" />
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Contact</h2>
+        <div class="form-group">
+          <label for="cContactTitle">Titel</label>
+          <input class="form-control" type="text" id="cContactTitle" />
+        </div>
+        <div class="form-group">
+          <label for="cContactDesc">Beschrijving</label>
+          <textarea class="form-control" id="cContactDesc" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cContactPhone">Telefoonnummer (weergave)</label>
+            <input class="form-control" type="text" id="cContactPhone" />
+          </div>
+          <div class="form-group">
+            <label for="cContactWhatsappUrl">WhatsApp URL</label>
+            <input class="form-control" type="text" id="cContactWhatsappUrl" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cContactEmail">E-mailadres</label>
+            <input class="form-control" type="email" id="cContactEmail" />
+          </div>
+          <div class="form-group">
+            <label for="cContactLocation">Locatie</label>
+            <input class="form-control" type="text" id="cContactLocation" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cInstagramUrl">Instagram URL</label>
+            <input class="form-control" type="text" id="cInstagramUrl" />
+          </div>
+          <div class="form-group">
+            <label for="cInstagramHandle">Instagram handle</label>
+            <input class="form-control" type="text" id="cInstagramHandle" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cTiktokUrl">TikTok URL</label>
+            <input class="form-control" type="text" id="cTiktokUrl" />
+          </div>
+          <div class="form-group">
+            <label for="cTiktokHandle">TikTok handle</label>
+            <input class="form-control" type="text" id="cTiktokHandle" />
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Footer</h2>
+        <div class="form-group">
+          <label for="cFooterTagline">Tagline</label>
+          <textarea class="form-control" id="cFooterTagline" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="content-save-bottom">
+        <button class="btn-save" onclick="saveContent()">Wijzigingen opslaan</button>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -400,7 +595,7 @@
   let formImages = [];
 
   // ── Init ──
-  if (token) loadProducts().catch(() => showLogin());
+  if (token) { loadProducts().catch(() => showLogin()); loadContent(); }
   else showLogin();
 
   function showLogin() {
@@ -435,6 +630,7 @@
       document.getElementById('totp').value = '';
       showMain();
       await loadProducts();
+      loadContent();
     } catch (e) {
       document.getElementById('loginErr').textContent = e.message;
     } finally {
@@ -680,6 +876,77 @@
     el.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  // ── Tabs ──
+  function showTab(tab) {
+    document.getElementById('tabProducts').classList.toggle('active', tab === 'products');
+    document.getElementById('tabContent').classList.toggle('active', tab === 'content');
+    document.getElementById('productsView').style.display = tab === 'products' ? '' : 'none';
+    document.getElementById('contentView').style.display  = tab === 'content'  ? '' : 'none';
+  }
+
+  // ── Content ──
+  let siteContent = {};
+
+  async function loadContent() {
+    try {
+      const r = await fetch(API + '/content');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      siteContent = await r.json();
+      fillContentForm();
+    } catch (e) {
+      console.warn('Content laden mislukt:', e.message);
+    }
+  }
+
+  function fillContentForm() {
+    const h = siteContent.hero || {}, a = siteContent.about || {};
+    const w = siteContent.workshop || {}, c = siteContent.contact || {}, f = siteContent.footer || {};
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    set('cHeroTag', h.tag); set('cHeroTitle', h.title);
+    set('cHeroMotto', h.motto); set('cHeroBody', h.body);
+    set('cAboutTitle', a.title);
+    set('cAboutP1', a.p1); set('cAboutP2', a.p2); set('cAboutP3', a.p3);
+    set('cWorkshopTag', w.tag); set('cWorkshopTitle', w.title);
+    set('cWorkshopDesc', w.desc); set('cWorkshopHighlight', w.highlight);
+    set('cWorkshopDuration', w.duration); set('cWorkshopGroupSize', w.groupSize);
+    set('cWorkshopLocation', w.location);
+    set('cWorkshopPrice', w.price); set('cWorkshopPriceLabel', w.priceLabel);
+    set('cContactTitle', c.title); set('cContactDesc', c.desc);
+    set('cContactPhone', c.phone); set('cContactWhatsappUrl', c.whatsappUrl);
+    set('cContactEmail', c.email); set('cContactLocation', c.location);
+    set('cInstagramUrl', c.instagramUrl); set('cInstagramHandle', c.instagramHandle);
+    set('cTiktokUrl', c.tiktokUrl); set('cTiktokHandle', c.tiktokHandle);
+    set('cFooterTagline', f.tagline);
+  }
+
+  async function saveContent() {
+    const btn = document.getElementById('contentSaveBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Opslaan...'; }
+    const val = id => (document.getElementById(id) || {}).value || '';
+    const body = {
+      hero:     { tag: val('cHeroTag'), title: val('cHeroTitle'), motto: val('cHeroMotto'), body: val('cHeroBody') },
+      about:    { title: val('cAboutTitle'), p1: val('cAboutP1'), p2: val('cAboutP2'), p3: val('cAboutP3') },
+      workshop: { tag: val('cWorkshopTag'), title: val('cWorkshopTitle'), desc: val('cWorkshopDesc'),
+                  highlight: val('cWorkshopHighlight'), duration: val('cWorkshopDuration'),
+                  groupSize: val('cWorkshopGroupSize'), location: val('cWorkshopLocation'),
+                  price: val('cWorkshopPrice'), priceLabel: val('cWorkshopPriceLabel') },
+      contact:  { title: val('cContactTitle'), desc: val('cContactDesc'), phone: val('cContactPhone'),
+                  whatsappUrl: val('cContactWhatsappUrl'), email: val('cContactEmail'),
+                  location: val('cContactLocation'), instagramUrl: val('cInstagramUrl'),
+                  instagramHandle: val('cInstagramHandle'), tiktokUrl: val('cTiktokUrl'),
+                  tiktokHandle: val('cTiktokHandle') },
+      footer:   { tagline: val('cFooterTagline') }
+    };
+    try {
+      siteContent = await apiReq('PUT', '/admin/content', body);
+      toast('Teksten opgeslagen');
+    } catch (e) {
+      toast('Opslaan mislukt: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Opslaan'; }
+    }
   }
 </script>
 </body>
