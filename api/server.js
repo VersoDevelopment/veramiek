@@ -265,10 +265,12 @@ app.post('/admin/login', rateLimit, async (req, res) => {
 
 // ── Publieke producten & content (voor de website) ──
 app.get('/products', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.json(products.filter(p => p.available !== false));
 });
 
 app.get('/content', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.json(siteContent);
 });
 
