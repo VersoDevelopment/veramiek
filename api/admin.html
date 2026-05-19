@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veramiek Beheer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --tc: #C8A49F; --tc-d: #A8807A; --cream: #D8C4AC;
+      --warm: #EEE4DA; --brown: #4D0E13; --muted: #8A6055;
+      --border: #C8B0A4; --white: #ffffff; --red: #c2714f;
+      --green: #5c8a5e;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Raleway', sans-serif; background: var(--warm); color: var(--brown); line-height: 1.6; }
+
+    /* ── LOGIN ── */
+    #loginView {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 2rem;
+    }
+    .login-card {
+      background: var(--white); border-radius: 4px; padding: 2.75rem 2.5rem;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 4px 32px rgba(77,14,19,.1);
+    }
+    .login-brand {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+      font-weight: 300; color: var(--brown); letter-spacing: .1em;
+      margin-bottom: .25rem;
+    }
+    .login-sub {
+      font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 2rem;
+    }
+    .field-label {
+      display: block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem;
+    }
+    .field-input {
+      width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border);
+      font-family: 'Raleway', sans-serif; font-size: .9rem; color: var(--brown);
+      background: #faf8f5; margin-bottom: 1.25rem; transition: border-color .2s;
+    }
+    .field-input:focus { outline: none; border-color: var(--tc); }
+    .totp-hint {
+      font-size: .78rem; color: var(--muted); margin-top: -.9rem;
+      margin-bottom: 1.25rem; line-height: 1.5;
+    }
+    .btn-primary {
+      width: 100%; padding: .85rem; background: var(--tc); color: white;
+      border: none; font-family: 'Raleway', sans-serif; font-weight: 700;
+      font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--tc-d); }
+    .btn-primary:disabled { opacity: .6; cursor: default; }
+    .login-err { color: var(--red); font-size: .82rem; margin-top: .85rem; min-height: 1.2em; }
+    .login-footer { margin-top: 1.75rem; text-align: center; font-size: .78rem; color: var(--muted); }
+    .login-footer a { color: var(--tc); text-decoration: none; }
+    .login-footer a:hover { text-decoration: underline; }
+
+    /* ── MAIN ── */
+    #mainView { display: none; }
+    header {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: .9rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
+    }
+    .header-brand {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;
+      font-weight: 300; color: var(--brown); letter-spacing: .08em;
+    }
+    .header-brand span { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); display: block; }
+    .btn-outline {
+      padding: .45rem 1.1rem; border: 1.5px solid var(--border);
+      background: none; font-family: 'Raleway', sans-serif; font-weight: 700;
+      font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; transition: all .2s;
+    }
+    .btn-outline:hover { border-color: var(--tc); color: var(--tc); }
+
+    main { padding: 2.5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; }
+    .btn-add {
+      padding: .65rem 1.5rem; background: var(--brown); color: white;
+      border: none; font-family: 'Raleway', sans-serif; font-weight: 700;
+      font-size: .78rem; letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s; display: flex; align-items: center; gap: .5rem;
+    }
+    .btn-add:hover { background: #7D3E43; }
+
+    /* ── PRODUCT GRID ── */
+    #productGrid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .prod-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 3px; overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .prod-card:hover { box-shadow: 0 4px 16px rgba(77,14,19,.08); }
+    .prod-thumb {
+      aspect-ratio: 1; background: #e8ddd4; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .prod-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .prod-thumb .no-img { color: var(--border); }
+    .prod-status {
+      position: absolute; top: .6rem; right: .6rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; padding: .2rem .5rem; border-radius: 2px;
+    }
+    .prod-status.available { background: #e8f4e8; color: var(--green); }
+    .prod-status.hidden { background: #f4e8e8; color: var(--red); }
+    .prod-body { padding: 1rem 1.1rem; }
+    .prod-name { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--brown); margin-bottom: .15rem; }
+    .prod-price { font-size: .85rem; font-weight: 700; color: var(--muted); margin-bottom: .75rem; }
+    .prod-actions { display: flex; gap: .5rem; }
+    .btn-edit, .btn-del {
+      flex: 1; padding: .45rem; border: 1.5px solid var(--border); background: none;
+      font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      transition: all .2s; display: flex; align-items: center; justify-content: center; gap: .3rem;
+    }
+    .btn-edit { color: var(--brown); }
+    .btn-edit:hover { background: var(--brown); color: white; border-color: var(--brown); }
+    .btn-del { color: var(--red); border-color: #e8c0b4; }
+    .btn-del:hover { background: var(--red); color: white; border-color: var(--red); }
+
+    .empty-state {
+      grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;
+      color: var(--muted); font-size: .95rem;
+    }
+    .empty-state p:first-child { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--brown); margin-bottom: .5rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(77,14,19,.35); z-index: 200;
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 4px; width: 100%; max-width: 560px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header {
+      padding: 1.5rem 1.75rem 1rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1;
+    }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 300; }
+    .btn-close {
+      background: none; border: none; font-size: 1.4rem; color: var(--muted);
+      cursor: pointer; line-height: 1; padding: .2rem;
+    }
+    .btn-close:hover { color: var(--brown); }
+    .modal-body { padding: 1.5rem 1.75rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    .form-group label .opt { font-weight: 300; text-transform: none; letter-spacing: 0; margin-left: .25rem; }
+    .form-control {
+      width: 100%; padding: .65rem .9rem; border: 1.5px solid var(--border);
+      font-family: 'Raleway', sans-serif; font-size: .88rem; color: var(--brown);
+      background: #faf8f5; transition: border-color .2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--tc); }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    select.form-control { cursor: pointer; }
+    .toggle-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .toggle { position: relative; width: 42px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: #e0d6d0; border-radius: 24px;
+      cursor: pointer; transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      background: white; left: 3px; top: 3px; transition: transform .2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle input:checked + .toggle-slider { background: var(--green); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .toggle-label { font-size: .85rem; color: var(--brown); }
+
+    /* Image upload */
+    .images-section { margin-bottom: 1.5rem; }
+    .images-section > label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
+    .img-thumbs { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .75rem; }
+    .img-thumb {
+      width: 80px; height: 80px; border-radius: 3px; position: relative;
+      background: #e8ddd4; border: 1px solid var(--border);
+    }
+    .img-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; display: block; }
+    .img-del {
+      position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--red); color: white; border: none;
+      font-size: .75rem; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; line-height: 1; font-weight: 700;
+    }
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: 3px;
+      padding: 1.25rem; text-align: center; cursor: pointer;
+      transition: all .2s; color: var(--muted); font-size: .85rem;
+    }
+    .upload-area:hover, .upload-area.drag { border-color: var(--tc); color: var(--tc); background: #faf5f2; }
+    .upload-area svg { display: block; margin: 0 auto .4rem; opacity: .5; }
+    #imgFileInput { display: none; }
+    .upload-spinner { display: none; align-items: center; justify-content: center; gap: .5rem; font-size: .82rem; color: var(--muted); padding: .5rem; }
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--tc); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-footer {
+      padding: 1.25rem 1.75rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: .75rem;
+      position: sticky; bottom: 0; background: var(--white);
+    }
+    .btn-cancel {
+      padding: .65rem 1.4rem; background: none; border: 1.5px solid var(--border);
+      font-family: 'Raleway', sans-serif; font-weight: 700; font-size: .78rem;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-cancel:hover { border-color: var(--brown); color: var(--brown); }
+    .btn-save {
+      padding: .65rem 1.8rem; background: var(--tc); color: white; border: none;
+      font-family: 'Raleway', sans-serif; font-weight: 700; font-size: .78rem;
+      letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-save:hover:not(:disabled) { background: var(--tc-d); }
+    .btn-save:disabled { opacity: .6; cursor: default; }
+    .modal-err { color: var(--red); font-size: .82rem; padding: 0 1.75rem .75rem; }
+
+    /* Delete confirm */
+    .del-modal { background: var(--white); border-radius: 4px; width: 100%; max-width: 380px; }
+    .del-modal-body { padding: 1.75rem; }
+    .del-modal-body h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: .5rem; }
+    .del-modal-body p { font-size: .88rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .del-actions { display: flex; justify-content: flex-end; gap: .75rem; }
+    .btn-del-confirm {
+      padding: .65rem 1.4rem; background: var(--red); color: white; border: none;
+      font-family: 'Raleway', sans-serif; font-weight: 700; font-size: .78rem;
+      letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    }
+    .btn-del-confirm:hover { background: #a05840; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(6px);
+      background: var(--brown); color: white; padding: .65rem 1.4rem;
+      border-radius: 3px; font-size: .82rem; font-weight: 400; opacity: 0;
+      transition: opacity .3s, transform .3s; pointer-events: none; z-index: 300; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 600px) {
+      main { padding: 1.5rem 1rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .modal-body, .modal-header, .modal-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginView">
+  <div class="login-card">
+    <div class="login-brand">Veramiek</div>
+    <div class="login-sub">Beheer</div>
+    <label class="field-label" for="pw">Wachtwoord</label>
+    <input class="field-input" type="password" id="pw" placeholder="••••••••" autocomplete="current-password" />
+    <label class="field-label" for="totp">Verificatiecode</label>
+    <input class="field-input" type="text" id="totp" placeholder="123456" autocomplete="one-time-code" inputmode="numeric" maxlength="6" />
+    <p class="totp-hint">6-cijferige code uit Google Authenticator of Authy.</p>
+    <button class="btn-primary" id="loginBtn" onclick="login()">Inloggen</button>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-footer">
+      Eerste keer? <a href="/admin/setup">2FA instellen →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="mainView">
+  <header>
+    <div class="login-brand" style="margin:0">
+      Veramiek
+      <span>Beheer</span>
+    </div>
+    <button class="btn-outline" onclick="logout()">Uitloggen</button>
+  </header>
+  <main>
+    <div class="page-header">
+      <h1 class="page-title" id="pageTitle">Producten</h1>
+      <button class="btn-add" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+        Nieuw product
+      </button>
+    </div>
+    <div id="productGrid"></div>
+  </main>
+</div>
+
+<!-- ── PRODUCT MODAL ── -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Nieuw product</h2>
+      <button class="btn-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Images -->
+      <div class="images-section">
+        <label>Foto's</label>
+        <div class="img-thumbs" id="imgThumbs"></div>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgFileInput').click()"
+             ondragover="event.preventDefault();this.classList.add('drag')"
+             ondragleave="this.classList.remove('drag')"
+             ondrop="handleDrop(event)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Klik of sleep foto's hierheen (max 10 MB)
+        </div>
+        <div class="upload-spinner" id="uploadSpinner">
+          <div class="spinner"></div> Uploading...
+        </div>
+        <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleFiles(this.files)" />
+      </div>
+
+      <!-- Fields -->
+      <div class="form-group">
+        <label for="fName">Naam *</label>
+        <input class="form-control" type="text" id="fName" placeholder="bijv. Espresso kopjes" />
+      </div>
+      <div class="form-group">
+        <label for="fDesc">Beschrijving <span class="opt">(optioneel)</span></label>
+        <textarea class="form-control" id="fDesc" rows="3" placeholder="Korte beschrijving van het product…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fPrice">Prijs (€) *</label>
+          <input class="form-control" type="number" id="fPrice" placeholder="0.00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label for="fCat">Categorie *</label>
+          <select class="form-control" id="fCat">
+            <option value="mokken">Mokken & Kopjes</option>
+            <option value="borden">Borden & Kommen</option>
+            <option value="schalen">Schalen</option>
+            <option value="overige">Overige</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="fBadge">Badge <span class="opt">(optioneel — bijv. "Nieuw" of "Favoriet")</span></label>
+        <input class="form-control" type="text" id="fBadge" placeholder="bijv. Nieuw" />
+      </div>
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="fAvailable" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Zichtbaar op de website</span>
+      </div>
+    </div>
+    <div class="modal-err" id="modalErr"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
+      <button class="btn-save" id="saveBtn" onclick="saveProduct()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DELETE CONFIRM ── -->
+<div class="modal-overlay" id="delModal">
+  <div class="del-modal">
+    <div class="del-modal-body">
+      <h3>Product verwijderen?</h3>
+      <p id="delMsg">Weet je zeker dat je dit product wilt verwijderen? Dit kan niet ongedaan worden gemaakt.</p>
+      <div class="del-actions">
+        <button class="btn-cancel" onclick="closeDelModal()">Annuleren</button>
+        <button class="btn-del-confirm" id="delConfirmBtn">Verwijderen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = '';
+  let token = sessionStorage.getItem('vmk_token') || '';
+  let editId = null;
+  let formImages = [];
+
+  // ── Init ──
+  if (token) loadProducts().catch(() => showLogin());
+  else showLogin();
+
+  function showLogin() {
+    token = '';
+    sessionStorage.removeItem('vmk_token');
+    document.getElementById('loginView').style.display = 'flex';
+    document.getElementById('mainView').style.display = 'none';
+  }
+  function showMain() {
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('mainView').style.display = 'block';
+  }
+
+  // ── Login ──
+  async function login() {
+    const pw   = document.getElementById('pw').value;
+    const totp = document.getElementById('totp').value.trim();
+    const btn  = document.getElementById('loginBtn');
+    document.getElementById('loginErr').textContent = '';
+    btn.disabled = true; btn.textContent = 'Inloggen...';
+    try {
+      const r = await fetch(API + '/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, totp })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Inloggen mislukt');
+      token = d.token;
+      sessionStorage.setItem('vmk_token', token);
+      document.getElementById('pw').value = '';
+      document.getElementById('totp').value = '';
+      showMain();
+      await loadProducts();
+    } catch (e) {
+      document.getElementById('loginErr').textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Inloggen';
+    }
+  }
+  ['pw','totp'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  });
+
+  function logout() {
+    showLogin();
+    toast('Je bent uitgelogd');
+  }
+
+  // ── API helpers ──
+  function apiReq(method, path, body) {
+    const opts = { method, headers: { Authorization: 'Bearer ' + token } };
+    if (body !== undefined) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    return fetch(API + path, opts).then(async r => {
+      if (r.status === 401) { showLogin(); throw new Error('Sessie verlopen'); }
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Fout');
+      return d;
+    });
+  }
+
+  // ── Products ──
+  let allProducts = [];
+
+  async function loadProducts() {
+    allProducts = await apiReq('GET', '/admin/products');
+    renderProducts();
+    showMain();
+    document.getElementById('pageTitle').textContent = `Producten (${allProducts.length})`;
+  }
+
+  function fmtPrice(p) {
+    return '€ ' + Number(p).toFixed(2).replace('.', ',');
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    if (!allProducts.length) {
+      grid.innerHTML = `<div class="empty-state"><p>Nog geen producten</p><p>Voeg je eerste product toe via de knop hierboven.</p></div>`;
+      return;
+    }
+    grid.innerHTML = allProducts.map(p => `
+      <div class="prod-card">
+        <div class="prod-thumb">
+          ${p.images && p.images[0] ? `<img src="${p.images[0]}" alt="${esc(p.name)}" loading="lazy">` : noImgSvg()}
+          <span class="prod-status ${p.available !== false ? 'available' : 'hidden'}">
+            ${p.available !== false ? 'Zichtbaar' : 'Verborgen'}
+          </span>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">${esc(p.name)}</div>
+          <div class="prod-price">${fmtPrice(p.price)}</div>
+          <div class="prod-actions">
+            <button class="btn-edit" onclick="openModal('${p.id}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Bewerken
+            </button>
+            <button class="btn-del" onclick="confirmDelete('${p.id}', '${esc(p.name)}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function noImgSvg() {
+    return `<div class="no-img"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+  }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ── Modal ──
+  function openModal(id) {
+    editId = id || null;
+    formImages = [];
+    document.getElementById('modalErr').textContent = '';
+    document.getElementById('saveBtn').disabled = false;
+
+    if (id) {
+      const p = allProducts.find(x => x.id === id);
+      document.getElementById('modalTitle').textContent = 'Product bewerken';
+      document.getElementById('fName').value = p.name || '';
+      document.getElementById('fDesc').value = p.desc || '';
+      document.getElementById('fPrice').value = p.price || '';
+      document.getElementById('fCat').value = p.category || 'overige';
+      document.getElementById('fBadge').value = p.badge || '';
+      document.getElementById('fAvailable').checked = p.available !== false;
+      formImages = Array.isArray(p.images) ? [...p.images] : [];
+    } else {
+      document.getElementById('modalTitle').textContent = 'Nieuw product';
+      document.getElementById('fName').value = '';
+      document.getElementById('fDesc').value = '';
+      document.getElementById('fPrice').value = '';
+      document.getElementById('fCat').value = 'overige';
+      document.getElementById('fBadge').value = '';
+      document.getElementById('fAvailable').checked = true;
+    }
+    renderThumbs();
+    document.getElementById('productModal').classList.add('open');
+    document.getElementById('fName').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').classList.remove('open');
+    editId = null;
+    formImages = [];
+  }
+
+  // ── Image upload ──
+  function renderThumbs() {
+    const el = document.getElementById('imgThumbs');
+    el.innerHTML = formImages.map((url, i) => `
+      <div class="img-thumb">
+        <img src="${esc(url)}" alt="foto ${i+1}">
+        <button class="img-del" onclick="removeImg(${i})" title="Verwijderen">×</button>
+      </div>`).join('');
+  }
+
+  function removeImg(i) {
+    formImages.splice(i, 1);
+    renderThumbs();
+  }
+
+  async function handleFiles(files) {
+    for (const f of files) await uploadFile(f);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('uploadArea').classList.remove('drag');
+    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+  }
+
+  async function uploadFile(file) {
+    const spinner = document.getElementById('uploadSpinner');
+    spinner.style.display = 'flex';
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const r = await fetch(API + '/admin/upload', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: fd
+      });
+      if (r.status === 401) { showLogin(); return; }
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Upload mislukt');
+      formImages.push(d.url);
+      renderThumbs();
+    } catch (e) {
+      toast('Upload mislukt: ' + e.message);
+    } finally {
+      spinner.style.display = 'none';
+      document.getElementById('imgFileInput').value = '';
+    }
+  }
+
+  // ── Save product ──
+  async function saveProduct() {
+    const name  = document.getElementById('fName').value.trim();
+    const price = parseFloat(document.getElementById('fPrice').value);
+    document.getElementById('modalErr').textContent = '';
+
+    if (!name) { document.getElementById('modalErr').textContent = 'Naam is verplicht.'; return; }
+    if (isNaN(price) || price < 0) { document.getElementById('modalErr').textContent = 'Vul een geldige prijs in.'; return; }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = 'Opslaan...';
+
+    const body = {
+      name,
+      desc: document.getElementById('fDesc').value.trim(),
+      price,
+      category: document.getElementById('fCat').value,
+      badge: document.getElementById('fBadge').value.trim() || null,
+      images: formImages,
+      available: document.getElementById('fAvailable').checked
+    };
+
+    try {
+      if (editId) {
+        await apiReq('PUT', '/admin/products/' + editId, body);
+        toast('Product bijgewerkt');
+      } else {
+        await apiReq('POST', '/admin/products', body);
+        toast('Product toegevoegd');
+      }
+      closeModal();
+      await loadProducts();
+    } catch (e) {
+      document.getElementById('modalErr').textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Opslaan';
+    }
+  }
+
+  // ── Delete ──
+  function confirmDelete(id, name) {
+    document.getElementById('delMsg').textContent = `Weet je zeker dat je "${name}" wilt verwijderen?`;
+    const btn = document.getElementById('delConfirmBtn');
+    btn.onclick = () => deleteProduct(id);
+    document.getElementById('delModal').classList.add('open');
+  }
+
+  function closeDelModal() { document.getElementById('delModal').classList.remove('open'); }
+
+  async function deleteProduct(id) {
+    const btn = document.getElementById('delConfirmBtn');
+    btn.disabled = true;
+    try {
+      await apiReq('DELETE', '/admin/products/' + id);
+      closeDelModal();
+      await loadProducts();
+      toast('Product verwijderd');
+    } catch (e) {
+      toast('Verwijderen mislukt: ' + e.message);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ── Keyboard / overlay close ──
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) { closeModal(); closeDelModal(); } });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeDelModal(); }
+  });
+
+  // ── Toast ──
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

@@ -17,3 +17,10 @@ services:
     restart: unless-stopped
     expose:
       - "3001"
+    volumes:
+      - api_data:/app/data
+      - api_uploads:/app/uploads
+
+volumes:
+  api_data:
+  api_uploads:

@@ -1,34 +1,277 @@
-const express = require('express');
+'use strict';
+const express    = require('express');
 const nodemailer = require('nodemailer');
-const cors = require('cors');
+const cors       = require('cors');
+const jwt        = require('jsonwebtoken');
+const { authenticator } = require('otplib');
+const QRCode     = require('qrcode');
+const multer     = require('multer');
+const bcrypt     = require('bcryptjs');
+const crypto     = require('crypto');
+const fs         = require('fs');
+const path       = require('path');
 
-const app = express();
-app.use(express.json());
-app.use(cors({ origin: ['https://veramiek.nl', 'http://localhost:8082'] }));
+// ── Paths ──
+const DATA_DIR    = path.join(__dirname, 'data');
+const PRODUCTS_F  = path.join(DATA_DIR, 'products.json');
+const TOTP_F      = path.join(DATA_DIR, 'totp_secret.txt');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.eu',
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+[DATA_DIR, UPLOADS_DIR].forEach(d => {
+  if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
-function escapeHtml(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+// ── Products ──
+let products = [];
+if (fs.existsSync(PRODUCTS_F)) {
+  try { products = JSON.parse(fs.readFileSync(PRODUCTS_F, 'utf8')); } catch (_) {}
+} else {
+  fs.writeFileSync(PRODUCTS_F, '[]');
+}
+function saveProducts() {
+  fs.writeFileSync(PRODUCTS_F, JSON.stringify(products, null, 2));
 }
 
-function imgUrl(path) {
-  return 'https://veramiek.nl/' + path.split('/').map(encodeURIComponent).join('/');
+// ── TOTP secret ──
+let totpSecret = (process.env.TOTP_SECRET || '').trim();
+if (!totpSecret) {
+  if (fs.existsSync(TOTP_F)) {
+    totpSecret = fs.readFileSync(TOTP_F, 'utf8').trim();
+  } else {
+    totpSecret = authenticator.generateSecret();
+    fs.writeFileSync(TOTP_F, totpSecret);
+    console.log('\n╔═══════════════════════════════════════╗');
+    console.log('║  2FA SECRET AANGEMAAKT                ║');
+    console.log('║  Bezoek /admin/setup om QR te scannen ║');
+    console.log('╚═══════════════════════════════════════╝\n');
+  }
 }
+
+// ── Admin wachtwoord ──
+if (!process.env.ADMIN_PASSWORD) {
+  console.error('FOUT: ADMIN_PASSWORD niet ingesteld in .env');
+  process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.error('FOUT: JWT_SECRET niet ingesteld in .env');
+  process.exit(1);
+}
+const adminHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 12);
+
+// ── Express ──
+const app = express();
+app.use(express.json({ limit: '2mb' }));
+app.use(cors({
+  origin: ['https://veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001'],
+  credentials: true
+}));
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+// ── Multer (foto upload) ──
+const storage = multer.diskStorage({
+  destination: UPLOADS_DIR,
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    cb(null, Date.now() + '-' + crypto.randomBytes(6).toString('hex') + ext);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) return cb(new Error('Alleen afbeeldingen toegestaan'));
+    cb(null, true);
+  }
+});
+
+// ── Auth middleware ──
+function auth(req, res, next) {
+  const h = req.headers.authorization;
+  if (!h || !h.startsWith('Bearer ')) return res.status(401).json({ error: 'Niet ingelogd' });
+  try {
+    req.admin = jwt.verify(h.slice(7), process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Sessie verlopen — log opnieuw in' });
+  }
+}
+
+// ── Rate limiting ──
+const loginAttempts = new Map();
+function rateLimit(req, res, next) {
+  const key = req.ip || 'unknown';
+  const now = Date.now();
+  const recent = (loginAttempts.get(key) || []).filter(t => now - t < 900000);
+  if (recent.length >= 5) {
+    return res.status(429).json({ error: 'Te veel pogingen. Probeer over 15 minuten opnieuw.' });
+  }
+  recent.push(now);
+  loginAttempts.set(key, recent);
+  next();
+}
+
+// ── Hulpfuncties e-mail ──
+function escapeHtml(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function imgUrl(src) {
+  if (!src) return null;
+  if (String(src).startsWith('http')) return String(src);
+  return 'https://veramiek.nl/' + String(src).split('/').map(encodeURIComponent).join('/');
+}
+
+// ── Admin panel HTML ──
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/admin', (req, res) => res.redirect('/'));
+
+// ── 2FA Setup ──
+app.get('/admin/setup', (req, res) => {
+  res.send(`<!DOCTYPE html><html lang="nl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Veramiek — 2FA Instellen</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Raleway,sans-serif;background:#EEE4DA;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:2rem}
+.card{background:white;border-radius:4px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 4px 24px rgba(77,14,19,.1)}
+h1{font-family:Georgia,serif;color:#4D0E13;font-size:1.5rem;font-weight:400;margin-bottom:.4rem}
+.sub{color:#8A6055;font-size:.85rem;margin-bottom:1.75rem;line-height:1.6}
+label{display:block;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A6055;margin-bottom:.4rem}
+input{width:100%;padding:.75rem 1rem;border:1.5px solid #C8B0A4;font-family:Raleway,sans-serif;font-size:.9rem;color:#4D0E13;background:#faf8f5;margin-bottom:1.25rem}
+input:focus{outline:none;border-color:#C8A49F}
+button{width:100%;padding:.85rem;background:#C8A49F;color:white;border:none;font-family:Raleway,sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+button:hover{background:#A8807A}
+.err{color:#c2714f;font-size:.82rem;margin-bottom:.75rem;min-height:1.2em}
+#result{margin-top:2rem;text-align:center;display:none}
+#qrimg{width:200px;height:200px;border:1px solid #C8B0A4;border-radius:2px;margin-bottom:1rem}
+.secret{font-family:monospace;background:#f5f0e8;padding:.6rem .9rem;border-radius:2px;font-size:.82rem;color:#4D0E13;word-break:break-all;text-align:left;margin:.5rem 0 1rem}
+.ok{color:#5c8a5e;font-size:.85rem;margin-top:.75rem}
+a{color:#C8A49F;text-decoration:none}
+</style></head><body>
+<div class="card">
+  <h1>2FA Instellen</h1>
+  <p class="sub">Voer je beheer-wachtwoord in om de QR-code te genereren. Scan die daarna met Google Authenticator of Authy.</p>
+  <label for="pw">Wachtwoord</label>
+  <input type="password" id="pw" placeholder="Beheer-wachtwoord" autocomplete="current-password">
+  <div class="err" id="err"></div>
+  <button onclick="setup()">QR-code ophalen</button>
+  <div id="result">
+    <img id="qrimg" alt="QR code">
+    <p style="font-size:.8rem;color:#8A6055;margin-bottom:.25rem">Of voer deze code handmatig in:</p>
+    <div class="secret" id="secretTxt"></div>
+    <p class="ok">✓ Gescand? Je kunt nu <a href="/">inloggen</a>.</p>
+  </div>
+</div>
+<script>
+async function setup(){
+  const pw=document.getElementById('pw').value;
+  document.getElementById('err').textContent='';
+  const r=await fetch('/admin/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+  const d=await r.json();
+  if(!r.ok){document.getElementById('err').textContent=d.error;return;}
+  document.getElementById('qrimg').src=d.qr;
+  document.getElementById('secretTxt').textContent=d.secret;
+  document.getElementById('result').style.display='block';
+}
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')setup();});
+</script></body></html>`);
+});
+
+app.post('/admin/setup', async (req, res) => {
+  const { password } = req.body || {};
+  if (!password || !bcrypt.compareSync(password, adminHash)) {
+    return res.status(401).json({ error: 'Onjuist wachtwoord' });
+  }
+  try {
+    const otpauth = authenticator.keyuri('admin', 'Veramiek Beheer', totpSecret);
+    const qr = await QRCode.toDataURL(otpauth);
+    res.json({ qr, secret: totpSecret });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'QR-generatie mislukt' });
+  }
+});
+
+// ── Login ──
+app.post('/admin/login', rateLimit, async (req, res) => {
+  const { password, totp } = req.body || {};
+  const pwOk   = password && bcrypt.compareSync(String(password), adminHash);
+  const totpOk = totp && authenticator.check(String(totp), totpSecret);
+  if (!pwOk || !totpOk) {
+    return res.status(401).json({ error: 'Onjuist wachtwoord of verificatiecode' });
+  }
+  loginAttempts.delete(req.ip);
+  const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, { expiresIn: '8h' });
+  res.json({ token });
+});
+
+// ── Publieke producten (voor de website) ──
+app.get('/products', (req, res) => {
+  res.json(products.filter(p => p.available !== false));
+});
+
+// ── Admin: producten CRUD ──
+app.get('/admin/products', auth, (req, res) => {
+  res.json(products);
+});
+
+app.post('/admin/products', auth, (req, res) => {
+  const { name, desc, price, category, badge, images, available } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
+  const p = {
+    id: crypto.randomUUID(),
+    name: String(name).trim(),
+    desc: String(desc || '').trim(),
+    price: Math.max(0, Number(price) || 0),
+    category: String(category || 'overige'),
+    badge: badge ? String(badge).trim() : null,
+    images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
+    available: available !== false
+  };
+  products.push(p);
+  saveProducts();
+  res.json(p);
+});
+
+app.put('/admin/products/:id', auth, (req, res) => {
+  const idx = products.findIndex(p => p.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Product niet gevonden' });
+  const { name, desc, price, category, badge, images, available } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
+  products[idx] = {
+    id: products[idx].id,
+    name: String(name).trim(),
+    desc: String(desc || '').trim(),
+    price: Math.max(0, Number(price) || 0),
+    category: String(category || 'overige'),
+    badge: badge ? String(badge).trim() : null,
+    images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
+    available: available !== false
+  };
+  saveProducts();
+  res.json(products[idx]);
+});
+
+app.delete('/admin/products/:id', auth, (req, res) => {
+  const idx = products.findIndex(p => p.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Product niet gevonden' });
+  products.splice(idx, 1);
+  saveProducts();
+  res.json({ ok: true });
+});
+
+// ── Foto upload ──
+app.post('/admin/upload', auth, upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Geen bestand ontvangen' });
+  const url = `https://veramiek.nl/api/uploads/${req.file.filename}`;
+  res.json({ url });
+});
+
+// ── Bestelling e-mail (bestaand) ──
+const transporter = nodemailer.createTransport({
+  host: 'smtp.zoho.eu', port: 587, secure: false, requireTLS: true,
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+});
 
 function buildVeraEmail({ naam, email, tel, adres, items, totaal }) {
   const rows = items.map(item => {
@@ -43,7 +286,6 @@ function buildVeraEmail({ naam, email, tel, adres, items, totaal }) {
         <td style="padding:12px 8px;text-align:right;color:#5c3d2e;font-size:14px;font-weight:bold;">${escapeHtml(item.subtotal)}</td>
       </tr>`;
   }).join('');
-
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
@@ -85,7 +327,6 @@ function buildVeraEmail({ naam, email, tel, adres, items, totaal }) {
 function buildBuyerEmail({ naam, items, totaal }) {
   const hero = items.find(i => i.images && i.images[0]);
   const heroSrc = hero ? imgUrl(hero.images[0]) : null;
-
   const rows = items.map(item => {
     const img = item.images && item.images[0] ? imgUrl(item.images[0]) : null;
     return `
@@ -98,7 +339,6 @@ function buildBuyerEmail({ naam, items, totaal }) {
       <td style="padding:10px 8px;text-align:right;color:#5c3d2e;font-size:14px;">${escapeHtml(item.subtotal)}</td>
     </tr>`;
   }).join('');
-
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
@@ -110,7 +350,7 @@ function buildBuyerEmail({ naam, items, totaal }) {
   ${heroSrc ? `<tr><td style="padding:0;"><img src="${heroSrc}" width="600" style="display:block;width:100%;height:220px;object-fit:cover;" /></td></tr>` : ''}
   <tr><td style="padding:32px 40px 20px;">
     <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:22px;">Bedankt voor je bestelling, ${escapeHtml(naam)}!</h2>
-    <p style="margin:0;color:#7a6259;font-size:14px;line-height:1.8;">Je bestelling is goed ontvangen. Vera neemt zo snel mogelijk contact op om de bestelling te bevestigen en de verdere details te bespreken.</p>
+    <p style="margin:0;color:#7a6259;font-size:14px;line-height:1.8;">Je bestelling is goed ontvangen. Vera neemt zo snel mogelijk contact op om de bestelling te bevestigen.</p>
   </td></tr>
   <tr><td style="padding:0 40px 32px;">
     <h3 style="margin:0 0 10px;color:#5c3d2e;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;">Jouw bestelling</h3>
@@ -136,7 +376,6 @@ app.post('/send-order', async (req, res) => {
     if (!naam || !email || !Array.isArray(items) || !items.length) {
       return res.status(400).json({ error: 'Ontbrekende velden' });
     }
-
     await transporter.sendMail({
       from: '"Veramiek Webshop" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',
@@ -144,7 +383,6 @@ app.post('/send-order', async (req, res) => {
       subject: `Nieuwe bestelling — ${naam}`,
       html: buildVeraEmail({ naam, email, tel, adres, items, totaal }),
     });
-
     await transporter.sendMail({
       from: '"Vera — Veramiek" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',
@@ -152,7 +390,6 @@ app.post('/send-order', async (req, res) => {
       subject: 'Bedankt voor je bestelling bij Veramiek!',
       html: buildBuyerEmail({ naam, items, totaal }),
     });
-
     res.json({ ok: true });
   } catch (err) {
     console.error(err);

@@ -1512,11 +1512,7 @@
 </div>
 
 <script>
-  // ── Sanity config ──
-  const SANITY_PROJECT = '9frmabsj'
-  const SANITY_DATASET = 'production'
-
-  // Categorie-mapping Sanity → filter waarden
+  // Categorie-mapping → filter waarden
   const catMap = { mokken: 'kopjes', kopjes: 'kopjes', borden: 'borden', kommen: 'borden', schalen: 'schalen', overige: 'overige' }
 
   const svgTypes = {
@@ -1539,8 +1535,8 @@
 
   let products = []
 
-  const CACHE_KEY = 'veramiek-products-v1'
-  const CACHE_TTL = 24 * 60 * 60 * 1000
+  const CACHE_KEY = 'veramiek-products-v2'
+  const CACHE_TTL = 60 * 60 * 1000
 
   function mapProducts(raw) {
     return raw.map(p => ({
@@ -1555,31 +1551,17 @@
     })).filter(p => p.name)
   }
 
-  async function fetchWithRetry(url, tries = 3) {
-    for (let i = 0; i < tries; i++) {
-      try {
-        const res = await fetch(url)
-        if (!res.ok) throw new Error('HTTP ' + res.status)
-        return await res.json()
-      } catch (e) {
-        if (i === tries - 1) throw e
-        await new Promise(r => setTimeout(r, 800 * (i + 1)))
-      }
-    }
-  }
-
   async function loadProducts() {
-    const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->url }')
-    const url = `https://${SANITY_PROJECT}.api.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
     try {
-      const data = await fetchWithRetry(url)
-      const result = Array.isArray(data && data.result) ? data.result : []
-      products = mapProducts(result)
+      const res = await fetch('/api/products')
+      if (!res.ok) throw new Error('HTTP ' + res.status)
+      const data = await res.json()
+      products = mapProducts(Array.isArray(data) ? data : [])
       if (products.length) {
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products })) } catch (_) {}
       }
     } catch (e) {
-      console.warn('Sanity niet bereikbaar, cache proberen…', e)
+      console.warn('Producten laden mislukt, cache proberen…', e)
       try {
         const cached = JSON.parse(localStorage.getItem(CACHE_KEY))
         if (cached && Date.now() - cached.ts < CACHE_TTL) {
