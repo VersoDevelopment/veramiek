@@ -1544,15 +1544,15 @@
 
   function mapProducts(raw) {
     return raw.map(p => ({
-      name: p.name,
-      desc: p.desc,
-      price: p.price,
+      name: p.name || '',
+      desc: p.desc || '',
+      price: typeof p.price === 'number' ? p.price : 0,
       cat: catMap[p.category] || p.category || 'overige',
       badge: p.badge || null,
       type: svgTypes[p.name] || 'bowl',
       color: svgColors[p.name] || ["#c9a882","#b09070"],
-      images: p.images && p.images.length ? p.images : null
-    }))
+      images: Array.isArray(p.images) ? p.images.filter(u => u) : null
+    })).filter(p => p.name)
   }
 
   async function fetchWithRetry(url, tries = 3) {
@@ -1570,11 +1570,14 @@
 
   async function loadProducts() {
     const query = encodeURIComponent('*[_type == "product"] | order(_createdAt asc) { name, desc, price, category, badge, "images": images[].asset->url }')
-    const url = `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
+    const url = `https://${SANITY_PROJECT}.api.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}?query=${query}`
     try {
       const data = await fetchWithRetry(url)
-      products = mapProducts(data.result)
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products })) } catch (_) {}
+      const result = Array.isArray(data && data.result) ? data.result : []
+      products = mapProducts(result)
+      if (products.length) {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products })) } catch (_) {}
+      }
     } catch (e) {
       console.warn('Sanity niet bereikbaar, cache proberen…', e)
       try {
@@ -1712,6 +1715,10 @@
 
   function renderProducts(cat = 'alles') {
     const grid = document.getElementById('productGrid');
+    if (!products.length) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:3rem 0;">Collectie kon niet worden geladen. Probeer de pagina te vernieuwen.</p>';
+      return;
+    }
     grid.innerHTML = products.map((p, i) => {
       const visible = cat === 'alles' || p.cat === cat;
       let mediaContent;
