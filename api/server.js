@@ -493,7 +493,7 @@ app.post('/send-contact', async (req, res) => {
   </td></tr>
   <tr><td style="padding:32px 40px;">
     <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:20px;">Bedankt voor je bericht!</h2>
-    <p style="margin:0 0 16px;color:#7a6259;font-size:14px;line-height:1.8;">Hoi ${escapeHtml(naam)}, ik heb je bericht goed ontvangen en neem zo snel mogelijk contact met je op — meestal binnen 1 à 2 werkdagen.</p>
+    <p style="margin:0 0 16px;color:#7a6259;font-size:14px;line-height:1.8;">Hoi ${escapeHtml(naam)}, ik heb je bericht goed ontvangen. Ik neem zo snel mogelijk contact met je op, doorgaans binnen 1 à 2 werkdagen.</p>
     <div style="background:#faf7f2;border-left:3px solid #c2714f;padding:14px 18px;font-size:13px;color:#7a6259;line-height:1.7;white-space:pre-wrap;">${escapeHtml(bericht)}</div>
   </td></tr>
   <tr><td style="background:#f5f0e8;padding:18px 40px;text-align:center;">
