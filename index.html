@@ -233,18 +233,20 @@
     .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
 
     .hero-image {
-      background: var(--cream);
+      background: #c9b8ab;
       position: relative;
       overflow: hidden;
-    }
-    .hero-image .clay-art {
-      width: 100%;
-      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .ceramic-hero-svg { width: 100%; height: 100%; min-height: 600px; }
+    .hero-video {
+      width: 88%;
+      height: 88%;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
 
     /* ── SECTION BASICS ── */
     section { padding: 6rem 4rem; }
@@ -571,11 +573,33 @@
     }
 
     .workshop-img {
-      background: var(--cream);
+      background: #c9b8ab;
+      position: relative;
+      overflow: hidden;
+      min-height: 340px;
+    }
+    .workshop-gallery {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      height: 100%;
+      min-height: 340px;
+    }
+    .workshop-gallery::-webkit-scrollbar { display: none; }
+    .workshop-slide {
+      min-width: 100%;
+      scroll-snap-align: start;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 340px;
+    }
+    .workshop-slide img {
+      width: 88%;
+      height: 88%;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
     }
 
     .workshop-body { padding: 2.5rem; }
@@ -1021,6 +1045,7 @@
       .process-steps::before { display: none; }
       .workshop-single { grid-template-columns: 1fr; }
       .workshop-img { min-height: 220px; }
+      .workshop-gallery { min-height: 220px; }
       .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       section { padding: 4rem 2rem; }
@@ -1103,32 +1128,9 @@
     </div>
   </div>
   <div class="hero-image">
-    <div class="clay-art">
-      <svg class="ceramic-hero-svg" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
-        <rect width="600" height="700" fill="#e0d0c4"/>
-        <ellipse cx="300" cy="560" rx="130" ry="18" fill="#b8a090" opacity="0.4"/>
-        <path d="M200 560 Q170 400 190 300 Q210 200 300 180 Q390 200 410 300 Q430 400 400 560 Z" fill="#C8A49F" opacity="0.9"/>
-        <path d="M220 545 Q195 395 208 305 Q225 215 300 198" fill="none" stroke="#DEC0BC" stroke-width="2" opacity="0.5"/>
-        <path d="M250 200 Q260 170 280 158 Q300 150 320 158 Q340 170 350 200" fill="#A8807A" opacity="0.85"/>
-        <ellipse cx="300" cy="155" rx="52" ry="12" fill="#8b4a2f"/>
-        <ellipse cx="140" cy="460" rx="60" ry="10" fill="#8b6151" opacity="0.35"/>
-        <path d="M88 460 Q85 400 100 380 Q120 365 140 365 Q160 365 180 380 Q195 400 192 460 Z" fill="#7a8c6e" opacity="0.85"/>
-        <ellipse cx="140" cy="365" rx="52" ry="9" fill="#5e6e56"/>
-        <ellipse cx="430" cy="500" rx="40" ry="7" fill="#8b6151" opacity="0.3"/>
-        <path d="M394 500 Q392 455 400 440 Q415 428 430 428 Q445 428 460 440 Q468 455 466 500 Z" fill="#D8C4AC" opacity="0.9"/>
-        <ellipse cx="430" cy="430" rx="36" ry="7" fill="#C8B0A4"/>
-        <path d="M466 455 Q485 455 485 470 Q485 485 466 485" fill="none" stroke="#C8B0A4" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="280" cy="360" r="4" fill="#EEE4DA" opacity="0.6"/>
-        <circle cx="300" cy="340" r="3" fill="#EEE4DA" opacity="0.6"/>
-        <circle cx="320" cy="360" r="4" fill="#EEE4DA" opacity="0.6"/>
-        <path d="M300 155 Q295 120 285 105" fill="none" stroke="#7a8c6e" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M285 105 Q270 90 278 78 Q292 88 285 105" fill="#7a8c6e"/>
-        <path d="M287 118 Q272 108 272 95 Q285 98 287 118" fill="#7a8c6e"/>
-        <circle cx="80" cy="150" r="3" fill="#D8C4AC" opacity="0.4"/>
-        <circle cx="520" cy="200" r="5" fill="#D8C4AC" opacity="0.3"/>
-        <circle cx="540" cy="580" r="3" fill="#D8C4AC" opacity="0.4"/>
-      </svg>
-    </div>
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="Hoofd video.mp4" type="video/mp4">
+    </video>
   </div>
 </section>
 
@@ -1205,27 +1207,18 @@
     <h2 class="section-title">Workshop</h2>
     <div class="workshop-single">
       <div class="workshop-img">
-        <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
-          <rect width="380" height="340" fill="#e8ddd4"/>
-          <!-- Hand building + glazing combo -->
-          <!-- Vase being built -->
-          <path d="M130 270 Q118 200 128 160 Q148 125 190 120 Q232 125 252 160 Q262 200 250 270Z" fill="#c2714f" opacity="0.8"/>
-          <ellipse cx="190" cy="270" rx="62" ry="11" fill="#a05a3b" opacity="0.4"/>
-          <!-- Glaze drips on right side -->
-          <rect x="250" y="180" width="70" height="90" rx="3" fill="#7a8c6e" opacity="0.75"/>
-          <ellipse cx="285" cy="180" rx="35" ry="8" fill="#5e6e56" opacity="0.8"/>
-          <path d="M262 180 Q260 210 263 240" fill="none" stroke="#a8c090" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
-          <path d="M280 180 Q278 220 281 248" fill="none" stroke="#a8c090" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-          <path d="M300 180 Q298 205 300 228" fill="none" stroke="#a8c090" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
-          <!-- Hands -->
-          <path d="M100 200 Q92 182 96 168 Q106 155 115 160 Q111 174 109 188 Q113 197 118 206 L106 214 Z" fill="#d4a882"/>
-          <path d="M96 185 Q87 176 90 163 Q100 156 107 165 L105 180 Z" fill="#d4a882"/>
-          <!-- Small tools -->
-          <rect x="60" y="240" width="6" height="50" rx="3" fill="#b09080" transform="rotate(-15 63 265)"/>
-          <rect x="85" y="245" width="5" height="42" rx="2.5" fill="#b09080" transform="rotate(10 87 266)"/>
-          <!-- Text label -->
-          <text x="190" y="318" font-family="Georgia,serif" font-size="13" fill="#7a6050" opacity="0.7" text-anchor="middle">Handvormen · Opbouwen · Glazuren</text>
-        </svg>
+        <div class="workshop-gallery" id="workshopGallery">
+          <div class="workshop-slide"><img src="Foto's keramiek/keramiek workshop breda.jpeg" alt="Keramiek workshop" loading="lazy" /></div>
+          <div class="workshop-slide"><img src="Foto's keramiek/keramiek workshop.jpeg" alt="Keramiek workshop" loading="lazy" /></div>
+          <div class="workshop-slide"><img src="Foto's keramiek/breda keramiek workshop.jpeg" alt="Keramiek workshop" loading="lazy" /></div>
+        </div>
+        <button class="gallery-prev" onclick="workshopNav(-1)" aria-label="Vorige">&#8249;</button>
+        <button class="gallery-next" onclick="workshopNav(1)" aria-label="Volgende">&#8250;</button>
+        <div class="gallery-dots" id="workshopDots">
+          <span class="gallery-dot active"></span>
+          <span class="gallery-dot"></span>
+          <span class="gallery-dot"></span>
+        </div>
       </div>
       <div class="workshop-body">
         <p class="workshop-tag" id="workshopTag">Alle niveaus · Vanaf 4 personen</p>
@@ -2109,6 +2102,19 @@
     } catch (e) {
       console.warn('Content laden mislukt:', e)
     }
+  }
+
+  function workshopNav(dir) {
+    const gallery = document.getElementById('workshopGallery');
+    gallery.scrollBy({ left: dir * gallery.offsetWidth, behavior: 'smooth' });
+  }
+
+  const wg = document.getElementById('workshopGallery');
+  if (wg) {
+    wg.addEventListener('scroll', () => {
+      const idx = Math.round(wg.scrollLeft / wg.offsetWidth);
+      document.querySelectorAll('#workshopDots .gallery-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    }, { passive: true });
   }
 
   loadProducts()
