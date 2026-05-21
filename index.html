@@ -152,6 +152,7 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
+      display: block;
     }
 
     .hero-content {
@@ -246,7 +247,6 @@
     .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
 
     .hero-image {
-      background: #c9b8ab;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -260,6 +260,8 @@
       object-fit: cover;
       border-radius: 2px;
       display: block;
+      position: relative;
+      z-index: 1;
     }
 
     /* ── SECTION BASICS ── */
@@ -1131,7 +1133,6 @@
 
 <!-- ── HERO ── -->
 <section class="hero" id="home">
-  <canvas id="mesh-bg"></canvas>
   <div class="hero-content">
     <p class="hero-tag" id="heroTag">Handgemaakt keramiek · Etten-Leur</p>
     <h1 id="heroTitle">Keramiek dat<br /><em>verhalen</em> vertelt</h1>
@@ -1143,6 +1144,7 @@
     </div>
   </div>
   <div class="hero-image">
+    <canvas id="mesh-bg"></canvas>
     <video class="hero-video" autoplay muted loop playsinline>
       <source src="Hoofd video.mp4" type="video/mp4">
     </video>
@@ -2212,8 +2214,9 @@
   const uTime = gl.getUniformLocation(prog, 'iTime');
 
   function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = canvas.parentElement ? canvas.parentElement.offsetHeight : window.innerHeight;
+    const parent = canvas.parentElement;
+    canvas.width  = parent ? parent.offsetWidth  : window.innerWidth / 2;
+    canvas.height = parent ? parent.offsetHeight : window.innerHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
   window.addEventListener('resize', resize, { passive: true });
