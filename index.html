@@ -2212,11 +2212,11 @@
   const uTime = gl.getUniformLocation(prog, 'iTime');
 
   function resize() {
-    canvas.width  = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    canvas.width  = window.innerWidth;
+    canvas.height = canvas.parentElement ? canvas.parentElement.offsetHeight : window.innerHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
-  new ResizeObserver(resize).observe(canvas);
+  window.addEventListener('resize', resize, { passive: true });
   resize();
 
   const t0 = Date.now();
