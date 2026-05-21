@@ -141,6 +141,17 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       padding-top: 68px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #mesh-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
 
     .hero-content {
@@ -148,6 +159,8 @@
       flex-direction: column;
       justify-content: center;
       padding: 6rem 4rem 6rem 6rem;
+      position: relative;
+      z-index: 1;
     }
 
     .hero-tag {
@@ -239,6 +252,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 1;
     }
     .hero-video {
       width: 60%;
@@ -1117,6 +1131,7 @@
 
 <!-- ── HERO ── -->
 <section class="hero" id="home">
+  <canvas id="mesh-bg"></canvas>
   <div class="hero-content">
     <p class="hero-tag" id="heroTag">Handgemaakt keramiek · Etten-Leur</p>
     <h1 id="heroTitle">Keramiek dat<br /><em>verhalen</em> vertelt</h1>
@@ -2119,6 +2134,109 @@
 
   loadProducts()
   loadContent()
+
+// ── MESH GRADIENT BACKGROUND ─────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('mesh-bg');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl');
+  if (!gl) return;
+
+  const vs = `
+    attribute vec2 a;
+    void main() { gl_Position = vec4(a, 0.0, 1.0); }
+  `;
+
+  const fs = `
+    precision highp float;
+    uniform vec2 iRes;
+    uniform float iTime;
+
+    // Veramiek kleurenpalet
+    vec3 c0 = vec3(0.933, 0.894, 0.855); // warm-white  #EEE4DA
+    vec3 c1 = vec3(0.847, 0.769, 0.675); // cream       #D8C4AC
+    vec3 c2 = vec3(0.784, 0.643, 0.624); // terracotta  #C8A49F
+    vec3 c3 = vec3(0.478, 0.243, 0.263); // brown-light #7A3E43
+    vec3 c4 = vec3(0.302, 0.055, 0.075); // deep brown  #4D0E13
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / iRes.xy;
+      float t = iTime * 0.18;
+
+      // Vijf kleurpunten die langzaam bewegen
+      vec2 p0 = vec2(0.20 + 0.18 * sin(t * 0.70),       0.25 + 0.18 * cos(t * 0.50));
+      vec2 p1 = vec2(0.80 + 0.14 * cos(t * 0.80 + 1.0), 0.20 + 0.14 * sin(t * 0.60 + 0.5));
+      vec2 p2 = vec2(0.50 + 0.20 * sin(t * 0.55 + 2.1), 0.72 + 0.16 * cos(t * 0.65 + 1.2));
+      vec2 p3 = vec2(0.12 + 0.12 * cos(t * 0.90 + 1.5), 0.78 + 0.12 * sin(t * 0.40 + 3.0));
+      vec2 p4 = vec2(0.78 + 0.16 * sin(t * 0.62 + 2.8), 0.55 + 0.14 * cos(t * 0.75 + 0.8));
+
+      // Inverse distance weighting (macht 4 = zachte overgang)
+      float pw = 4.0;
+      float d0 = max(pow(length(uv - p0), pw), 1e-4);
+      float d1 = max(pow(length(uv - p1), pw), 1e-4);
+      float d2 = max(pow(length(uv - p2), pw), 1e-4);
+      float d3 = max(pow(length(uv - p3), pw), 1e-4);
+      float d4 = max(pow(length(uv - p4), pw), 1e-4);
+
+      float w0 = 1.0/d0, w1 = 1.0/d1, w2 = 1.0/d2, w3 = 1.0/d3, w4 = 1.0/d4;
+      float wt = w0 + w1 + w2 + w3 + w4;
+
+      vec3 col = (w0*c0 + w1*c1 + w2*c2 + w3*c3 + w4*c4) / wt;
+
+      // Subtiele vignette — donkerder aan de randen
+      float vig = 1.0 - 0.35 * length(uv - vec2(0.5));
+      col *= vig;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+  const aLoc = gl.getAttribLocation(prog, 'a');
+  const uRes = gl.getUniformLocation(prog, 'iRes');
+  const uTime = gl.getUniformLocation(prog, 'iTime');
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  const t0 = Date.now();
+  let raf;
+  function render() {
+    gl.useProgram(prog);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, (Date.now() - t0) / 1000);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(aLoc);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    raf = requestAnimationFrame(render);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf); else render();
+  });
+  render();
+})();
 </script>
 </body>
 </html>
