@@ -140,7 +140,6 @@
       min-height: 100vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      padding-top: 68px;
     }
 
     .hero-content {
@@ -148,6 +147,7 @@
       flex-direction: column;
       justify-content: center;
       padding: 6rem 4rem 6rem 6rem;
+      padding-top: calc(68px + 6rem);
     }
 
     .hero-tag {
@@ -1037,7 +1037,7 @@
       .hero { grid-template-columns: 1fr; }
       .hero-image { min-height: 340px; }
       .hero-video { width: 85%; height: 85%; }
-      .hero-content { padding: 5rem 2rem 4rem; }
+      .hero-content { padding: 4rem 2rem 4rem; padding-top: calc(68px + 4rem); }
       .about-grid { grid-template-columns: 1fr; }
       .about-image { min-height: 300px; }
       .about-content { padding: 4rem 2rem; }
