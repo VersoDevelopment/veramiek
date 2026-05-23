@@ -10,6 +10,7 @@ const bcrypt     = require('bcryptjs');
 const crypto     = require('crypto');
 const fs         = require('fs');
 const path       = require('path');
+const rateLimit  = require('express-rate-limit');
 
 // ── Paths ──
 const DATA_DIR    = path.join(__dirname, 'data');
@@ -118,11 +119,16 @@ const adminHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 12);
 
 // ── Express ──
 const app = express();
-app.use(express.json({ limit: '2mb' }));
+app.set('trust proxy', 1);
+app.use(express.json({ limit: '100kb' }));
 app.use(cors({
   origin: ['https://veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001'],
   credentials: true
 }));
+
+const contactLimit = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
+const orderLimit   = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
+const setupLimit   = rateLimit({ windowMs: 900_000, max: 5, standardHeaders: true, legacyHeaders: false });
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── Multer (foto upload) ──
@@ -235,7 +241,7 @@ document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')
 </script></body></html>`);
 });
 
-app.post('/admin/setup', async (req, res) => {
+app.post('/admin/setup', setupLimit, async (req, res) => {
   const { password } = req.body || {};
   if (!password || !bcrypt.compareSync(password, adminHash)) {
     return res.status(401).json({ error: 'Onjuist wachtwoord' });
@@ -446,12 +452,15 @@ function buildBuyerEmail({ naam, items, totaal }) {
 </body></html>`;
 }
 
-app.post('/send-contact', async (req, res) => {
+app.post('/send-contact', contactLimit, async (req, res) => {
   try {
-    const { naam, email, onderwerp, bericht } = req.body;
+    const { naam, email, onderwerp, bericht, website } = req.body;
+    if (website) return res.json({ ok: true }); // honeypot
     if (!naam || !email || !bericht) {
       return res.status(400).json({ error: 'Ontbrekende velden' });
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Ongeldig e-mailadres' });
+    if (String(naam).length > 100 || String(bericht).length > 5000) return res.status(400).json({ error: 'Invoer te lang' });
     await transporter.sendMail({
       from: '"Veramiek Website" <info@versodevelopment.nl>',
       replyTo: email,
@@ -510,12 +519,14 @@ app.post('/send-contact', async (req, res) => {
   }
 });
 
-app.post('/send-order', async (req, res) => {
+app.post('/send-order', orderLimit, async (req, res) => {
   try {
     const { naam, email, tel, adres, items, totaal } = req.body;
     if (!naam || !email || !Array.isArray(items) || !items.length) {
       return res.status(400).json({ error: 'Ontbrekende velden' });
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Ongeldig e-mailadres' });
+    if (items.length > 50) return res.status(400).json({ error: 'Te veel producten' });
     await transporter.sendMail({
       from: '"Veramiek Webshop" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',

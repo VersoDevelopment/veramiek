@@ -1297,6 +1297,7 @@
         </div>
       </div>
       <form class="contact-form" onsubmit="sendMessage(event)">
+        <input name="website" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-row">
           <div class="form-group">
             <label for="naam">Naam</label>
@@ -2023,7 +2024,8 @@
           naam:      form.naam.value,
           email:     form.email.value,
           onderwerp: form.onderwerp.value,
-          bericht:   form.bericht.value
+          bericht:   form.bericht.value,
+          website:   form.website.value
         })
       });
       if (!res.ok) throw new Error();
