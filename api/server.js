@@ -162,7 +162,7 @@ function auth(req, res, next) {
 
 // ── Rate limiting ──
 const loginAttempts = new Map();
-function rateLimit(req, res, next) {
+function loginRateLimit(req, res, next) {
   const key = req.ip || 'unknown';
   const now = Date.now();
   const recent = (loginAttempts.get(key) || []).filter(t => now - t < 900000);
@@ -257,7 +257,7 @@ app.post('/admin/setup', setupLimit, async (req, res) => {
 });
 
 // ── Login ──
-app.post('/admin/login', rateLimit, async (req, res) => {
+app.post('/admin/login', loginRateLimit, async (req, res) => {
   const { password, totp } = req.body || {};
   const pwOk   = password && bcrypt.compareSync(String(password), adminHash);
   const totpOk = totp && authenticator.check(String(totp), totpSecret);
