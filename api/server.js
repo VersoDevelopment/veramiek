@@ -156,7 +156,7 @@ function auth(req, res, next) {
     req.admin = jwt.verify(h.slice(7), process.env.JWT_SECRET);
     next();
   } catch {
-    res.status(401).json({ error: 'Sessie verlopen — log opnieuw in' });
+    res.status(401).json({ error: 'Sessie verlopen, log opnieuw in' });
   }
 }
 
@@ -192,7 +192,7 @@ app.get('/admin', (req, res) => res.redirect('/'));
 app.get('/admin/setup', (req, res) => {
   res.send(`<!DOCTYPE html><html lang="nl"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Veramiek — 2FA Instellen</title>
+<title>Veramiek: 2FA Instellen</title>
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -465,7 +465,7 @@ app.post('/send-contact', contactLimit, async (req, res) => {
       from: '"Veramiek Website" <info@versodevelopment.nl>',
       replyTo: email,
       to: 'info@veramiek.nl',
-      subject: `Nieuw bericht — ${naam}`,
+      subject: `Nieuw bericht van ${naam}`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
@@ -478,7 +478,7 @@ app.post('/send-contact', contactLimit, async (req, res) => {
     <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#2d1f17;margin-bottom:20px;">
       <tr><td style="padding:4px 0;color:#7a6259;width:90px;">Naam</td><td style="padding:4px 0;font-weight:bold;">${escapeHtml(naam)}</td></tr>
       <tr><td style="padding:4px 0;color:#7a6259;">E-mail</td><td style="padding:4px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#c2714f;">${escapeHtml(email)}</a></td></tr>
-      <tr><td style="padding:4px 0;color:#7a6259;">Onderwerp</td><td style="padding:4px 0;">${escapeHtml(onderwerp || '—')}</td></tr>
+      <tr><td style="padding:4px 0;color:#7a6259;">Onderwerp</td><td style="padding:4px 0;">${escapeHtml(onderwerp || '(geen)')}</td></tr>
     </table>
     <div style="background:#faf7f2;border-left:3px solid #c2714f;padding:14px 18px;font-size:14px;color:#2d1f17;line-height:1.7;white-space:pre-wrap;">${escapeHtml(bericht)}</div>
   </td></tr>
@@ -489,7 +489,7 @@ app.post('/send-contact', contactLimit, async (req, res) => {
 </body></html>`
     });
     await transporter.sendMail({
-      from: '"Vera — Veramiek" <info@versodevelopment.nl>',
+      from: '"Vera, Veramiek" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',
       to: email,
       subject: `Bedankt voor je bericht, ${escapeHtml(naam)}!`,
@@ -531,11 +531,11 @@ app.post('/send-order', orderLimit, async (req, res) => {
       from: '"Veramiek Webshop" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',
       to: 'info@veramiek.nl',
-      subject: `Nieuwe bestelling — ${naam}`,
+      subject: `Nieuwe bestelling van ${naam}`,
       html: buildVeraEmail({ naam, email, tel, adres, items, totaal }),
     });
     await transporter.sendMail({
-      from: '"Vera — Veramiek" <info@versodevelopment.nl>',
+      from: '"Vera, Veramiek" <info@versodevelopment.nl>',
       replyTo: 'info@veramiek.nl',
       to: email,
       subject: 'Bedankt voor je bestelling bij Veramiek!',
