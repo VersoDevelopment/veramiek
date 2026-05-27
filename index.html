@@ -1136,7 +1136,7 @@
 
 <!-- ── UITGELICHT ── -->
 <section id="uitgelicht" style="background:var(--cream);padding:5rem 4rem;">
-  <div style="max-width:900px;margin:0 auto;">
+  <div style="max-width:900px;margin:0 auto;opacity:0;transform:translateY(40px);transition:opacity 0.75s ease,transform 0.75s ease;" data-fly-in>
     <p class="section-label">Uitgelicht</p>
     <h2 class="section-title">Veramiek op de Stek Markt</h2>
     <p class="section-sub" style="margin-bottom:2.5rem;">Voor het eerst sta ik op een markt. Vrijdag 22 augustus ben ik te vinden op de Stek Markt, van 16:00 tot 22:00 uur. Een mooie kans om de keramiekstukken niet alleen op een scherm te bekijken, maar ook echt vast te houden, het gewicht te voelen en de glazuurkleuren in het echt te zien. Want dat maakt elk stuk pas echt bijzonder. Zie ik je dan?</p>
@@ -2143,6 +2143,23 @@
 
   loadProducts()
   loadContent()
+
+  // Fly-in animatie voor uitgelicht sectie
+  const flyEls = document.querySelectorAll('[data-fly-in]')
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1'
+          e.target.style.transform = 'translateY(0)'
+          io.unobserve(e.target)
+        }
+      })
+    }, { threshold: 0.12 })
+    flyEls.forEach(el => io.observe(el))
+  } else {
+    flyEls.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none' })
+  }
 </script>
 </body>
 </html>
