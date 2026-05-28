@@ -126,9 +126,15 @@ app.use(cors({
   credentials: true
 }));
 
+const globalLimit  = rateLimit({ windowMs: 60_000, max: 200, standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Te veel verzoeken. Probeer het later opnieuw.' } });
 const contactLimit = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
 const orderLimit   = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
 const setupLimit   = rateLimit({ windowMs: 900_000, max: 5, standardHeaders: true, legacyHeaders: false });
+const loginLimit   = rateLimit({ windowMs: 900_000, max: 5, standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Te veel pogingen. Probeer over 15 minuten opnieuw.' } });
+const uploadLimit  = rateLimit({ windowMs: 60_000, max: 20, standardHeaders: true, legacyHeaders: false });
+app.use(globalLimit);
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── Multer (foto upload) ──
@@ -144,6 +150,8 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) return cb(new Error('Alleen afbeeldingen toegestaan'));
+    // Reject SVG: can contain embedded JavaScript that executes in browsers
+    if (file.mimetype === 'image/svg+xml') return cb(new Error('SVG-bestanden zijn niet toegestaan'));
     cb(null, true);
   }
 });
@@ -160,28 +168,20 @@ function auth(req, res, next) {
   }
 }
 
-// ── Rate limiting ──
-const loginAttempts = new Map();
-function loginRateLimit(req, res, next) {
-  const key = req.ip || 'unknown';
-  const now = Date.now();
-  const recent = (loginAttempts.get(key) || []).filter(t => now - t < 900000);
-  if (recent.length >= 5) {
-    return res.status(429).json({ error: 'Te veel pogingen. Probeer over 15 minuten opnieuw.' });
-  }
-  recent.push(now);
-  loginAttempts.set(key, recent);
-  next();
-}
+// ── Rate limiting (login uses express-rate-limit via loginLimit defined above) ──
 
 // ── Hulpfuncties e-mail ──
 function escapeHtml(str) {
   return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+const ALLOWED_IMG_ORIGINS = ['https://veramiek.nl'];
 function imgUrl(src) {
   if (!src) return null;
-  if (String(src).startsWith('http')) return String(src);
-  return 'https://veramiek.nl/' + String(src).split('/').map(encodeURIComponent).join('/');
+  const s = String(src);
+  // Only allow images hosted on veramiek.nl to prevent external tracking via email clients
+  if (s.startsWith('https://veramiek.nl/')) return s;
+  if (!s.startsWith('http')) return 'https://veramiek.nl/' + s.split('/').map(encodeURIComponent).join('/');
+  return null; // reject external URLs
 }
 
 // ── Admin panel HTML ──
@@ -257,14 +257,13 @@ app.post('/admin/setup', setupLimit, async (req, res) => {
 });
 
 // ── Login ──
-app.post('/admin/login', loginRateLimit, async (req, res) => {
+app.post('/admin/login', loginLimit, async (req, res) => {
   const { password, totp } = req.body || {};
   const pwOk   = password && bcrypt.compareSync(String(password), adminHash);
   const totpOk = totp && authenticator.check(String(totp), totpSecret);
   if (!pwOk || !totpOk) {
     return res.status(401).json({ error: 'Onjuist wachtwoord of verificatiecode' });
   }
-  loginAttempts.delete(req.ip);
   const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, { expiresIn: '8h' });
   res.json({ token });
 });
@@ -343,7 +342,7 @@ app.put('/admin/content', auth, (req, res) => {
 });
 
 // ── Foto upload ──
-app.post('/admin/upload', auth, upload.single('image'), (req, res) => {
+app.post('/admin/upload', auth, uploadLimit, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Geen bestand ontvangen' });
   const url = `https://veramiek.nl/api/uploads/${req.file.filename}`;
   res.json({ url });
@@ -546,6 +545,17 @@ app.post('/send-order', orderLimit, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Mail mislukt' });
   }
+});
+
+// ── Global error handler (prevents stack trace leakage to clients) ──
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error('[Error]', err.message, err.stack);
+  // Multer errors (file type, size)
+  if (err.name === 'MulterError' || (err.message && (err.message.includes('afbeeldingen') || err.message.includes('SVG')))) {
+    return res.status(400).json({ error: err.message });
+  }
+  res.status(500).json({ error: 'Er is een interne fout opgetreden' });
 });
 
 app.listen(3001, () => console.log('Veramiek API op poort 3001'));

@@ -5,5 +5,6 @@ RUN npm ci --omit=dev
 COPY server.js .
 COPY admin.html .
 RUN mkdir -p /app/data /app/uploads
+ENV NODE_ENV=production
 EXPOSE 3001
 CMD ["node", "server.js"]
