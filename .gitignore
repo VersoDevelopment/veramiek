@@ -1,0 +1,3 @@
+# Zware mediabestanden horen niet in git (los op de server plaatsen)
+*.mp4
+*.mov
