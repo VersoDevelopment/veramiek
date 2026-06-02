@@ -1,3 +1,9 @@
 # Zware mediabestanden horen niet in git (los op de server plaatsen)
 *.mp4
 *.mov
+
+# Stitch-experimenten (lokale schetsen, niet in productie)
+index-v2.html
+stitch-collectie.html
+stitch-home.html
+stitch-home-preview.png
