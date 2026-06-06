@@ -30,11 +30,28 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
-        .filter-sticky {
-            position: sticky;
-            top: 5rem;
-            max-height: calc(100vh - 6rem);
-            overflow-y: auto;
+        /* Filters: pills op mobiel, tekstlijst op desktop */
+        .cat-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+            border: 1px solid #d3c3be;
+            color: #4f4440;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+            transition: all .2s;
+        }
+        .cat-btn.is-active { background: #911818; border-color: #911818; color: #efe6d3; }
+        @media (min-width: 768px) {
+            .cat-btn { border: 0; border-radius: 0; padding: 0; width: 100%; text-align: left; }
+            .cat-btn:hover { color: #911818; padding-left: 12px; }
+            .cat-btn.is-active { background: transparent; color: #911818; font-weight: 500; border-left: 2px solid #911818; padding-left: 12px; }
+            .filter-sticky {
+                position: sticky;
+                top: 6rem;
+                max-height: calc(100vh - 7rem);
+                overflow-y: auto;
+            }
         }
         [data-cat] { display: block; }
         [data-cat].hidden { display: none; }
@@ -42,9 +59,9 @@
 </head>
 <body class="font-plattekunst-md selection:bg-secondary-container selection:text-on-secondary-container">
 <!-- TopNavBar: zelfde stijl als de index bij het scrollen -->
-<header class="fixed top-0 left-0 right-0 z-50" style="background: rgba(239,230,211,.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 rgba(31,27,19,.06);">
-<div class="max-w-7xl mx-auto px-marge-mobiel md:px-marge-desktop pt-5 pb-3">
-<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-on-surface/10 pb-4">
+<header class="fixed top-0 left-0 right-0 z-50" style="background: rgba(239,230,211,.80); backdrop-filter: blur(10px);">
+<div class="max-w-7xl mx-auto px-marge-mobiel md:px-marge-desktop pt-5 pb-4">
+<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
 <div class="hidden md:flex items-center gap-8 col-start-1">
 <a class="text-secondary border-b border-secondary font-medium font-plattekunst-md text-plattekunst-md transition-all duration-300" href="collectie.html">Collectie</a>
 <a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 font-plattekunst-md text-plattekunst-md" href="index.html#workshops">Workshops</a>
@@ -95,12 +112,12 @@
 <!-- Categories -->
 <div>
 <h3 class="font-label-sm text-label-sm text-on-surface uppercase mb-4 tracking-widest">Categorieen</h3>
-<ul class="flex flex-wrap md:flex-col gap-2 md:gap-3">
-<li><button onclick="filterCat('alles', this)" class="cat-btn w-full text-left font-plattekunst-md text-secondary font-medium border-l-2 border-secondary pl-3 transition-all">Alles</button></li>
-<li><button onclick="filterCat('mokken', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Kopjes &amp; Mokken</button></li>
-<li><button onclick="filterCat('borden', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Borden &amp; Kommen</button></li>
-<li><button onclick="filterCat('schalen', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Schalen</button></li>
-<li><button onclick="filterCat('overige', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Overige</button></li>
+<ul class="flex md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-visible -mx-marge-mobiel px-marge-mobiel md:mx-0 md:px-0 pb-2 md:pb-0">
+<li><button onclick="filterCat('alles', this)" class="cat-btn is-active font-plattekunst-md">Alles</button></li>
+<li><button onclick="filterCat('mokken', this)" class="cat-btn font-plattekunst-md">Kopjes &amp; Mokken</button></li>
+<li><button onclick="filterCat('borden', this)" class="cat-btn font-plattekunst-md">Borden &amp; Kommen</button></li>
+<li><button onclick="filterCat('schalen', this)" class="cat-btn font-plattekunst-md">Schalen</button></li>
+<li><button onclick="filterCat('overige', this)" class="cat-btn font-plattekunst-md">Overige</button></li>
 </ul>
 </div>
 </div>
@@ -381,7 +398,7 @@
 <footer class="bg-surface-container dark:bg-surface-container border-t border-on-surface/5">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-tussenruimte px-marge-desktop py-sectie-afstand max-w-7xl mx-auto">
 <div class="flex flex-col gap-4">
-<img alt="Veramiek Logo" class="h-12 w-fit" src="Foto's keramiek/Logo horizontaal cropped.png"/>
+<img alt="Veramiek logo" class="h-20 w-20" src="Foto's keramiek/Logo rond.png"/>
 <p class="font-plattekunst-md text-on-surface-variant max-w-xs">
                     Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.
                 </p>
@@ -415,12 +432,8 @@
 <script>
         function filterCat(cat, btn) {
             // Update active button state
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('text-secondary', 'font-medium', 'border-l-2', 'border-secondary', 'pl-3');
-                b.classList.add('text-on-surface-variant');
-            });
-            btn.classList.add('text-secondary', 'font-medium', 'border-l-2', 'border-secondary', 'pl-3');
-            btn.classList.remove('text-on-surface-variant');
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
 
             // Filter products
             let visible = 0;
@@ -457,8 +470,10 @@
         const mobileMenu = document.getElementById('mobileMenu');
         const menuToggle = document.getElementById('menuToggle');
         const menuIcon = document.getElementById('menuIcon');
+        const siteHeader = document.querySelector('header');
         function toggleMenu() {
             const open = mobileMenu.classList.toggle('hidden') === false;
+            if (open) mobileMenu.style.top = Math.round(siteHeader.getBoundingClientRect().bottom) + 'px';
             menuIcon.textContent = open ? 'close' : 'menu';
             menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
