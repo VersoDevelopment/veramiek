@@ -2,8 +2,9 @@
 *.mp4
 *.mov
 
-# Stitch-experimenten (lokale schetsen, niet in productie)
+# Oude/experimentele pagina (wordt ook door nginx geblokkeerd)
 index-v2.html
-stitch-collectie.html
-stitch-home.html
-stitch-home-preview.png
+
+# Tailwind build-dependencies (config + input.css worden wel getrackt)
+.build/node_modules/
+.backups/

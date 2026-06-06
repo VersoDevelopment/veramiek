@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html class="light" lang="nl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>De Collectie | Veramiek Handgemaakt Keramiek</title>
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"/>
+<link rel="apple-touch-icon" href="/favicon.png"/>
+<link rel="canonical" href="https://veramiek.nl/collectie.html"/>
+<meta name="description" content="Ontdek de volledige collectie handgemaakt keramiek van Veramiek: schalen, mokken, borden en meer. Elk stuk uniek, met de hand gevormd in Etten-Leur."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="styles.css"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=DM+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fff8f2;
+            color: #1f1b13;
+        }
+        .editorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+        @media (min-width: 1024px) {
+            .editorial-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .filter-sticky {
+            position: sticky;
+            top: 5rem;
+            max-height: calc(100vh - 6rem);
+            overflow-y: auto;
+        }
+        [data-cat] { display: block; }
+        [data-cat].hidden { display: none; }
+    </style>
+</head>
+<body class="font-plattekunst-md selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar: zelfde stijl als de index bij het scrollen -->
+<header class="fixed top-0 left-0 right-0 z-50" style="background: rgba(239,230,211,.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 rgba(31,27,19,.06);">
+<div class="max-w-7xl mx-auto px-marge-mobiel md:px-marge-desktop pt-5 pb-3">
+<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-on-surface/10 pb-4">
+<div class="hidden md:flex items-center gap-8 col-start-1">
+<a class="text-secondary border-b border-secondary font-medium font-plattekunst-md text-plattekunst-md transition-all duration-300" href="collectie.html">Collectie</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 font-plattekunst-md text-plattekunst-md" href="index.html#workshops">Workshops</a>
+</div>
+<div class="col-start-2 justify-self-center">
+<a href="index.html" aria-label="Veramiek home">
+<img alt="Veramiek, handmade ceramics" class="h-8 md:h-9 w-auto" src="Foto's keramiek/Logo horizontaal cropped.png"/>
+</a>
+</div>
+<div class="hidden md:flex items-center gap-8 col-start-3 justify-self-end">
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 font-plattekunst-md text-plattekunst-md" href="index.html#over">Over</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 font-plattekunst-md text-plattekunst-md" href="index.html#contact">Contact</a>
+</div>
+<button id="menuToggle" onclick="toggleMenu()" aria-label="Menu openen" aria-expanded="false" class="md:hidden col-start-3 justify-self-end">
+<span id="menuIcon" class="material-symbols-outlined text-primary">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="fixed inset-x-0 top-[88px] z-40 bg-surface border-y border-on-surface/10 md:hidden hidden">
+<nav class="flex flex-col px-marge-mobiel py-4">
+<a class="mobile-link text-secondary font-medium font-plattekunst-md text-plattekunst-lg py-3 border-b border-on-surface/5" href="collectie.html">Collectie</a>
+<a class="mobile-link text-on-surface-variant hover:text-secondary transition-colors font-plattekunst-md text-plattekunst-lg py-3 border-b border-on-surface/5" href="index.html#workshops">Workshops</a>
+<a class="mobile-link text-on-surface-variant hover:text-secondary transition-colors font-plattekunst-md text-plattekunst-lg py-3 border-b border-on-surface/5" href="index.html#over">Over</a>
+<a class="mobile-link text-on-surface-variant hover:text-secondary transition-colors font-plattekunst-md text-plattekunst-lg py-3" href="index.html#contact">Contact</a>
+</nav>
+</div>
+<main class="pt-32 pb-sectie-afstand px-marge-mobiel md:px-marge-desktop max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-sectie-afstand flex flex-col md:flex-row md:items-end justify-between gap-basis">
+<div class="max-w-2xl">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4 block">Mijn collectie</span>
+<h1 class="font-kop-xl text-kop-xl text-secondary mb-6">De Collectie</h1>
+<p class="font-plattekunst-lg text-plattekunst-lg text-on-surface-variant leading-relaxed">
+                    Een zorgvuldige selectie van handgemaakte objecten. Elk stuk draagt de sporen van het maakproces en de textuur van de aarde. Ontdek functionele kunst voor dagelijks gebruik.
+                </p>
+</div>
+<div class="mt-8 md:mt-0 flex items-center gap-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Maatwerk?</span>
+<a href="index.html#contact" class="border border-secondary text-secondary px-6 py-2 font-label-sm text-label-sm hover:bg-secondary/5 transition-all">AANVRAGEN</a>
+</div>
+</header>
+<div class="flex flex-col md:flex-row gap-tussenruimte">
+<!-- Sidebar Filters -->
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="filter-sticky flex flex-col gap-8">
+<!-- Categories -->
+<div>
+<h3 class="font-label-sm text-label-sm text-on-surface uppercase mb-4 tracking-widest">Categorieen</h3>
+<ul class="flex flex-wrap md:flex-col gap-2 md:gap-3">
+<li><button onclick="filterCat('alles', this)" class="cat-btn w-full text-left font-plattekunst-md text-secondary font-medium border-l-2 border-secondary pl-3 transition-all">Alles</button></li>
+<li><button onclick="filterCat('mokken', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Kopjes &amp; Mokken</button></li>
+<li><button onclick="filterCat('borden', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Borden &amp; Kommen</button></li>
+<li><button onclick="filterCat('schalen', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Schalen</button></li>
+<li><button onclick="filterCat('overige', this)" class="cat-btn w-full text-left font-plattekunst-md text-on-surface-variant hover:text-secondary hover:pl-3 transition-all">Overige</button></li>
+</ul>
+</div>
+</div>
+</aside>
+<!-- Product Grid -->
+<section class="flex-grow">
+<div class="editorial-grid gap-y-16 gap-x-8" id="productGrid">
+
+<!-- Pot -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6 relative">
+<img alt="Pot handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/8584cac942bc.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Pot</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 17,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Veelzijdige pot</p>
+</div>
+</article>
+
+<!-- Berry Bowl -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="overige">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<div class="w-full h-full bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size:64px;">water_drop</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Berry Bowl</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 17,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Spoelkom voor fruit of groente</p>
+</div>
+</article>
+
+<!-- Kopjes -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="mokken">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Kopjes handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/c13e04226af2.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Kopjes</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 9,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Handgevormd keramiek</p>
+</div>
+</article>
+
+<!-- (Thee)mok -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="mokken">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Theemok handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/03ce7346379d.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">(Thee)mok</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 14,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ruime mok voor thee of koffie</p>
+</div>
+</article>
+
+<!-- Gebaksbordje -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="borden">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<div class="w-full h-full bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size:64px;">brunch_dining</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Gebaksbordje</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 9,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Klein bordje voor gebak of hapjes</p>
+</div>
+</article>
+
+<!-- Diepbord -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="borden">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Diepbord handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/c7a9c9b6fa45.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Diepbord</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 14,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Voor soep, pasta of salade</p>
+</div>
+</article>
+
+<!-- Dinerbord -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="borden">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<div class="w-full h-full bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size:64px;">dinner_dining</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Dinerbord</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 17,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Het complete dinnerbord</p>
+</div>
+</article>
+
+<!-- Kom -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Kom handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/f2ef4644b41a.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Kom</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 9,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Sausbakje of tapasschaaltje</p>
+</div>
+</article>
+
+<!-- Chip & Dip Bowl -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6 relative">
+<img alt="Chip en Dip Bowl handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/ddaef2a762b2.png"/>
+<div class="absolute top-4 left-4 bg-surface/90 px-3 py-1 font-label-sm text-secondary uppercase">Favoriet</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Chip &amp; Dip Bowl</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 39,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Grote schaal met dipdoosje</p>
+</div>
+</article>
+
+<!-- Chip & Dip Bowl 2 -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Chip en Dip Bowl handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/c2fbe95f80d9.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Chip &amp; Dip Bowl</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 39,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Grote schaal met dipdoosje</p>
+</div>
+</article>
+
+<!-- Matcha Set -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="overige">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6 relative">
+<img alt="Matcha Set handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/62fb9f32e5f3.png"/>
+<div class="absolute top-4 left-4 bg-surface/90 px-3 py-1 font-label-sm text-secondary uppercase">Set</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Matcha Set</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 39,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Kom en houder, compleet setje</p>
+</div>
+</article>
+
+<!-- Lepelhouder -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="overige">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Lepelhouder handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/bf861244fee2.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Lepelhouder</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 12,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Handgevormde keramiek lepelhouders</p>
+</div>
+</article>
+
+<!-- Bubble Cups -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="mokken">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Bubble Cups handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/b77365c80e58.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Bubble Cups</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 14,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Handgevormd met een speelse look</p>
+</div>
+</article>
+
+<!-- Lunchbord -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="borden">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<div class="w-full h-full bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size:64px;">lunch_dining</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Lunchbord</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 14,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ideaal voor lunch</p>
+</div>
+</article>
+
+<!-- Schaal -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Schaal handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/a6b364ddc1ce.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Schaal</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 39,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Serveerschaal</p>
+</div>
+</article>
+
+<!-- Schaal 2 -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="schalen">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Schaal handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/e1d083ba2ba7.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Schaal</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 39,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Serveerschaal</p>
+</div>
+</article>
+
+<!-- Asbak -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out" data-cat="overige">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Asbak handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/fcb1adf97996.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Asbak</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 17,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Handgevormd keramiek</p>
+</div>
+</article>
+
+<!-- Asbak 2 -->
+<article class="group cursor-pointer opacity-0 translate-y-8 transition-all duration-1000 ease-out md:mt-12" data-cat="overige">
+<div class="aspect-[2/3] overflow-hidden bg-surface-container mb-6">
+<img alt="Asbak handgemaakt keramiek" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://veramiek.nl/api/uploads/ab5cf596ab3c.png"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h3 class="font-kop-md text-kop-md text-primary">Asbak</h3>
+<span class="font-plattekunst-md text-on-surface-variant">€ 17,95</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Handgevormd keramiek</p>
+</div>
+</article>
+
+</div>
+<!-- Geen resultaten melding -->
+<p id="noResults" class="hidden text-center text-on-surface-variant font-plattekunst-md py-16">Geen producten gevonden in deze categorie.</p>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container border-t border-on-surface/5">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-tussenruimte px-marge-desktop py-sectie-afstand max-w-7xl mx-auto">
+<div class="flex flex-col gap-4">
+<img alt="Veramiek Logo" class="h-12 w-fit" src="Foto's keramiek/Logo horizontaal cropped.png"/>
+<p class="font-plattekunst-md text-on-surface-variant max-w-xs">
+                    Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.
+                </p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-4">
+                    &copy; 2026 Veramiek. KvK 42062076.
+                </p>
+</div>
+<div class="flex flex-col gap-6">
+<h3 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Snel naar</h3>
+<div class="flex flex-col gap-3">
+<a class="font-plattekunst-md text-on-surface-variant hover:text-secondary transition-colors" href="index.html#workshops">Workshops</a>
+<a class="font-plattekunst-md text-on-surface-variant hover:text-secondary transition-colors" href="index.html#over">Over</a>
+<a class="font-plattekunst-md text-on-surface-variant hover:text-secondary transition-colors" href="index.html#contact">Contact</a>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<h3 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Volg ons</h3>
+<div class="flex flex-col gap-3">
+<a class="font-plattekunst-md text-on-surface-variant hover:text-secondary transition-colors" href="https://www.instagram.com/veramiek.nl" target="_blank" rel="noopener">Instagram @veramiek.nl</a>
+<a class="font-plattekunst-md text-on-surface-variant hover:text-secondary transition-colors" href="https://www.tiktok.com/@veramiek" target="_blank" rel="noopener">TikTok @veramiek</a>
+</div>
+<div class="mt-4">
+<p class="font-plattekunst-md text-on-surface-variant">
+<a href="https://wa.me/31648145413" class="hover:text-secondary transition-colors">+31 6 48 14 54 13</a><br/>
+<a href="mailto:info@veramiek.nl" class="hover:text-secondary transition-colors">info@veramiek.nl</a>
+</p>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        function filterCat(cat, btn) {
+            // Update active button state
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('text-secondary', 'font-medium', 'border-l-2', 'border-secondary', 'pl-3');
+                b.classList.add('text-on-surface-variant');
+            });
+            btn.classList.add('text-secondary', 'font-medium', 'border-l-2', 'border-secondary', 'pl-3');
+            btn.classList.remove('text-on-surface-variant');
+
+            // Filter products
+            let visible = 0;
+            document.querySelectorAll('[data-cat]').forEach(el => {
+                const show = cat === 'alles' || el.dataset.cat === cat;
+                el.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+            document.getElementById('noResults').classList.toggle('hidden', visible > 0);
+        }
+
+        // Scroll reveal
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-8');
+                    }, index % 3 * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('[data-cat]').forEach(product => {
+            observer.observe(product);
+        });
+
+        // Mobile menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuToggle = document.getElementById('menuToggle');
+        const menuIcon = document.getElementById('menuIcon');
+        function toggleMenu() {
+            const open = mobileMenu.classList.toggle('hidden') === false;
+            menuIcon.textContent = open ? 'close' : 'menu';
+            menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        document.querySelectorAll('.mobile-link').forEach(a => {
+            a.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.textContent = 'menu';
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+    </script>
+</body></html>
