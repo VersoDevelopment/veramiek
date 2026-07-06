@@ -21,38 +21,33 @@ export type Collection = {
   href: string;
   image: string;
   alt: string;
-  /** Grid-plaatsing + verhouding per tegel, zodat de wand niet uit vier identieke kaarten bestaat. */
-  tileClass: string;
 };
 
+/** De eerste drie zijn de uitgelichte rij op de homepage; het megamenu toont alles. */
 export const collections: Collection[] = [
   {
     name: "Dune & Dust",
     href: "/#collecties",
     image: "/images/schaal-1.png",
     alt: "Handgedraaide schaal uit de collectie Dune & Dust",
-    tileClass: "md:col-span-7 aspect-[3/4] md:aspect-[4/3]",
   },
   {
     name: "Blush",
     href: "/#collecties",
     image: "/images/bubble-cups.png",
     alt: "Bubble cups uit de collectie Blush",
-    tileClass: "md:col-span-5 aspect-[3/4] md:aspect-auto md:h-full",
   },
   {
     name: "Boeren bontjes",
     href: "/#collecties",
     image: "/images/letters.png",
     alt: "Beschilderd keramiek uit de collectie Boeren bontjes",
-    tileClass: "md:col-span-5 aspect-[3/4] md:aspect-[5/4]",
   },
   {
     name: "Placeholder",
     href: "/#collecties",
     image: "/images/matcha-set.png",
     alt: "Matcha set uit een nieuwe collectie",
-    tileClass: "md:col-span-7 aspect-[3/4] md:aspect-auto md:h-full",
   },
 ];
 
@@ -88,8 +83,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/kopjes.png",
     alt: "Vers gebakken kopjes op een plank in het atelier",
     meta: "Stoken, 2026",
-    layoutClass: "col-span-12 md:col-span-7 md:row-span-2",
-    aspectClass: "aspect-[4/3] md:aspect-[4/5]",
+    layoutClass: "col-span-12 md:col-span-3 md:col-start-1",
+    aspectClass: "aspect-[4/3] md:aspect-[3/4]",
   },
   {
     title: "Geen twee glazuren zijn hetzelfde",
@@ -98,8 +93,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/chip-and-dip-1.png",
     alt: "Geglazuurde chip and dip schaal",
     meta: "Glazuur, 2026",
-    layoutClass: "col-span-12 md:col-span-5 md:col-start-8 md:translate-y-10",
-    aspectClass: "aspect-[4/3] md:aspect-[4/5]",
+    layoutClass: "col-span-12 md:col-span-4 md:col-start-5 md:translate-y-14",
+    aspectClass: "aspect-[4/3] md:aspect-[16/11]",
   },
   {
     title: "Een ochtend in het atelier",
@@ -108,8 +103,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/studio-hero.webp",
     alt: "Werkbank met klei en gereedschap in het atelier",
     meta: "Atelier, 2025",
-    layoutClass: "col-span-12 md:col-span-5 md:col-start-8 md:translate-y-12",
-    aspectClass: "aspect-[4/3] md:aspect-[16/10]",
+    layoutClass: "col-span-12 md:col-span-3 md:col-start-10 md:translate-y-4",
+    aspectClass: "aspect-[4/3] md:aspect-[3/4]",
   },
   {
     title: "Draaien leer je met je handen",
@@ -118,8 +113,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/schaaltje-2.png",
     alt: "Handgedraaid schaaltje",
     meta: "Techniek, 2026",
-    layoutClass: "col-span-12 md:col-span-4 md:col-start-1 md:-translate-y-8",
-    aspectClass: "aspect-[4/3] md:aspect-[3/4]",
+    layoutClass: "col-span-12 md:col-span-4 md:col-start-2",
+    aspectClass: "aspect-[4/3] md:aspect-[4/5]",
   },
   {
     title: "Van klomp klei tot diep bord",
@@ -128,8 +123,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/diep-bord.png",
     alt: "Diep bord met glazuur",
     meta: "Proces, 2025",
-    layoutClass: "col-span-12 md:col-span-5 md:col-start-6 md:translate-y-6",
-    aspectClass: "aspect-[4/3] md:aspect-[5/4]",
+    layoutClass: "col-span-12 md:col-span-4 md:col-start-8 md:translate-y-16",
+    aspectClass: "aspect-[4/3] md:aspect-[16/10]",
   },
   {
     title: "Kleine dingen, veel geduld",
@@ -138,7 +133,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/lepel-dingen.png",
     alt: "Handgemaakte lepelhouders",
     meta: "Detail, 2026",
-    layoutClass: "col-span-12 md:col-span-3 md:col-start-1 md:-translate-y-14",
+    layoutClass: "col-span-12 md:col-span-3 md:col-start-5",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
   },
 ];
