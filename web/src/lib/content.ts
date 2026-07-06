@@ -79,12 +79,12 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
-    title: "Uit de oven: de eerste stook van het seizoen",
+    title: "Hoe Veramiek ontstond",
     excerpt:
-      "De oven ging voor het eerst dit seizoen op temperatuur. Wat er na twaalf uur wachten uit kwam, had ik zelf niet verwacht.",
+      "In september 2025 begon ik aan een cursus keramiek, zonder enig idee waar het toe zou leiden. Vanaf de eerste les voelde ik het: dit is helemaal mijn ding.",
     image: "/images/kopjes.png",
     alt: "Vers gebakken kopjes op een plank in het atelier",
-    meta: "Stoken, 2026",
+    meta: "Het begin, 2025",
     layoutClass: "col-span-12 md:col-span-2 md:col-start-1",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
     tinted: true,
@@ -129,17 +129,6 @@ export const blogPosts: BlogPost[] = [
     meta: "Proces, 2025",
     layoutClass: "col-span-12 md:col-span-5 md:col-start-7 md:translate-y-20",
     aspectClass: "aspect-[4/3] md:aspect-[16/10]",
-  },
-  {
-    title: "Kleine dingen, veel geduld",
-    excerpt:
-      "Lepelhouders lijken simpel, tot je er twintig achter elkaar maakt en er zes de oven overleven.",
-    image: "/images/lepel-dingen.png",
-    alt: "Handgemaakte lepelhouders",
-    meta: "Detail, 2026",
-    layoutClass: "col-span-12 md:col-span-2 md:col-start-5",
-    aspectClass: "aspect-[4/3] md:aspect-[3/4]",
-    tinted: true,
   },
 ];
 

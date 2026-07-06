@@ -79,7 +79,7 @@ export function NavMegaMenu({ solid }: { solid: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={menuTransition}
-            className="absolute top-full right-5 left-auto flex flex-row-reverse border border-wine/10 bg-white text-wine md:right-10"
+            className="absolute top-full right-0 left-auto flex flex-row-reverse border border-wine/10 bg-white text-wine"
           >
             <div className="w-60 p-9">
               <p className="mb-4 font-display text-lg tracking-[0.08em]">

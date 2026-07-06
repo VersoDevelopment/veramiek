@@ -52,11 +52,29 @@ export function Nav() {
       }`}
     >
       <div className="px-5 md:px-10">
+        {/* relative: het megamenu ankert aan deze rij en opent dus direct onder de haarlijn. */}
         <div
-          className={`flex h-[56px] items-center justify-between border-b transition-colors duration-300 ${
+          className={`relative flex h-[56px] items-center justify-between border-b transition-colors duration-300 ${
             solid ? "border-sage/40" : "border-white/30"
           }`}
         >
+          {/* Bij scrollen verhuist het logo naar boven de lijn, tussen de links in. */}
+          {solid && (
+            <Link
+              href="/"
+              aria-label="Veramiek, naar de homepage"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
+              <Image
+                src="/logo/logo-horizontal.png"
+                alt="Veramiek"
+                width={520}
+                height={130}
+                className="h-8 w-auto"
+                preload
+              />
+            </Link>
+          )}
           <nav
             aria-label="Hoofdnavigatie links"
             className="hidden flex-1 items-center gap-9 lg:flex"
@@ -100,18 +118,20 @@ export function Nav() {
           </div>
         </div>
 
-        <div className="flex justify-center py-3">
-          <Link href="/" aria-label="Veramiek, naar de homepage">
-            <Image
-              src={solid ? "/logo/logo-horizontal.png" : "/logo/logo-horizontal-white.png"}
-              alt="Veramiek"
-              width={520}
-              height={130}
-              className="h-9 w-auto md:h-10"
-              preload
-            />
-          </Link>
-        </div>
+        {!solid && (
+          <div className="flex justify-center py-3">
+            <Link href="/" aria-label="Veramiek, naar de homepage">
+              <Image
+                src="/logo/logo-horizontal-white.png"
+                alt="Veramiek"
+                width={520}
+                height={130}
+                className="h-9 w-auto md:h-10"
+                preload
+              />
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
