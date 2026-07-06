@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veramiek — Kleurenpalet preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alata&family=Cardo:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Gruppo&family=Special+Gothic+Expanded+One&family=Julius+Sans+One&display=swap" rel="stylesheet">
+<style>
+  /* Hadley: echt gratis (Apostrophic Lab, ook commercieel), self-hosted */
+  @font-face {
+    font-family: 'Hadley';
+    src: url('fonts/Hadley-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
+  /* Harietta: nog DEMO-only (Harmonais Visual). Zet hier de demo .ttf neer
+     (fonts/HV-Harietta-Demo.ttf) zodra je 'm handmatig via Fontspring hebt gedownload
+     (script-download wordt daar geblokkeerd door Cloudflare).
+     Tot die tijd valt dit automatisch terug op Jost.
+     LET OP: demo-fonts mogen niet mee naar de live site, alleen voor preview/comping. */
+  @font-face {
+    font-family: 'HV Harietta Demo';
+    src: url('fonts/HV-Harietta-Demo.ttf') format('truetype');
+    font-display: swap;
+  }
+  /* Florentino: echt gelicenseerd (Harmonais Visual), mag mee naar de live site */
+  @font-face {
+    font-family: 'HV Florentino';
+    src: url('fonts/HV-Florentino-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  :root {
+    /* De 3 gekozen kleuren (definitieve Veramiek-vibe) */
+    --wit: #FFFFFF;
+    --deep-wine: #2F0410;
+    --pastel-groen: #CBD1A1;
+
+    /* Rollen: pas hier de mapping aan, of gebruik het paneel rechtsboven */
+    --role-bg: var(--wit);
+    --role-primary: var(--deep-wine);
+    --role-accent: var(--pastel-groen);
+
+    /* Fonts: pas hier aan, of gebruik het paneel rechtsboven */
+    --font-main: 'Playfair Display', serif;
+    --font-sub: 'Gruppo', sans-serif;
+    --main-weight: 400;
+    --main-stroke: 0px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sub);
+    font-size: 19px;
+    background: var(--role-bg);
+    color: var(--role-primary);
+    line-height: 1.6;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  nav .logo, h1, h2, h3 {
+    font-family: var(--font-main);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    font-weight: var(--main-weight, 400);
+    -webkit-text-stroke: var(--main-stroke, 0px) currentColor;
+  }
+
+  /* --- Controlepaneel --- */
+  #panel {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #fff;
+    z-index: 999;
+    line-height: 1.6;
+  }
+  #panel summary { cursor: pointer; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.9; list-style: none; }
+  #panel summary::-webkit-details-marker { display: none; }
+  #panel summary::after { content: ' \25BE'; }
+  #panel[open] summary { margin-bottom: 10px; }
+  #panel h4 { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; }
+  #panel label { display: block; margin-top: 6px; }
+  #panel select { margin-left: 6px; }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 6%;
+  }
+  nav .logo { font-size: 26px; letter-spacing: 0.08em; }
+  nav ul { list-style: none; display: flex; gap: 32px; margin: 0; padding: 0; font-size: 19px; letter-spacing: 0.03em; }
+  nav a { color: inherit; text-decoration: none; opacity: 0.85; }
+  nav a:hover { opacity: 1; }
+
+  header.hero {
+    padding: 80px 6% 100px;
+    text-align: center;
+  }
+  header.hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    margin: 0 0 16px;
+  }
+  header.hero .accent-line {
+    width: 40px;
+    height: 3px;
+    background: var(--role-accent);
+    margin: 0 auto 24px;
+    border-radius: 2px;
+  }
+  header.hero p {
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-size: 20px;
+    opacity: 0.85;
+    line-height: 1.6;
+  }
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--role-primary);
+    color: var(--role-bg);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 19px;
+    letter-spacing: 0.03em;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  section.collectie {
+    padding: 60px 6% 100px;
+  }
+  section.collectie h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 48px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--role-primary);
+    padding: 32px 24px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+  }
+  .card--featured {
+    grid-row: span 2;
+    padding: 40px 32px;
+    justify-content: flex-end;
+  }
+  .card .photo {
+    background: var(--role-bg);
+    opacity: 0.12;
+    margin-bottom: 24px;
+  }
+  .card--featured .photo { aspect-ratio: 4 / 5; }
+  .card:not(.card--featured) .photo { aspect-ratio: 16 / 9; margin-bottom: 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 19px; color: var(--role-bg); }
+  .card--featured h3 { font-size: 23px; }
+  .card p { margin: 0; font-size: 19px; color: var(--role-bg); opacity: 0.7; }
+  .card .price { color: var(--role-accent); opacity: 1; font-weight: bold; }
+
+  section.moodboard {
+    padding: 20px 6% 100px;
+  }
+  section.moodboard h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 48px;
+  }
+  .moodboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .moodboard-grid img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
+
+  footer {
+    padding: 32px 6%;
+    text-align: center;
+    font-size: 19px;
+    opacity: 0.6;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+    nav ul { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <details id="panel">
+    <summary>Aanpassen</summary>
+    <h4>Kleuren</h4>
+    <label>Achtergrond
+      <select id="sel-bg"></select>
+    </label>
+    <label>Primair
+      <select id="sel-primary"></select>
+    </label>
+    <label>Accent
+      <select id="sel-accent"></select>
+    </label>
+    <h4 style="margin-top:14px;">Fonts</h4>
+    <label>Hoofdlettertype
+      <select id="sel-font-main"></select>
+    </label>
+    <label>Sublettertype
+      <select id="sel-font-sub"></select>
+    </label>
+  </details>
+
+  <nav>
+    <div class="logo">VERAMIEK</div>
+    <ul>
+      <li><a href="#">Collectie</a></li>
+      <li><a href="#">Workshops</a></li>
+      <li><a href="#">Over ons</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1>Handgemaakt aardewerk<br>uit Breda</h1>
+    <div class="accent-line"></div>
+    <p>Elk stuk keramiek wordt met de hand gedraaid en gebakken in ons atelier. Geen twee stukken zijn hetzelfde.</p>
+    <a href="#" class="btn">Bekijk de collectie</a>
+  </header>
+
+  <section class="collectie">
+    <h2>Uitgelicht</h2>
+    <div class="grid">
+      <div class="card card--featured">
+        <div class="photo"></div>
+        <h3>Stoneware vaas</h3>
+        <p>Handgedraaid &middot; <span class="price">&euro; 68</span></p>
+      </div>
+      <div class="card">
+        <div class="photo"></div>
+        <h3>Kom set</h3>
+        <p>Set van 4 &middot; <span class="price">&euro; 92</span></p>
+      </div>
+      <div class="card">
+        <div class="photo"></div>
+        <h3>Theepot</h3>
+        <p>Uniek exemplaar &middot; <span class="price">&euro; 145</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="moodboard">
+    <h2>Moodboard</h2>
+    <div class="moodboard-grid">
+      <img src="moodboard/moodboard-01.jpeg" alt="Moodboard referentie 1">
+      <img src="moodboard/moodboard-02.jpeg" alt="Moodboard referentie 2">
+    </div>
+  </section>
+
+  <footer>&copy; 2026 Veramiek — Breda</footer>
+
+<script>
+  const colors = {
+    'Wit': '#FFFFFF',
+    'Deep Wine': '#2F0410',
+    'Pastel Groen': '#CBD1A1'
+  };
+
+  // weight/stroke = alleen relevant als het lettertype als Hoofdlettertype (titels/logo)
+  // wordt gebruikt; sommige fonts (bv. Gruppo) hebben maar 1 dun gewicht en hebben een
+  // synthetische boost nodig om als titel leesbaar te zijn, andere (bv. Playfair Display)
+  // hebben van zichzelf al genoeg contrast en worden juist te zwaar van diezelfde boost.
+  const fonts = {
+    'Hadley': { family: "'Hadley', 'Fraunces', serif", weight: 400, stroke: 0 },
+    'Harietta (demo)': { family: "'HV Harietta Demo', 'Jost', sans-serif", weight: 400, stroke: 0 },
+    'Florentino': { family: "'HV Florentino', 'Playfair Display', serif", weight: 400, stroke: 0 },
+    'Playfair Display': { family: "'Playfair Display', serif", weight: 400, stroke: 0 },
+    'Alata': { family: "'Alata', sans-serif", weight: 400, stroke: 0 },
+    'Cardo': { family: "'Cardo', serif", weight: 400, stroke: 0 },
+    'Gruppo': { family: "'Gruppo', sans-serif", weight: 700, stroke: 0.4 },
+    'Special Gothic Expanded One': { family: "'Special Gothic Expanded One', sans-serif", weight: 400, stroke: 0 },
+    'Julius Sans One': { family: "'Julius Sans One', sans-serif", weight: 400, stroke: 0 }
+  };
+
+  const selects = {
+    bg: document.getElementById('sel-bg'),
+    primary: document.getElementById('sel-primary'),
+    accent: document.getElementById('sel-accent')
+  };
+
+  const fontSelects = {
+    main: document.getElementById('sel-font-main'),
+    sub: document.getElementById('sel-font-sub')
+  };
+
+  const defaults = { bg: 'Wit', primary: 'Deep Wine', accent: 'Pastel Groen' };
+  const fontDefaults = { main: 'Playfair Display', sub: 'Gruppo' };
+
+  Object.values(selects).forEach(sel => {
+    Object.entries(colors).forEach(([name, hex]) => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name + ' ' + hex;
+      sel.appendChild(opt);
+    });
+  });
+
+  Object.values(fontSelects).forEach(sel => {
+    Object.keys(fonts).forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    });
+  });
+
+  function applyRoles() {
+    document.documentElement.style.setProperty('--role-bg', colors[selects.bg.value]);
+    document.documentElement.style.setProperty('--role-primary', colors[selects.primary.value]);
+    document.documentElement.style.setProperty('--role-accent', colors[selects.accent.value]);
+    const main = fonts[fontSelects.main.value];
+    document.documentElement.style.setProperty('--font-main', main.family);
+    document.documentElement.style.setProperty('--main-weight', main.weight);
+    document.documentElement.style.setProperty('--main-stroke', main.stroke + 'px');
+    document.documentElement.style.setProperty('--font-sub', fonts[fontSelects.sub.value].family);
+  }
+
+  selects.bg.value = defaults.bg;
+  selects.primary.value = defaults.primary;
+  selects.accent.value = defaults.accent;
+  fontSelects.main.value = fontDefaults.main;
+  fontSelects.sub.value = fontDefaults.sub;
+
+  Object.values(selects).forEach(sel => sel.addEventListener('change', applyRoles));
+  Object.values(fontSelects).forEach(sel => sel.addEventListener('change', applyRoles));
+  applyRoles();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/*
+ * Veramiek design tokens (bron: DESIGN.md + _palette-preview/index.html)
+ * - Precies 3 kleurrollen: wit (drager), Deep Wine (spreekt), Pastel Groen (fluistert).
+ * - Whisper Rule: sage alleen als dunne lijn of kleine tekst, nooit als vlak.
+ * - Flat Gallery Rule: geen box-shadow, nergens. Alle shadow-utilities zijn hieronder
+ *   structureel op "geen schaduw" gezet.
+ * - Gruppo is een dun single-weight font dat onder ~19px onleesbaar wordt; de hele
+ *   text-schaal heeft daarom een harde ondergrens van 1.1875rem (19px).
+ */
+
+@theme inline {
+  --font-display: var(--font-playfair), serif;
+  --font-body: var(--font-gruppo), sans-serif;
+  --font-sans: var(--font-gruppo), sans-serif;
+}
+
+@theme {
+  --color-wine: #2f0410;
+  --color-sage: #cbd1a1;
+
+  /* Type-schaal met 19px-vloer (Gruppo-leesbaarheid) */
+  --text-xs: 1.1875rem;
+  --text-xs--line-height: 1.55;
+  --text-sm: 1.1875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1.1875rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.3125rem;
+  --text-lg--line-height: 1.6;
+  --text-xl: 1.4375rem;
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.625rem;
+  --text-2xl--line-height: 1.35;
+  --text-3xl: 1.9375rem;
+  --text-3xl--line-height: 1.25;
+  --text-4xl: 2.375rem;
+  --text-4xl--line-height: 1.15;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1.1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1.05;
+  --text-8xl: 6rem;
+  --text-8xl--line-height: 1;
+  --text-9xl: 8rem;
+  --text-9xl--line-height: 1;
+
+  /* Flat Gallery Rule: elke shadow-utility levert niets op */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-2xl: 0 0 #0000;
+  --inset-shadow-2xs: 0 0 #0000;
+  --inset-shadow-xs: 0 0 #0000;
+  --inset-shadow-sm: 0 0 #0000;
+  --drop-shadow-xs: 0 0 #0000;
+  --drop-shadow-sm: 0 0 #0000;
+  --drop-shadow-md: 0 0 #0000;
+  --drop-shadow-lg: 0 0 #0000;
+  --drop-shadow-xl: 0 0 #0000;
+  --drop-shadow-2xl: 0 0 #0000;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-wine);
+    font-family: var(--font-body);
+    font-size: 1.1875rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+
+  /*
+   * Zichtbare focus voor toetsenbordgebruik. Standaard een Deep Wine-ring
+   * (contrasteert op de witte galeriewand, ook rond gevulde wijn-knoppen).
+   * Binnen Deep Wine-vlakken wordt de ring wit, zodat hij altijd afsteekt.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-wine);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .bg-wine :focus-visible,
+  .bg-wine:focus-visible {
+    outline-color: #ffffff;
+  }
+}
