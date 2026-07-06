@@ -32,8 +32,11 @@ export function BlogTile({ post }: { post: BlogPost }) {
           alt={post.alt}
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
-          className="object-cover"
+          className={`object-cover ${post.tinted ? "grayscale" : ""}`}
         />
+        {post.tinted && (
+          <div aria-hidden className="absolute inset-0 bg-wine/45 mix-blend-multiply" />
+        )}
         <div
           className={`absolute inset-0 flex items-end bg-wine/70 p-6 transition-opacity duration-300 md:p-8 ${
             active ? "opacity-100" : "opacity-0"

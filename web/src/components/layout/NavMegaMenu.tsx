@@ -7,12 +7,15 @@ import { collections, productCategories } from "@/lib/content";
 import { menuTransition } from "@/lib/motion";
 
 /**
- * Collecties-megamenu: opent op hover, klik en focus. Eén paneel met twee
- * kolommen die samen verschijnen: links de collecties, rechts de
- * product-categorieën. Snelle animatie (~180ms), dit is een UI-affordance.
+ * Collecties-megamenu in twee stappen: het paneel toont eerst alleen de
+ * collectienamen; pas bij hover of focus op een naam klapt links daarvan
+ * de kolom met productsoorten uit. Het paneel hangt aan de rechterkant
+ * van de nav, dus de tweede kolom groeit naar links en de namen blijven
+ * op hun plek. Snelle animatie (~180ms), dit is een UI-affordance.
  */
 export function NavMegaMenu({ solid }: { solid: boolean }) {
   const [open, setOpen] = useState(false);
+  const [activeCollection, setActiveCollection] = useState<string | null>(null);
   const closeTimer = useRef<number | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +30,10 @@ export function NavMegaMenu({ solid }: { solid: boolean }) {
     cancelClose();
     closeTimer.current = window.setTimeout(() => setOpen(false), 120);
   }, [cancelClose]);
+
+  useEffect(() => {
+    if (!open) setActiveCollection(null);
+  }, [open]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -72,48 +79,61 @@ export function NavMegaMenu({ solid }: { solid: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={menuTransition}
-            className={`absolute top-full right-5 left-auto w-[min(40rem,calc(100vw-2.5rem))] border border-wine/10 bg-white p-10 text-wine md:right-10 ${
-              solid ? "" : "border-t-white/0"
-            }`}
+            className="absolute top-full right-5 left-auto flex flex-row-reverse border border-wine/10 bg-white text-wine md:right-10"
           >
-            <div className="grid grid-cols-2 gap-10">
-              <div>
-                <p className="mb-4 font-display text-lg tracking-[0.08em]">
-                  Collecties
-                </p>
-                <ul className="space-y-3">
-                  {collections.map((collection) => (
-                    <li key={collection.name}>
-                      <Link
-                        href={collection.href}
-                        onClick={() => setOpen(false)}
-                        className="text-base opacity-80 transition-opacity hover:opacity-100"
-                      >
-                        {collection.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="border-l border-sage/40 pl-10">
-                <p className="mb-4 font-display text-lg tracking-[0.08em]">
-                  Per soort
-                </p>
-                <ul className="space-y-2.5">
-                  {productCategories.map((category) => (
-                    <li key={category.label}>
-                      <Link
-                        href={category.href}
-                        onClick={() => setOpen(false)}
-                        className="text-base opacity-80 transition-opacity hover:opacity-100"
-                      >
-                        {category.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="w-60 p-9">
+              <p className="mb-4 font-display text-lg tracking-[0.08em]">
+                Collecties
+              </p>
+              <ul className="space-y-3">
+                {collections.map((collection) => (
+                  <li key={collection.name}>
+                    <Link
+                      href={collection.href}
+                      onClick={() => setOpen(false)}
+                      onMouseEnter={() => setActiveCollection(collection.name)}
+                      onFocus={() => setActiveCollection(collection.name)}
+                      className={`transition-opacity ${
+                        activeCollection === collection.name
+                          ? "opacity-100"
+                          : "opacity-80 hover:opacity-100"
+                      } text-base`}
+                    >
+                      {collection.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
+
+            <AnimatePresence>
+              {activeCollection && (
+                <motion.div
+                  initial={{ opacity: 0, x: 8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={menuTransition}
+                  className="w-60 border-r border-sage/40 p-9"
+                >
+                  <p className="mb-4 font-display text-lg tracking-[0.08em]">
+                    Per soort
+                  </p>
+                  <ul className="space-y-2.5">
+                    {productCategories.map((category) => (
+                      <li key={category.label}>
+                        <Link
+                          href={category.href}
+                          onClick={() => setOpen(false)}
+                          className="text-base opacity-80 transition-opacity hover:opacity-100"
+                        >
+                          {category.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

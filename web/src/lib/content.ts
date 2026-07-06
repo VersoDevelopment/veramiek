@@ -73,6 +73,8 @@ export type BlogPost = {
   layoutClass: string;
   /** Beeldverhouding per tegel, bewust verschillend. */
   aspectClass: string;
+  /** Wine-duotoon filter over het beeld (voor sommige kleine tegels, zoals in de referentie). */
+  tinted?: boolean;
 };
 
 export const blogPosts: BlogPost[] = [
@@ -83,8 +85,9 @@ export const blogPosts: BlogPost[] = [
     image: "/images/kopjes.png",
     alt: "Vers gebakken kopjes op een plank in het atelier",
     meta: "Stoken, 2026",
-    layoutClass: "col-span-12 md:col-span-3 md:col-start-1",
+    layoutClass: "col-span-12 md:col-span-2 md:col-start-1",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
+    tinted: true,
   },
   {
     title: "Geen twee glazuren zijn hetzelfde",
@@ -93,8 +96,8 @@ export const blogPosts: BlogPost[] = [
     image: "/images/chip-and-dip-1.png",
     alt: "Geglazuurde chip and dip schaal",
     meta: "Glazuur, 2026",
-    layoutClass: "col-span-12 md:col-span-4 md:col-start-5 md:translate-y-14",
-    aspectClass: "aspect-[4/3] md:aspect-[16/11]",
+    layoutClass: "col-span-12 md:col-span-6 md:col-start-4 md:translate-y-16",
+    aspectClass: "aspect-[4/3] md:aspect-[16/10]",
   },
   {
     title: "Een ochtend in het atelier",
@@ -103,8 +106,9 @@ export const blogPosts: BlogPost[] = [
     image: "/images/studio-hero.webp",
     alt: "Werkbank met klei en gereedschap in het atelier",
     meta: "Atelier, 2025",
-    layoutClass: "col-span-12 md:col-span-3 md:col-start-10 md:translate-y-4",
+    layoutClass: "col-span-12 md:col-span-2 md:col-start-11 md:translate-y-6",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
+    tinted: true,
   },
   {
     title: "Draaien leer je met je handen",
@@ -113,7 +117,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/schaaltje-2.png",
     alt: "Handgedraaid schaaltje",
     meta: "Techniek, 2026",
-    layoutClass: "col-span-12 md:col-span-4 md:col-start-2",
+    layoutClass: "col-span-12 md:col-span-3 md:col-start-2",
     aspectClass: "aspect-[4/3] md:aspect-[4/5]",
   },
   {
@@ -123,7 +127,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/diep-bord.png",
     alt: "Diep bord met glazuur",
     meta: "Proces, 2025",
-    layoutClass: "col-span-12 md:col-span-4 md:col-start-8 md:translate-y-16",
+    layoutClass: "col-span-12 md:col-span-5 md:col-start-7 md:translate-y-20",
     aspectClass: "aspect-[4/3] md:aspect-[16/10]",
   },
   {
@@ -133,8 +137,9 @@ export const blogPosts: BlogPost[] = [
     image: "/images/lepel-dingen.png",
     alt: "Handgemaakte lepelhouders",
     meta: "Detail, 2026",
-    layoutClass: "col-span-12 md:col-span-3 md:col-start-5",
+    layoutClass: "col-span-12 md:col-span-2 md:col-start-5",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
+    tinted: true,
   },
 ];
 
