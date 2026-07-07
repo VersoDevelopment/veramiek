@@ -22,15 +22,16 @@ export function Hero() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+  // Beginstand bewust portrait (staand), zoals de aan te leveren video.
+  // Als calc-blend, want Motion kan strings met verschillende eenheden
+  // (rem naar vw) niet rechtstreeks interpoleren.
   const mediaWidth = useTransform(
     scrollYProgress,
-    [0, 1],
-    ["min(30rem, 86vw)", "100vw"],
+    (v) => `min(calc(${(1 - v) * 21}rem + ${v * 100}vw), 100vw)`,
   );
   const mediaHeight = useTransform(
     scrollYProgress,
-    [0, 1],
-    ["min(24rem, 52svh)", "100svh"],
+    (v) => `min(calc(${(1 - v) * 30}rem + ${v * 100}svh), 100svh)`,
   );
   const lineOneShift = useTransform(scrollYProgress, [0, 0.7], ["0vw", "-60vw"]);
   const lineTwoShift = useTransform(scrollYProgress, [0, 0.7], ["0vw", "60vw"]);
@@ -94,7 +95,7 @@ export function Hero() {
         </motion.div>
 
         <motion.h1
-          style={{ opacity: titleOpacity, top: "calc(50% + min(12rem, 26svh) + 2rem)" }}
+          style={{ opacity: titleOpacity, top: "calc(50% + min(15rem, 31svh) + 2rem)" }}
           className="pointer-events-none absolute inset-x-0 z-10 text-center text-3xl text-white antialiased md:text-5xl"
         >
           <motion.span style={{ x: lineOneShift }} className="block">

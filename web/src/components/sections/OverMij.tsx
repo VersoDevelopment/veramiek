@@ -1,34 +1,101 @@
-import Link from "next/link";
+import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealItem, RevealSection } from "@/components/ui/RevealSection";
 
 /**
- * Volle-breedte Deep Wine manifest: gecentreerde kop, sage haarlijn en
- * korte, galerie-rustige copy. Bewust zonder beeld; de tekst is het werk.
+ * Volle-breedte Deep Wine sectie met Vera's volledige verhaal: gecentreerde
+ * kop met sage haarlijn, redactionele tekstkolom, een Playfair-pullquote en
+ * twee subtiele knoppen naar de collecties en workshops.
  */
 export function OverMij() {
   return (
     <RevealSection id="over" stagger className="bg-wine text-white antialiased">
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-28 text-center md:py-40">
-        <RevealItem>
-          <h2 className="text-4xl md:text-5xl">Het atelier van Vera</h2>
-        </RevealItem>
-        <RevealItem>
+      <div className="mx-auto max-w-[65ch] px-6 py-28 md:py-36">
+        <RevealItem className="text-center">
+          <h2 className="text-4xl md:text-5xl">Over mij</h2>
           <div aria-hidden className="mx-auto mt-9 h-px w-12 bg-sage/70" />
         </RevealItem>
+
         <RevealItem>
-          <p className="mx-auto mt-10 max-w-[46ch] text-lg text-white/85">
-            Ik ben Vera. In mijn atelier draai en glazuur ik elk stuk met de
-            hand. Geen twee stukken zijn hetzelfde, en precies dat maakt dit
-            werk voor mij zo mooi.
-          </p>
+          <div className="mt-14 space-y-7 text-lg text-white/85">
+            <p>
+              Ik ben Vera, 26 jaar oud, keramist en maker achter Veramiek.
+              Samen met mijn partner Kenny en onze nieuwsgierige hond Ollie
+              woon ik in Etten-Leur. Ollie loopt regelmatig rond in mijn
+              atelier en is altijd erg nieuwsgierig wat ik daar nou allemaal
+              aan het doen ben, dus grote kans dat je hem af en toe voorbij
+              ziet komen op mijn website of socials. Hij is mijn kleine
+              sidekick en grootste supporter.
+            </p>
+            <p>
+              Mijn atelier is de plek waar ik tot rust kom. Hier ontstaan
+              unieke, handgemaakte keramiekstukken, gemaakt met aandacht,
+              geduld en liefde voor het ambacht. De stukken die ik maak zijn
+              bedoeld om generaties lang mee te gaan en een mooi plekje te
+              krijgen in jouw huis.
+            </p>
+            <p>
+              Ik verkoop mijn collecties online, sta op verschillende markten
+              en geef workshops waarin ik mensen laat ervaren hoe bijzonder
+              het is om iets met je eigen handen te creëren.
+            </p>
+            <p>
+              Een tijd geleden zat ik niet goed in mijn vel. Ik voelde druk om
+              carrière te maken zoals mensen om me heen dat deden, maar wist
+              niet wat mijn eigen pad was. Toen kwam ik een cursus pottenbakken
+              tegen. Voor velen maar iets kleins, maar het raakte meteen iets
+              in mij.
+            </p>
+            <p>
+              Na de eerste les was ik verkocht. Het werken met klei bracht
+              rust, focus en plezier terug in mijn leven. In de vakantie kocht
+              ik een tweedehands draaischijf en oven, en vanaf dat moment wist
+              ik: dit is het. Zo ontstond mijn onderneming Veramiek: Vera plus
+              keramiek. Een naam die bijna vanzelf kwam, alsof het zo had
+              moeten zijn.
+            </p>
+            <p>
+              Keramiek is voor mij meer dan een ambacht. Het is een manier om
+              te vertragen, om offline te zijn en om te voelen hoe het is om
+              zelf iets te maken.
+            </p>
+          </div>
         </RevealItem>
+
         <RevealItem>
-          <Link
-            href="/over-mij"
-            className="mt-12 inline-block border-b border-white/40 pb-1 text-base tracking-[0.03em] transition-colors hover:border-white"
-          >
-            Lees meer over mij
-          </Link>
+          <blockquote className="my-14 border-l border-sage/70 pl-8 font-display text-2xl leading-snug tracking-[0.04em] md:text-3xl">
+            Met je handen werken is bijna magisch: je wordt één met de klei,
+            komt volledig tot rust en je creëert iets dat blijft.
+          </blockquote>
+        </RevealItem>
+
+        <RevealItem>
+          <div className="space-y-7 text-lg text-white/85">
+            <p>
+              Ik geloof dat creativiteit en ambacht goed zijn voor je mentale
+              gezondheid. Voor mij is het een plek waar ik mezelf terugvind,
+              en dat is precies wat ik wil doorgeven via mijn werk en
+              workshops.
+            </p>
+            <p>
+              Kijk zeker even verder op mijn website en wie weet zie ik je
+              binnenkort op een markt of tijdens een workshop. Dan hoop ik dat
+              ik jou een stukje van mijn enthousiasme en liefde voor het vak
+              kan meegeven. Of dat nu is door een mooi stuk keramiek te kopen,
+              of door zelf met je handen in de klei te duiken tijdens een
+              workshop.
+            </p>
+          </div>
+        </RevealItem>
+
+        <RevealItem>
+          <div className="mt-14 flex flex-wrap justify-center gap-4">
+            <CtaButton href="/#collecties" variant="lightOutline">
+              Bekijk de collecties
+            </CtaButton>
+            <CtaButton href="/workshops" variant="lightOutline">
+              Naar de workshops
+            </CtaButton>
+          </div>
         </RevealItem>
       </div>
     </RevealSection>

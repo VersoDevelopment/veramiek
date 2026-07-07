@@ -3,7 +3,7 @@ import { RevealItem, RevealSection } from "@/components/ui/RevealSection";
 import { collections } from "@/lib/content";
 
 /**
- * Collectierij in galeriestijl: drie staande beelden van 420px breed naast
+ * Collectierij in galeriestijl: drie staande beelden van 450px breed naast
  * elkaar met een naad van 2px en wat lucht tot de schermranden.
  * Kop en tegels faden gestaffeld in.
  * De homepage toont de drie uitgelichte collecties; het megamenu blijft
@@ -17,8 +17,8 @@ export function Collecties() {
           Collecties
         </h2>
       </RevealItem>
-      {/* 3 tegels van 420px met een 2px naad; op kleinere schermen blijft er marge over via max-w. */}
-      <div className="mx-auto grid w-[1264px] max-w-[calc(100vw-3rem)] grid-cols-1 gap-[2px] md:grid-cols-3">
+      {/* 3 tegels van 450px met een 2px naad; op kleinere schermen blijft er marge over via max-w. */}
+      <div className="mx-auto grid w-[1354px] max-w-[calc(100vw-3rem)] grid-cols-1 gap-[2px] md:grid-cols-3">
         {collections.slice(0, 3).map((collection) => (
           <RevealItem key={collection.name}>
             <CollectionTile collection={collection} />
