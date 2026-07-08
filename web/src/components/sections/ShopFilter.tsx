@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ProductTile } from "@/components/ui/ProductTile";
 import {
   normalizeCategory,
+  productCollections,
   SHOP_CATEGORIES,
   type Product,
   type ShopCategory,
@@ -12,7 +13,7 @@ import {
 import { fadeUp } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
-type Filter = "Alles" | ShopCategory;
+const ALL = "Alles";
 
 /**
  * Bewust ongelijk raster: een herhalend ritme van twee grotere en drie
@@ -20,11 +21,11 @@ type Filter = "Alles" | ShopCategory;
  * oogt en niet als een uniform kaartgrid (DESIGN.md-regel).
  */
 const SPAN_RHYTHM = [
-  "md:col-span-3",
-  "md:col-span-3",
-  "md:col-span-2",
-  "md:col-span-2",
-  "md:col-span-2",
+  "lg:col-span-3",
+  "lg:col-span-3",
+  "lg:col-span-2",
+  "lg:col-span-2",
+  "lg:col-span-2",
 ];
 const ASPECT_RHYTHM = [
   "aspect-[5/6]",
@@ -34,98 +35,160 @@ const ASPECT_RHYTHM = [
   "aspect-[3/4]",
 ];
 
+/** Eén filtergroep in het linkerpaneel: een kop met daaronder de opties. */
+function FilterGroup({
+  title,
+  options,
+  active,
+  onSelect,
+}: {
+  title: string;
+  options: string[];
+  active: string;
+  onSelect: (value: string) => void;
+}) {
+  return (
+    <div>
+      <h3 className="mb-4 font-display text-lg tracking-[0.08em]">{title}</h3>
+      <ul className="flex flex-wrap gap-x-5 gap-y-2.5 md:flex-col md:gap-y-3">
+        {[ALL, ...options].map((option) => {
+          const isActive = option === active;
+          return (
+            <li key={option}>
+              <button
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => onSelect(option)}
+                className={`group relative inline-block text-left text-base tracking-[0.02em] transition-colors ${
+                  isActive ? "text-wine" : "text-wine/55 hover:text-wine"
+                }`}
+              >
+                {option}
+                <span
+                  className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-sage transition-transform duration-300 ease-out ${
+                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"
+                  }`}
+                />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function ShopFilter({
   products,
   initialCategory,
+  initialCollection,
 }: {
   products: Product[];
   initialCategory?: string;
+  initialCollection?: string;
 }) {
   const prefersReduced = usePrefersReducedMotion();
 
-  // Alleen categorieën tonen die daadwerkelijk producten hebben.
+  // Alleen categorieën / collecties tonen die daadwerkelijk producten hebben.
   const availableCategories = useMemo(() => {
     const present = new Set(products.map((p) => normalizeCategory(p.category)));
     return SHOP_CATEGORIES.filter((c) => present.has(c));
   }, [products]);
 
-  const normalizedInitial = initialCategory
+  const availableCollections = useMemo(
+    () => productCollections(products),
+    [products],
+  );
+
+  const normalizedCat = initialCategory
     ? normalizeCategory(initialCategory)
     : null;
-  const [active, setActive] = useState<Filter>(
-    normalizedInitial && availableCategories.includes(normalizedInitial)
-      ? normalizedInitial
-      : "Alles",
+  const [activeCategory, setActiveCategory] = useState<ShopCategory | "Alles">(
+    normalizedCat && availableCategories.includes(normalizedCat)
+      ? normalizedCat
+      : ALL,
+  );
+  const [activeCollection, setActiveCollection] = useState<string>(
+    initialCollection && availableCollections.includes(initialCollection)
+      ? initialCollection
+      : ALL,
   );
 
   const filtered = useMemo(
     () =>
-      active === "Alles"
-        ? products
-        : products.filter((p) => normalizeCategory(p.category) === active),
-    [products, active],
+      products.filter((p) => {
+        const catOk =
+          activeCategory === ALL ||
+          normalizeCategory(p.category) === activeCategory;
+        const colOk =
+          activeCollection === ALL ||
+          (p.collection ?? "").trim() === activeCollection;
+        return catOk && colOk;
+      }),
+    [products, activeCategory, activeCollection],
   );
 
-  const filters: Filter[] = ["Alles", ...availableCategories];
+  const hasFilters =
+    availableCollections.length > 0 || availableCategories.length > 0;
 
   return (
-    <div>
-      {/* Filter-chips */}
-      {availableCategories.length > 0 && (
-        <div
-          role="tablist"
-          aria-label="Filter op soort"
-          className="mb-12 flex flex-wrap justify-center gap-x-3 gap-y-3 md:mb-16"
-        >
-          {filters.map((filter) => {
-            const isActive = filter === active;
-            return (
-              <button
-                key={filter}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActive(filter)}
-                className={`cursor-pointer rounded-full border px-5 py-2 text-base tracking-[0.03em] transition-colors duration-300 ${
-                  isActive
-                    ? "border-wine bg-wine text-white"
-                    : "border-wine/25 text-wine hover:border-wine"
-                }`}
-              >
-                {filter}
-              </button>
-            );
-          })}
-        </div>
+    <div className="flex flex-col gap-10 md:flex-row md:gap-12 lg:gap-16">
+      {/* Filterpaneel links */}
+      {hasFilters && (
+        <aside className="shrink-0 md:sticky md:top-28 md:h-fit md:w-48 lg:w-56">
+          <div className="flex flex-col gap-10">
+            {availableCollections.length > 0 && (
+              <FilterGroup
+                title="Collecties"
+                options={availableCollections}
+                active={activeCollection}
+                onSelect={setActiveCollection}
+              />
+            )}
+            {availableCategories.length > 0 && (
+              <FilterGroup
+                title="Type product"
+                options={availableCategories}
+                active={activeCategory}
+                onSelect={(v) =>
+                  setActiveCategory(v as ShopCategory | "Alles")
+                }
+              />
+            )}
+          </div>
+        </aside>
       )}
 
-      {filtered.length === 0 ? (
-        <p className="py-16 text-center text-base opacity-70">
-          Er zijn nog geen stukken in deze categorie. Kom snel terug.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-6 md:gap-x-6 md:gap-y-14">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((product, i) => {
-              const span = SPAN_RHYTHM[i % SPAN_RHYTHM.length];
-              const aspect = ASPECT_RHYTHM[i % ASPECT_RHYTHM.length];
-              return (
-                <motion.div
-                  key={product.id}
-                  layout={!prefersReduced}
-                  variants={prefersReduced ? undefined : fadeUp}
-                  initial={prefersReduced ? false : "hidden"}
-                  animate="visible"
-                  exit={prefersReduced ? undefined : { opacity: 0 }}
-                  className={span}
-                >
-                  <ProductTile product={product} aspectClass={aspect} />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
-      )}
+      {/* Productraster */}
+      <div className="min-w-0 flex-1">
+        {filtered.length === 0 ? (
+          <p className="py-16 text-center text-base opacity-70">
+            Er zijn geen stukken die bij deze filters passen.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-14">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((product, i) => {
+                const span = SPAN_RHYTHM[i % SPAN_RHYTHM.length];
+                const aspect = ASPECT_RHYTHM[i % ASPECT_RHYTHM.length];
+                return (
+                  <motion.div
+                    key={product.id}
+                    layout={!prefersReduced}
+                    variants={prefersReduced ? undefined : fadeUp}
+                    initial={prefersReduced ? false : "hidden"}
+                    animate="visible"
+                    exit={prefersReduced ? undefined : { opacity: 0 }}
+                    className={span}
+                  >
+                    <ProductTile product={product} aspectClass={aspect} />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

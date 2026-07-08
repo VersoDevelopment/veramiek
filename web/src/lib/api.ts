@@ -24,11 +24,31 @@ export type Product = {
   price: number;
   /** Ruwe categorie zoals opgeslagen (bv. "mokken", "overige"). */
   category: string;
+  /** Collectienaam (bv. "Dune & Dust"); leeg als het product bij geen collectie hoort. */
+  collection?: string;
   badge: string | null;
   /** Absolute http(s)-URLs naar geüploade foto's, of lokale /images-paden bij seed. */
   images: string[];
   available?: boolean;
 };
+
+/**
+ * Distincte collectienamen die daadwerkelijk in de producten voorkomen,
+ * in de volgorde waarin ze voor het eerst opduiken. Basis voor het
+ * collectie-filter in de winkel.
+ */
+export function productCollections(products: Product[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of products) {
+    const c = (p.collection ?? "").trim();
+    if (c && !seen.has(c)) {
+      seen.add(c);
+      out.push(c);
+    }
+  }
+  return out;
+}
 
 /** Categorie-labels voor de winkel-filter (moeten sporen met productCategories in content.ts). */
 export const SHOP_CATEGORIES = [

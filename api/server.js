@@ -345,7 +345,7 @@ app.get('/admin/products', auth, (req, res) => {
 });
 
 app.post('/admin/products', auth, (req, res) => {
-  const { name, desc, price, category, badge, images, available } = req.body || {};
+  const { name, desc, price, category, collection, badge, images, available } = req.body || {};
   if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
   const p = {
     id: crypto.randomUUID(),
@@ -353,6 +353,7 @@ app.post('/admin/products', auth, (req, res) => {
     desc: String(desc || '').trim(),
     price: Math.max(0, Number(price) || 0),
     category: String(category || 'overige'),
+    collection: collection ? String(collection).trim() : '',
     badge: badge ? String(badge).trim() : null,
     images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
     available: available !== false
@@ -365,7 +366,7 @@ app.post('/admin/products', auth, (req, res) => {
 app.put('/admin/products/:id', auth, (req, res) => {
   const idx = products.findIndex(p => p.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Product niet gevonden' });
-  const { name, desc, price, category, badge, images, available } = req.body || {};
+  const { name, desc, price, category, collection, badge, images, available } = req.body || {};
   if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
   products[idx] = {
     id: products[idx].id,
@@ -373,6 +374,7 @@ app.put('/admin/products/:id', auth, (req, res) => {
     desc: String(desc || '').trim(),
     price: Math.max(0, Number(price) || 0),
     category: String(category || 'overige'),
+    collection: collection ? String(collection).trim() : '',
     badge: badge ? String(badge).trim() : null,
     images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
     available: available !== false

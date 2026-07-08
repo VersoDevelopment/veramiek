@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 export default async function CollectiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ soort?: string }>;
+  searchParams: Promise<{ soort?: string; collectie?: string }>;
 }) {
-  const [{ soort }, products] = await Promise.all([
+  const [{ soort, collectie }, products] = await Promise.all([
     searchParams,
     getProducts(),
   ]);
@@ -35,7 +35,11 @@ export default async function CollectiesPage({
         </p>
       ) : (
         <div className="mx-auto max-w-6xl">
-          <ShopFilter products={products} initialCategory={soort} />
+          <ShopFilter
+            products={products}
+            initialCategory={soort}
+            initialCollection={collectie}
+          />
         </div>
       )}
     </section>

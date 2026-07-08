@@ -581,6 +581,11 @@
         </div>
       </div>
       <div class="form-group">
+        <label for="fCollection">Collectie <span class="opt">(optioneel, bijv. "Dune &amp; Dust" of "Blush")</span></label>
+        <input class="form-control" type="text" id="fCollection" list="collectionOptions" placeholder="bijv. Dune & Dust" />
+        <datalist id="collectionOptions"></datalist>
+      </div>
+      <div class="form-group">
         <label for="fBadge">Badge <span class="opt">(optioneel, bijv. "Nieuw" of "Favoriet")</span></label>
         <input class="form-control" type="text" id="fBadge" placeholder="bijv. Nieuw" />
       </div>
@@ -740,6 +745,13 @@
   function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   // ── Modal ──
+  // Vult de collectie-suggesties op basis van bestaande producten.
+  function fillCollectionOptions() {
+    const names = [...new Set(allProducts.map(p => (p.collection || '').trim()).filter(Boolean))].sort();
+    document.getElementById('collectionOptions').innerHTML =
+      names.map(n => `<option value="${esc(n)}"></option>`).join('');
+  }
+
   function openModal(id) {
     editId = id || null;
     formImages = [];
@@ -753,6 +765,7 @@
       document.getElementById('fDesc').value = p.desc || '';
       document.getElementById('fPrice').value = p.price || '';
       document.getElementById('fCat').value = p.category || 'overige';
+      document.getElementById('fCollection').value = p.collection || '';
       document.getElementById('fBadge').value = p.badge || '';
       document.getElementById('fAvailable').checked = p.available !== false;
       formImages = Array.isArray(p.images) ? [...p.images] : [];
@@ -762,9 +775,11 @@
       document.getElementById('fDesc').value = '';
       document.getElementById('fPrice').value = '';
       document.getElementById('fCat').value = 'overige';
+      document.getElementById('fCollection').value = '';
       document.getElementById('fBadge').value = '';
       document.getElementById('fAvailable').checked = true;
     }
+    fillCollectionOptions();
     renderThumbs();
     document.getElementById('productModal').classList.add('open');
     document.getElementById('fName').focus();
@@ -842,6 +857,7 @@
       desc: document.getElementById('fDesc').value.trim(),
       price,
       category: document.getElementById('fCat').value,
+      collection: document.getElementById('fCollection').value.trim(),
       badge: document.getElementById('fBadge').value.trim() || null,
       images: formImages,
       available: document.getElementById('fAvailable').checked

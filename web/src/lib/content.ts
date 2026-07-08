@@ -28,13 +28,13 @@ export type Collection = {
 export const collections: Collection[] = [
   {
     name: "Dune & Dust",
-    href: "/collecties",
+    href: "/collecties?collectie=Dune%20%26%20Dust",
     images: ["/images/schaal-1.png"],
     alt: "Handgedraaide schaal uit de collectie Dune & Dust",
   },
   {
     name: "Blush",
-    href: "/collecties",
+    href: "/collecties?collectie=Blush",
     images: [
       "/images/collecties/blush/blush-1.jpeg",
       "/images/collecties/blush/blush-2.jpeg",
@@ -44,7 +44,7 @@ export const collections: Collection[] = [
   },
   {
     name: "Boeren bontjes",
-    href: "/collecties",
+    href: "/collecties?collectie=Boeren%20bontjes",
     images: [
       "/images/collecties/boeren-bontjes/boeren-bontjes-1.jpeg",
       "/images/collecties/boeren-bontjes/boeren-bontjes-2.jpeg",
@@ -54,7 +54,7 @@ export const collections: Collection[] = [
   },
   {
     name: "Placeholder",
-    href: "/collecties",
+    href: "/collecties?collectie=Placeholder",
     images: ["/images/matcha-set.png"],
     alt: "Matcha set uit een nieuwe collectie",
   },
