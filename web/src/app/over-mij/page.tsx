@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 
 export default function OverMijPage() {
   return (
-    <RevealSection className="bg-white px-6 pt-44 pb-28 md:pb-36">
+    <RevealSection className="px-6 pt-44 pb-28 md:pb-36">
       <div className="mx-auto max-w-[65ch]">
         <h1 className="text-4xl md:text-5xl">Over mij</h1>
         <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
 
-        <div className="mt-12 space-y-7 text-lg text-wine/90">
+        <div className="mt-12 space-y-7 text-lg text-white/90">
           <p>
             Ik ben Vera, 26 jaar oud, keramist en maker achter Veramiek. Samen
             met mijn partner Kenny en onze nieuwsgierige hond Ollie woon ik in
@@ -62,7 +62,7 @@ export default function OverMijPage() {
           volledig tot rust en je creëert iets dat blijft.
         </blockquote>
 
-        <div className="space-y-7 text-lg text-wine/90">
+        <div className="space-y-7 text-lg text-white/90">
           <p>
             Ik geloof dat creativiteit en ambacht goed zijn voor je mentale
             gezondheid. Voor mij is het een plek waar ik mezelf terugvind, en
@@ -78,10 +78,10 @@ export default function OverMijPage() {
         </div>
 
         <div className="mt-14 flex flex-wrap gap-4">
-          <CtaButton href="/#collecties" variant="outline">
+          <CtaButton href="/#collecties" variant="lightOutline">
             Bekijk de collecties
           </CtaButton>
-          <CtaButton href="/workshops" variant="outline">
+          <CtaButton href="/workshops" variant="lightOutline">
             Naar de workshops
           </CtaButton>
         </div>

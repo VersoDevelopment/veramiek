@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <RevealSection className="bg-white px-6 pt-44 pb-28 md:pb-36">
+    <RevealSection className="px-6 pt-44 pb-28 md:pb-36">
       <article className="mx-auto max-w-[65ch]">
-        <p className="text-base tracking-[0.22em] text-wine/55 uppercase">
+        <p className="text-base tracking-[0.22em] text-white/55 uppercase">
           Het begin, 2025
         </p>
         <h1 className="mt-4 text-4xl text-balance md:text-5xl">
@@ -31,7 +31,7 @@ export default function BlogPage() {
           />
         </div>
 
-        <div className="mt-12 space-y-7 text-lg text-wine/90">
+        <div className="mt-12 space-y-7 text-lg text-white/90">
           <p>
             In september 2025 begon ik aan een cursus keramiek, zonder enig
             idee waar het toe zou leiden. Vanaf de eerste les voelde ik het:
@@ -76,7 +76,7 @@ export default function BlogPage() {
         </div>
 
         <div className="mt-14">
-          <CtaButton href="/workshops" variant="outline">
+          <CtaButton href="/workshops" variant="lightOutline">
             Zelf klei ervaren? Naar de workshops
           </CtaButton>
         </div>
