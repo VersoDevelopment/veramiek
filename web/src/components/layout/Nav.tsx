@@ -5,23 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { navLinks } from "@/lib/content";
-import { NavMegaMenu } from "./NavMegaMenu";
 import { MobileNav } from "./MobileNav";
 import { CartButton } from "@/components/cart/CartButton";
 
 const SCROLL_THRESHOLD = 60;
 
-/** Boven de haarlijn: deze links staan in de linkergroep, Collecties + Workshops rechts. */
-const leftLabels = ["Over mij", "Mijn blogs", "Contact"];
-
 /**
  * Fixed navigatie. Op de homepage, bovenaan (nog niet gescrold), staat er
- * alleen een kale balk met het logo linksboven en een hamburger rechtsboven;
- * de volledige nav verschijnt pas zodra er ~60px gescrold is. Op subpagina's
- * (zonder hero) staat de nav altijd meteen in de "solid" stand.
- * Solid: twee lagen (links boven een bijna-schermbrede haarlijn: Over mij/
- * Mijn blogs/Contact, rechts Collecties/Workshops), daaronder het
- * gecentreerde logo; wit, geblurd vlak met Deep Wine tekst en logo-wissel.
+ * een witte balk (wijnrood bij hover) met logo linksboven en gecentreerde
+ * links; de "solid" stand verschijnt zodra er ~60px gescrold is, of altijd
+ * op subpagina's (zonder hero): logo links, cart + hamburger rechts, wit
+ * geblurd vlak met Deep Wine tekst.
  */
 export function Nav() {
   const pathname = usePathname();
@@ -56,14 +50,8 @@ export function Nav() {
     >
       {solid ? (
         <div className="px-5 md:px-10">
-          {/* relative: het megamenu ankert aan deze rij en opent dus direct onder de haarlijn. */}
-          <div className="relative flex h-[56px] items-center justify-between border-b border-sage/40 transition-colors duration-300">
-            {/* Logo tussen de links in, boven de haarlijn. */}
-            <Link
-              href="/"
-              aria-label="Veramiek, naar de homepage"
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            >
+          <div className="flex h-[56px] items-center justify-between border-b border-sage/40 transition-colors duration-300">
+            <Link href="/" aria-label="Veramiek, naar de homepage">
               <Image
                 src="/logo/logo-horizontal.png"
                 alt="Veramiek"
@@ -73,67 +61,54 @@ export function Nav() {
                 preload
               />
             </Link>
-            <nav
-              aria-label="Hoofdnavigatie links"
-              className="hidden flex-1 items-center gap-9 lg:flex"
-            >
-              {navLinks
-                .filter((link) => leftLabels.includes(link.label))
-                .map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-base tracking-[0.03em] opacity-85 transition-opacity hover:opacity-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-            </nav>
 
-            <nav
-              aria-label="Hoofdnavigatie rechts"
-              className="hidden flex-1 items-center justify-end gap-9 lg:flex"
-            >
-              <NavMegaMenu solid={solid} />
-              {navLinks
-                .filter(
-                  (link) =>
-                    !leftLabels.includes(link.label) && link.label !== "Collecties",
-                )
-                .map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-base tracking-[0.03em] opacity-85 transition-opacity hover:opacity-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              <CartButton className="ml-1" />
-            </nav>
-
-            <div className="ml-auto flex items-center gap-5 lg:hidden">
+            <div className="flex items-center gap-5">
               <CartButton />
               <MobileNav />
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex h-[92px] items-center justify-between px-5 md:px-10">
-          <Link href="/" aria-label="Veramiek, naar de homepage">
+        <div className="group relative flex h-[92px] items-center justify-between bg-white px-5 text-wine transition-colors duration-300 hover:bg-wine hover:text-white md:px-10">
+          <Link
+            href="/"
+            aria-label="Veramiek, naar de homepage"
+            className="relative block h-12 md:h-14"
+          >
+            <Image
+              src="/logo/logo-horizontal.png"
+              alt="Veramiek"
+              width={520}
+              height={130}
+              className="h-full w-auto opacity-100 transition-opacity duration-300 group-hover:opacity-0"
+              preload
+            />
             <Image
               src="/logo/logo-horizontal-white.png"
               alt="Veramiek"
               width={520}
               height={130}
-              className="h-12 w-auto md:h-14"
+              className="absolute inset-0 h-full w-auto opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               preload
             />
           </Link>
-          <div className="flex items-center gap-5">
-            <CartButton />
-            <MobileNav forceVisible />
-          </div>
+
+          <nav
+            aria-label="Hoofdnavigatie"
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-9 lg:flex"
+          >
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-base tracking-[0.03em] opacity-85 transition-opacity hover:opacity-100"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <CartButton />
         </div>
       )}
     </header>
