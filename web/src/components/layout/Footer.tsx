@@ -3,15 +3,16 @@ import Link from "next/link";
 import { contact, navLinks } from "@/lib/content";
 
 /**
- * Minimalistische footer op Deep Wine: wit logo, één rij links,
- * en een dunne Pastel Groen haarlijn (Whisper Rule als lijn).
+ * Minimalistische witte footer als adempauze onder het wijnrode vlak:
+ * donker logo, één rij links, en een dunne Pastel Groen haarlijn bovenaan
+ * (Whisper Rule als lijn).
  */
 export function Footer() {
   return (
-    <footer className="border-t border-sage/30 bg-wine text-white antialiased">
+    <footer className="border-t border-sage/40 bg-white text-wine antialiased">
       <div className="flex flex-col items-center gap-10 px-6 py-20 md:py-24">
         <Image
-          src="/logo/logo-horizontal-white.png"
+          src="/logo/logo-horizontal.png"
           alt="Veramiek"
           width={520}
           height={130}
