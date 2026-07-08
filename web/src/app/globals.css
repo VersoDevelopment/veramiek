@@ -111,3 +111,40 @@
     outline-color: #ffffff;
   }
 }
+
+/* Subtiele scroll-hint (Hero): trage, vloeiende drift i.p.v. een speelse bounce. */
+@keyframes soft-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/*
+ * Mouse-glow: een lichtvlek die de cursor volgt over de hele collectierij
+ * heen, niet per tegel. `--glow-x/--glow-y` (ruwe viewport-pixels, gezet
+ * door PointerGlowProvider) sturen een radial-gradient met
+ * `background-attachment: fixed` op elke tegel; omdat alle tegels naar
+ * dezelfde vaste viewport-coördinaat verwijzen, "loopt" de vlek gewoon door
+ * over de naad heen (rechterrand van foto 1 + linkerrand van foto 2 lichten
+ * allebei op als de cursor daar tussenin staat). Zichtbaarheid wordt apart
+ * geregeld via group-hover/gallery (zie Collecties.tsx).
+ * Dit element zit ACHTER de foto (zie CollectionTile.tsx: de foto is 3px
+ * ingesprongen), zodat alleen een dun randje van de gradient zichtbaar
+ * wordt. Bewust geen CSS mask-image/mask-composite: twee losse pogingen
+ * (dubbele mask + single-layer mask-image) renderden niets in deze
+ * omgeving; deze laag-op-laag aanpak is 100% CSS-basics en dus robuust.
+ */
+[data-glow-spot] {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: radial-gradient(
+    500px 500px at var(--glow-x, 50vw) var(--glow-y, 50vh),
+    rgba(47, 4, 16, 0.9) 0%,
+    rgba(47, 4, 16, 0.5) 60%,
+    transparent 100%
+  );
+}

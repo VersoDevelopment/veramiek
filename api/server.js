@@ -16,6 +16,9 @@ const rateLimit  = require('express-rate-limit');
 const DATA_DIR    = path.join(__dirname, 'data');
 const PRODUCTS_F  = path.join(DATA_DIR, 'products.json');
 const CONTENT_F   = path.join(DATA_DIR, 'site_content.json');
+const WORKSHOPS_F = path.join(DATA_DIR, 'workshops.json');
+const BOOKINGS_F  = path.join(DATA_DIR, 'bookings.json');
+const BLOCKED_F   = path.join(DATA_DIR, 'blocked_dates.json');
 const TOTP_F      = path.join(DATA_DIR, 'totp_secret.txt');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
@@ -91,6 +94,62 @@ function saveContent() {
   fs.writeFileSync(CONTENT_F, JSON.stringify(siteContent, null, 2));
 }
 
+// ── Workshops (types die geboekt kunnen worden) ──
+const DEFAULT_WORKSHOPS = [
+  {
+    id: 'op-locatie',
+    name: 'Keramiek workshop op locatie',
+    desc: 'Ik kom bij jullie langs en neem alles mee: klei, gereedschap en verf. Onder mijn begeleiding maakt iedereen een eigen stuk, dat je daarna zelf beschildert. Ik neem alles mee om te bakken en te glazuren, zodat je binnen no-time je eigen creatie in huis hebt. De perfecte activiteit voor een verjaardag, babyshower of gewoon een gezellige middag.',
+    duration: '~2,5 uur',
+    groupSize: 'Vanaf 4 personen',
+    price: 'Vanaf € 30 p.p.',
+    images: ['/images/workshop.jpeg'],
+  },
+  {
+    id: 'draaimiddag',
+    name: 'Draaimiddag in het atelier',
+    desc: 'Kom een middag naar mijn atelier en leer draaien aan de schijf. In een klein groepje neem ik je stap voor stap mee, van een klomp klei tot je eigen kom of kopje. Rustig, met alle aandacht en tijd om te oefenen. Je stukken worden na het bakken en glazuren voor je klaargezet om op te halen.',
+    duration: '~2 uur',
+    groupSize: '1 tot 3 personen',
+    price: '€ 45 p.p.',
+    images: ['/images/studio-hero.webp'],
+  },
+];
+
+let workshops = [];
+if (fs.existsSync(WORKSHOPS_F)) {
+  try { workshops = JSON.parse(fs.readFileSync(WORKSHOPS_F, 'utf8')); } catch (_) {}
+}
+if (!Array.isArray(workshops) || workshops.length === 0) {
+  workshops = JSON.parse(JSON.stringify(DEFAULT_WORKSHOPS));
+  fs.writeFileSync(WORKSHOPS_F, JSON.stringify(workshops, null, 2));
+}
+function saveWorkshops() {
+  fs.writeFileSync(WORKSHOPS_F, JSON.stringify(workshops, null, 2));
+}
+
+// ── Boekingen ──
+let bookings = [];
+if (fs.existsSync(BOOKINGS_F)) {
+  try { bookings = JSON.parse(fs.readFileSync(BOOKINGS_F, 'utf8')); } catch (_) {}
+} else {
+  fs.writeFileSync(BOOKINGS_F, '[]');
+}
+function saveBookings() {
+  fs.writeFileSync(BOOKINGS_F, JSON.stringify(bookings, null, 2));
+}
+
+// ── Door Vera geblokkeerde datums (YYYY-MM-DD) ──
+let blockedDates = [];
+if (fs.existsSync(BLOCKED_F)) {
+  try { blockedDates = JSON.parse(fs.readFileSync(BLOCKED_F, 'utf8')); } catch (_) {}
+} else {
+  fs.writeFileSync(BLOCKED_F, '[]');
+}
+function saveBlocked() {
+  fs.writeFileSync(BLOCKED_F, JSON.stringify(blockedDates, null, 2));
+}
+
 // ── TOTP secret ──
 let totpSecret = (process.env.TOTP_SECRET || '').trim();
 if (!totpSecret) {
@@ -122,7 +181,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(express.json({ limit: '100kb' }));
 app.use(cors({
-  origin: ['https://veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001'],
+  origin: ['https://veramiek.nl', 'https://www.veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001', 'http://localhost:3000'],
   credentials: true
 }));
 
@@ -130,6 +189,7 @@ const globalLimit  = rateLimit({ windowMs: 60_000, max: 200, standardHeaders: tr
   message: { error: 'Te veel verzoeken. Probeer het later opnieuw.' } });
 const contactLimit = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
 const orderLimit   = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
+const bookLimit    = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
 const setupLimit   = rateLimit({ windowMs: 900_000, max: 5, standardHeaders: true, legacyHeaders: false });
 const loginLimit   = rateLimit({ windowMs: 900_000, max: 5, standardHeaders: true, legacyHeaders: false,
   message: { error: 'Te veel pogingen. Probeer over 15 minuten opnieuw.' } });
@@ -545,6 +605,300 @@ app.post('/send-order', orderLimit, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Mail mislukt' });
   }
+});
+
+// ── Workshops & boekingen ──
+
+/** Vandaag als YYYY-MM-DD in de Nederlandse tijdzone. */
+function todayStr() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Amsterdam' }).format(new Date());
+}
+function isValidDateStr(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+/** YYYY-MM-DD → DD/MM/YYYY (huisstijl-datumnotatie). */
+function nlDate(s) {
+  const [y, m, d] = String(s).split('-');
+  return `${d}/${m}/${y}`;
+}
+
+/** Escapet tekst voor een .ics-veld. */
+function icsEscape(s) {
+  return String(s ?? '')
+    .replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+/** Volgende dag als YYYYMMDD (all-day DTEND is exclusief). */
+function icsNextDay(datum) {
+  const [y, m, d] = datum.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10).replace(/-/g, '');
+}
+/** Bouwt een all-day .ics-agenda-item voor een workshopboeking. */
+function buildIcs({ uid, datum, summary, description }) {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+  return [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Veramiek//Boeking//NL',
+    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
+    `UID:${uid}`, `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${datum.replace(/-/g, '')}`,
+    `DTEND;VALUE=DATE:${icsNextDay(datum)}`,
+    `SUMMARY:${icsEscape(summary)}`, `DESCRIPTION:${icsEscape(description)}`,
+    'END:VEVENT', 'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+function bookingShell(inner) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:white;border-radius:4px;overflow:hidden;border:1px solid #ede5db;">
+  <tr><td style="background:#c2714f;padding:28px 40px;text-align:center;">
+    <h1 style="margin:0;font-family:Georgia,serif;color:white;font-size:26px;letter-spacing:3px;">VERAMIEK</h1>
+    <p style="margin:6px 0 0;color:rgba(255,255,255,.8);font-size:12px;letter-spacing:1px;">HANDGEMAAKT KERAMIEK</p>
+  </td></tr>
+  ${inner}
+  <tr><td style="background:#f5f0e8;padding:18px 40px;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#7a6259;">veramiek.nl · info@veramiek.nl</p>
+  </td></tr>
+</table></td></tr></table>
+</body></html>`;
+}
+function detailRows(pairs) {
+  return pairs.map(([k, v]) =>
+    `<tr><td style="padding:4px 0;color:#7a6259;width:130px;">${escapeHtml(k)}</td><td style="padding:4px 0;font-weight:bold;color:#2d1f17;">${escapeHtml(v)}</td></tr>`
+  ).join('');
+}
+function buildVeraBookingEmail(b) {
+  return bookingShell(`
+  <tr><td style="padding:28px 40px 8px;">
+    <h2 style="margin:0 0 16px;color:#5c3d2e;font-family:Georgia,serif;font-size:21px;">Nieuwe workshopaanvraag</h2>
+    <table cellpadding="0" cellspacing="0" style="font-size:14px;">
+      ${detailRows([
+        ['Workshop', b.workshopName],
+        ['Datum', nlDate(b.datum)],
+        ['Aantal personen', String(b.aantalPersonen)],
+        ['Naam', b.naam],
+        ['E-mail', b.email],
+        ['Telefoon', b.tel],
+      ])}
+    </table>
+    ${b.bericht ? `<p style="margin:16px 0 0;padding:14px 18px;background:#faf7f2;border:1px solid #ede5db;border-radius:3px;font-size:14px;color:#2d1f17;line-height:1.7;white-space:pre-wrap;">${escapeHtml(b.bericht)}</p>` : ''}
+    <p style="margin:18px 0 4px;color:#7a6259;font-size:13px;line-height:1.7;">De aanvraag staat in je agenda (bijlage). Neem contact op met de deelnemer om de tijd te bevestigen.</p>
+  </td></tr>`);
+}
+function buildDeelnemerBookingEmail(b) {
+  return bookingShell(`
+  <tr><td style="padding:32px 40px 8px;">
+    <h2 style="margin:0 0 12px;color:#5c3d2e;font-family:Georgia,serif;font-size:22px;">Je aanvraag is ontvangen, ${escapeHtml(b.naam)}!</h2>
+    <p style="margin:0 0 16px;color:#7a6259;font-size:14px;line-height:1.8;">Dankjewel voor je aanvraag voor <strong>${escapeHtml(b.workshopName)}</strong>. Ik neem zo snel mogelijk contact met je op om de datum en tijd definitief te bevestigen.</p>
+    <table cellpadding="0" cellspacing="0" style="font-size:14px;">
+      ${detailRows([
+        ['Workshop', b.workshopName],
+        ['Voorkeursdatum', nlDate(b.datum)],
+        ['Aantal personen', String(b.aantalPersonen)],
+      ])}
+    </table>
+    <p style="margin:18px 0 0;color:#7a6259;font-size:13px;line-height:1.7;">In de bijlage vind je een agenda-item zodat je de datum alvast kunt noteren.</p>
+  </td></tr>`);
+}
+
+// Publiek: workshoptypes
+app.get('/workshops', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.json(workshops);
+});
+
+// Publiek: beschikbaarheid voor een maand (YYYY-MM). Alleen niet-vrije dagen.
+app.get('/availability', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  const maand = String(req.query.maand || '');
+  if (!/^\d{4}-\d{2}$/.test(maand)) return res.status(400).json({ error: 'Ongeldige maand' });
+  const [y, m] = maand.split('-').map(Number);
+  const days = new Date(y, m, 0).getDate();
+  const today = todayStr();
+  const result = {};
+  for (let d = 1; d <= days; d++) {
+    const date = `${maand}-${String(d).padStart(2, '0')}`;
+    if (date < today) result[date] = 'blocked';
+  }
+  for (const date of blockedDates) {
+    if (date.startsWith(maand)) result[date] = 'blocked';
+  }
+  for (const b of bookings) {
+    if (b.status !== 'cancelled' && b.datum.startsWith(maand) && result[b.datum] !== 'blocked') {
+      result[b.datum] = 'full';
+    }
+  }
+  res.json(result);
+});
+
+// Publiek: boekingsaanvraag
+app.post('/book', bookLimit, async (req, res) => {
+  try {
+    const { workshopId, datum, naam, email, tel, aantalPersonen, bericht, website } = req.body || {};
+    if (website) return res.json({ ok: true }); // honeypot
+    if (!workshopId || !datum || !naam || !email || !tel || !aantalPersonen) {
+      return res.status(400).json({ error: 'Vul alle verplichte velden in' });
+    }
+    const workshop = workshops.find(w => w.id === workshopId);
+    if (!workshop) return res.status(400).json({ error: 'Onbekende workshop' });
+    if (!isValidDateStr(datum) || datum < todayStr()) {
+      return res.status(400).json({ error: 'Kies een geldige datum' });
+    }
+    if (blockedDates.includes(datum) || bookings.some(b => b.status !== 'cancelled' && b.datum === datum)) {
+      return res.status(409).json({ error: 'Deze datum is niet meer beschikbaar' });
+    }
+    const aantal = Number(aantalPersonen);
+    if (!Number.isInteger(aantal) || aantal < 1 || aantal > 50) {
+      return res.status(400).json({ error: 'Ongeldig aantal personen' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Ongeldig e-mailadres' });
+    if (String(naam).length > 100 || String(bericht || '').length > 2000) {
+      return res.status(400).json({ error: 'Invoer te lang' });
+    }
+
+    const booking = {
+      id: crypto.randomUUID(),
+      workshopId,
+      workshopName: workshop.name,
+      datum,
+      naam: String(naam).trim(),
+      email: String(email).trim(),
+      tel: String(tel).trim(),
+      aantalPersonen: aantal,
+      bericht: String(bericht || '').trim(),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+    bookings.push(booking);
+    saveBookings();
+
+    // Mail Vera + deelnemer met een .ics-agenda-item (best effort).
+    try {
+      const ics = buildIcs({
+        uid: `${booking.id}@veramiek.nl`,
+        datum,
+        summary: `Workshop: ${workshop.name}`,
+        description: `${aantal} personen. Aangevraagd door ${booking.naam} (${booking.email}, ${booking.tel}).`,
+      });
+      const attachments = [{
+        filename: 'workshop-veramiek.ics',
+        content: ics,
+        contentType: 'text/calendar; charset=utf-8; method=PUBLISH',
+      }];
+      await transporter.sendMail({
+        from: '"Veramiek Workshops" <info@versodevelopment.nl>',
+        replyTo: booking.email,
+        to: 'info@veramiek.nl',
+        subject: `Nieuwe workshopaanvraag van ${booking.naam}`,
+        html: buildVeraBookingEmail(booking),
+        attachments,
+      });
+      await transporter.sendMail({
+        from: '"Vera, Veramiek" <info@versodevelopment.nl>',
+        replyTo: 'info@veramiek.nl',
+        to: booking.email,
+        subject: 'Je workshopaanvraag bij Veramiek',
+        html: buildDeelnemerBookingEmail(booking),
+        attachments,
+      });
+    } catch (mailErr) {
+      console.error('[Boeking] mail mislukt, boeking wel opgeslagen:', mailErr.message);
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Aanvraag mislukt' });
+  }
+});
+
+// ── Admin: workshops CRUD ──
+app.get('/admin/workshops', auth, (req, res) => res.json(workshops));
+app.post('/admin/workshops', auth, (req, res) => {
+  const { name, desc, duration, groupSize, price, images } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
+  const w = {
+    id: crypto.randomUUID(),
+    name: String(name).trim(),
+    desc: String(desc || '').trim(),
+    duration: String(duration || '').trim(),
+    groupSize: String(groupSize || '').trim(),
+    price: String(price || '').trim(),
+    images: Array.isArray(images) ? images.filter(u => typeof u === 'string') : [],
+  };
+  workshops.push(w);
+  saveWorkshops();
+  res.json(w);
+});
+app.put('/admin/workshops/:id', auth, (req, res) => {
+  const idx = workshops.findIndex(w => w.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Workshop niet gevonden' });
+  const { name, desc, duration, groupSize, price, images } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
+  workshops[idx] = {
+    id: workshops[idx].id,
+    name: String(name).trim(),
+    desc: String(desc || '').trim(),
+    duration: String(duration || '').trim(),
+    groupSize: String(groupSize || '').trim(),
+    price: String(price || '').trim(),
+    images: Array.isArray(images) ? images.filter(u => typeof u === 'string') : [],
+  };
+  saveWorkshops();
+  res.json(workshops[idx]);
+});
+app.delete('/admin/workshops/:id', auth, (req, res) => {
+  const idx = workshops.findIndex(w => w.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Workshop niet gevonden' });
+  workshops.splice(idx, 1);
+  saveWorkshops();
+  res.json({ ok: true });
+});
+
+// ── Admin: boekingen ──
+app.get('/admin/bookings', auth, (req, res) => {
+  res.json([...bookings].sort((a, b) => (a.datum < b.datum ? -1 : 1)));
+});
+app.put('/admin/bookings/:id', auth, (req, res) => {
+  const booking = bookings.find(b => b.id === req.params.id);
+  if (!booking) return res.status(404).json({ error: 'Boeking niet gevonden' });
+  const { status } = req.body || {};
+  if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
+    return res.status(400).json({ error: 'Ongeldige status' });
+  }
+  booking.status = status;
+  saveBookings();
+  res.json(booking);
+});
+app.delete('/admin/bookings/:id', auth, (req, res) => {
+  const idx = bookings.findIndex(b => b.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Boeking niet gevonden' });
+  bookings.splice(idx, 1);
+  saveBookings();
+  res.json({ ok: true });
+});
+
+// ── Admin: geblokkeerde datums ──
+app.get('/admin/blocked-dates', auth, (req, res) => res.json([...blockedDates].sort()));
+app.post('/admin/blocked-dates', auth, (req, res) => {
+  const { date } = req.body || {};
+  if (!isValidDateStr(date)) return res.status(400).json({ error: 'Ongeldige datum' });
+  if (!blockedDates.includes(date)) {
+    blockedDates.push(date);
+    saveBlocked();
+  }
+  res.json({ ok: true, blockedDates: [...blockedDates].sort() });
+});
+app.delete('/admin/blocked-dates/:date', auth, (req, res) => {
+  const date = req.params.date;
+  const idx = blockedDates.indexOf(date);
+  if (idx !== -1) {
+    blockedDates.splice(idx, 1);
+    saveBlocked();
+  }
+  res.json({ ok: true, blockedDates: [...blockedDates].sort() });
 });
 
 // ── Global error handler (prevents stack trace leakage to clients) ──

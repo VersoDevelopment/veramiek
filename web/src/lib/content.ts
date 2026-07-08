@@ -9,17 +9,18 @@ export type NavLink = {
 };
 
 export const navLinks: NavLink[] = [
-  { label: "Collecties", href: "/#collecties" },
+  { label: "Collecties", href: "/collecties" },
   { label: "Over mij", href: "/over-mij" },
   { label: "Workshops", href: "/workshops" },
-  { label: "Mijn blog", href: "/blog" },
+  { label: "Mijn blogs", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
 export type Collection = {
   name: string;
   href: string;
-  image: string;
+  /** Eén of meerdere foto's; bij meerdere wisselt de tegel er automatisch tussen (crossfade). */
+  images: string[];
   alt: string;
 };
 
@@ -27,39 +28,51 @@ export type Collection = {
 export const collections: Collection[] = [
   {
     name: "Dune & Dust",
-    href: "/#collecties",
-    image: "/images/schaal-1.png",
+    href: "/collecties",
+    images: ["/images/schaal-1.png"],
     alt: "Handgedraaide schaal uit de collectie Dune & Dust",
   },
   {
     name: "Blush",
-    href: "/#collecties",
-    image: "/images/bubble-cups.png",
-    alt: "Bubble cups uit de collectie Blush",
+    href: "/collecties",
+    images: [
+      "/images/collecties/blush/blush-1.jpeg",
+      "/images/collecties/blush/blush-2.jpeg",
+      "/images/collecties/blush/blush-3.jpeg",
+    ],
+    alt: "Keramiek uit de collectie Blush",
   },
   {
     name: "Boeren bontjes",
-    href: "/#collecties",
-    image: "/images/letters.png",
+    href: "/collecties",
+    images: [
+      "/images/collecties/boeren-bontjes/boeren-bontjes-1.jpeg",
+      "/images/collecties/boeren-bontjes/boeren-bontjes-2.jpeg",
+      "/images/collecties/boeren-bontjes/boeren-bontjes-3.jpeg",
+    ],
     alt: "Beschilderd keramiek uit de collectie Boeren bontjes",
   },
   {
     name: "Placeholder",
-    href: "/#collecties",
-    image: "/images/matcha-set.png",
+    href: "/collecties",
+    images: ["/images/matcha-set.png"],
     alt: "Matcha set uit een nieuwe collectie",
   },
 ];
 
-/** Product-categorieën voor de rechterkolom van het Collecties-megamenu. */
+/**
+ * Product-categorieën voor de rechterkolom van het Collecties-megamenu.
+ * De `soort`-query preselecteert het filter op de winkelpagina; labels
+ * moeten sporen met SHOP_CATEGORIES in lib/api.ts.
+ */
 export const productCategories: NavLink[] = [
-  { label: "Borden", href: "/#collecties" },
-  { label: "Mokken", href: "/#collecties" },
-  { label: "Schalen", href: "/#collecties" },
-  { label: "Kommen", href: "/#collecties" },
-  { label: "Matcha set", href: "/#collecties" },
-  { label: "Lepelhouders", href: "/#collecties" },
-  { label: "Overige", href: "/#collecties" },
+  { label: "Borden", href: "/collecties?soort=Borden" },
+  { label: "Mokken", href: "/collecties?soort=Mokken" },
+  { label: "Schalen", href: "/collecties?soort=Schalen" },
+  { label: "Kommen", href: "/collecties?soort=Kommen" },
+  { label: "Matcha set", href: "/collecties?soort=Matcha%20set" },
+  { label: "Lepelhouders", href: "/collecties?soort=Lepelhouders" },
+  { label: "Overige", href: "/collecties?soort=Overige" },
 ];
 
 export type BlogPost = {
@@ -96,7 +109,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/chip-and-dip-1.png",
     alt: "Geglazuurde chip and dip schaal",
     meta: "Glazuur, 2026",
-    layoutClass: "col-span-12 md:col-span-6 md:col-start-4 md:translate-y-16",
+    layoutClass: "col-span-12 md:col-span-6 md:col-start-4 md:translate-y-8",
     aspectClass: "aspect-[4/3] md:aspect-[16/10]",
   },
   {
@@ -106,7 +119,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/studio-hero.webp",
     alt: "Werkbank met klei en gereedschap in het atelier",
     meta: "Atelier, 2025",
-    layoutClass: "col-span-12 md:col-span-2 md:col-start-11 md:translate-y-6",
+    layoutClass: "col-span-12 md:col-span-2 md:col-start-11 md:translate-y-3",
     aspectClass: "aspect-[4/3] md:aspect-[3/4]",
     tinted: true,
   },
@@ -127,7 +140,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/diep-bord.png",
     alt: "Diep bord met glazuur",
     meta: "Proces, 2025",
-    layoutClass: "col-span-12 md:col-span-5 md:col-start-7 md:translate-y-20",
+    layoutClass: "col-span-12 md:col-span-5 md:col-start-7 md:translate-y-10",
     aspectClass: "aspect-[4/3] md:aspect-[16/10]",
   },
 ];
@@ -140,4 +153,6 @@ export const contact = {
   /** PLACEHOLDER: echte Instagram-handle volgt nog van de klant. */
   instagramUrl: "https://www.instagram.com/veramiek",
   instagramHandle: "@veramiek",
+  /** PLACEHOLDER: echte TikTok-handle volgt nog van de klant. */
+  tiktokUrl: "https://www.tiktok.com/@veramiek",
 };

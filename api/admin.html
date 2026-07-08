@@ -327,6 +327,7 @@
   <main>
     <div class="tab-bar">
       <button class="tab-btn active" id="tabProducts" onclick="showTab('products')">Producten</button>
+      <button class="tab-btn" id="tabBookings" onclick="showTab('bookings')">Boekingen</button>
       <button class="tab-btn" id="tabContent" onclick="showTab('content')">Website teksten</button>
     </div>
 
@@ -340,6 +341,34 @@
         </button>
       </div>
       <div id="productGrid"></div>
+    </div>
+
+    <!-- ── BOOKINGS VIEW ── -->
+    <div id="bookingsView" style="display:none;">
+      <div class="page-header">
+        <h1 class="page-title" id="bookingsTitle">Boekingen</h1>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Geblokkeerde datums</h2>
+        <p style="color:#8A6055;font-size:.85rem;margin-bottom:1rem;line-height:1.6;">
+          Datums die je hier blokkeert zijn niet meer te boeken op de website.
+          Een datum met een boeking is automatisch vol.
+        </p>
+        <div class="form-row" style="align-items:flex-end;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="blockDate">Datum blokkeren</label>
+            <input class="form-control" type="date" id="blockDate" />
+          </div>
+          <button class="btn-add" onclick="addBlocked()">Blokkeer</button>
+        </div>
+        <div id="blockedList" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem;"></div>
+      </div>
+
+      <div class="content-section">
+        <h2 class="content-section-title">Aanvragen</h2>
+        <div id="bookingsList"></div>
+      </div>
     </div>
 
     <!-- ── CONTENT VIEW ── -->
@@ -881,9 +910,118 @@
   // ── Tabs ──
   function showTab(tab) {
     document.getElementById('tabProducts').classList.toggle('active', tab === 'products');
+    document.getElementById('tabBookings').classList.toggle('active', tab === 'bookings');
     document.getElementById('tabContent').classList.toggle('active', tab === 'content');
     document.getElementById('productsView').style.display = tab === 'products' ? '' : 'none';
+    document.getElementById('bookingsView').style.display = tab === 'bookings' ? '' : 'none';
     document.getElementById('contentView').style.display  = tab === 'content'  ? '' : 'none';
+    if (tab === 'bookings') loadBookingsTab();
+  }
+
+  // ── Boekingen & geblokkeerde datums ──
+  const STATUS_LABEL = { pending: 'Nieuw', confirmed: 'Bevestigd', cancelled: 'Geannuleerd' };
+
+  async function loadBookingsTab() {
+    await Promise.all([loadBookings(), loadBlocked()]);
+  }
+
+  async function loadBookings() {
+    try {
+      const list = await apiReq('GET', '/admin/bookings');
+      renderBookings(list);
+      document.getElementById('bookingsTitle').textContent = `Boekingen (${list.length})`;
+    } catch (e) {
+      toast('Boekingen laden mislukt: ' + e.message);
+    }
+  }
+
+  function nlDate(s) {
+    const p = String(s).split('-');
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : s;
+  }
+
+  function renderBookings(list) {
+    const el = document.getElementById('bookingsList');
+    if (!list.length) {
+      el.innerHTML = `<div class="empty-state"><p>Nog geen aanvragen</p></div>`;
+      return;
+    }
+    el.innerHTML = list.map(b => `
+      <div class="content-section" style="margin-bottom:.75rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:Georgia,serif;color:#4D0E13;font-size:1.05rem;">${esc(b.workshopName)}</div>
+            <div style="color:#8A6055;font-size:.85rem;margin-top:.25rem;">
+              ${nlDate(b.datum)} · ${b.aantalPersonen} pers. · <strong>${STATUS_LABEL[b.status] || b.status}</strong>
+            </div>
+            <div style="color:#2d1f17;font-size:.85rem;margin-top:.4rem;">
+              ${esc(b.naam)} · <a href="mailto:${esc(b.email)}" style="color:#C8A49F;">${esc(b.email)}</a> · ${esc(b.tel)}
+            </div>
+            ${b.bericht ? `<div style="color:#7a6259;font-size:.82rem;margin-top:.4rem;white-space:pre-wrap;">${esc(b.bericht)}</div>` : ''}
+          </div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+            ${b.status !== 'confirmed' ? `<button class="btn-edit" onclick="setBookingStatus('${b.id}','confirmed')">Bevestigen</button>` : ''}
+            ${b.status !== 'cancelled' ? `<button class="btn-edit" onclick="setBookingStatus('${b.id}','cancelled')">Annuleren</button>` : ''}
+            <button class="btn-edit" onclick="deleteBooking('${b.id}')">Verwijderen</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function setBookingStatus(id, status) {
+    try {
+      await apiReq('PUT', '/admin/bookings/' + id, { status });
+      toast('Boeking bijgewerkt');
+      loadBookings();
+    } catch (e) { toast('Mislukt: ' + e.message); }
+  }
+
+  async function deleteBooking(id) {
+    if (!confirm('Deze boeking verwijderen?')) return;
+    try {
+      await apiReq('DELETE', '/admin/bookings/' + id);
+      toast('Boeking verwijderd');
+      loadBookings();
+    } catch (e) { toast('Mislukt: ' + e.message); }
+  }
+
+  async function loadBlocked() {
+    try {
+      const dates = await apiReq('GET', '/admin/blocked-dates');
+      renderBlocked(dates);
+    } catch (e) { toast('Datums laden mislukt: ' + e.message); }
+  }
+
+  function renderBlocked(dates) {
+    const el = document.getElementById('blockedList');
+    if (!dates.length) {
+      el.innerHTML = `<span style="color:#8A6055;font-size:.85rem;">Geen geblokkeerde datums.</span>`;
+      return;
+    }
+    el.innerHTML = dates.map(d => `
+      <span style="display:inline-flex;align-items:center;gap:.4rem;background:#f5f0e8;border:1px solid #C8B0A4;border-radius:2px;padding:.35rem .6rem;font-size:.82rem;color:#4D0E13;">
+        ${nlDate(d)}
+        <button onclick="removeBlocked('${d}')" title="Deblokkeren" style="border:none;background:none;color:#A8807A;cursor:pointer;font-size:1rem;line-height:1;padding:0;">×</button>
+      </span>`).join('');
+  }
+
+  async function addBlocked() {
+    const date = document.getElementById('blockDate').value;
+    if (!date) { toast('Kies een datum'); return; }
+    try {
+      const r = await apiReq('POST', '/admin/blocked-dates', { date });
+      renderBlocked(r.blockedDates);
+      document.getElementById('blockDate').value = '';
+      toast('Datum geblokkeerd');
+    } catch (e) { toast('Mislukt: ' + e.message); }
+  }
+
+  async function removeBlocked(date) {
+    try {
+      const r = await apiReq('DELETE', '/admin/blocked-dates/' + date);
+      renderBlocked(r.blockedDates);
+      toast('Datum gedeblokkeerd');
+    } catch (e) { toast('Mislukt: ' + e.message); }
   }
 
   // ── Content ──

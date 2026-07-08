@@ -4,7 +4,7 @@ import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealSection } from "@/components/ui/RevealSection";
 
 export const metadata: Metadata = {
-  title: "Mijn blog | Veramiek",
+  title: "Mijn blogs | Veramiek",
   description:
     "Verhalen uit het atelier: hoe een cursus keramiek in september 2025 uitgroeide tot Veramiek.",
 };

@@ -1,2 +1,5 @@
 .env
 node_modules/
+# Runtime data (in productie een Docker-volume, hoort niet in git)
+data/
+uploads/

@@ -3,6 +3,9 @@ import { Gruppo, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
+import { PointerGlowProvider } from "@/components/ui/PointerGlow";
+import { CartProvider } from "@/components/cart/CartProvider";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -34,9 +37,13 @@ export default function RootLayout({
       className={`${playfair.variable} ${gruppo.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Nav />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <CartProvider>
+          <PointerGlowProvider />
+          <Nav />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

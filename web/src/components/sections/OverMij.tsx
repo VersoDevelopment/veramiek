@@ -1,100 +1,58 @@
+import { BookOpen, Gem, Hand } from "lucide-react";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealItem, RevealSection } from "@/components/ui/RevealSection";
 
 /**
- * Volle-breedte Deep Wine sectie met Vera's volledige verhaal: gecentreerde
- * kop met sage haarlijn, redactionele tekstkolom, een Playfair-pullquote en
- * twee subtiele knoppen naar de collecties en workshops.
+ * Volle-breedte Deep Wine sectie met een samenvatting van Vera's verhaal:
+ * gecentreerde kop met sage haarlijn, korte introductie, daaronder de
+ * pullquote (breder dan de tekst, tussen twee subtiele sage-haarlijntjes met
+ * witruimte erboven en eronder), en pas daaronder de knoppen: "Lees mijn
+ * volledige verhaal" (naar /over-mij) los en gecentreerd boven de twee
+ * secundaire knoppen.
  */
 export function OverMij() {
   return (
     <RevealSection id="over" stagger className="bg-wine text-white antialiased">
-      <div className="mx-auto max-w-[65ch] px-6 py-28 md:py-36">
+      <div className="mx-auto max-w-[100rem] px-6 py-28 md:px-16 md:py-36">
         <RevealItem className="text-center">
           <h2 className="text-4xl md:text-5xl">Over mij</h2>
           <div aria-hidden className="mx-auto mt-9 h-px w-12 bg-sage/70" />
         </RevealItem>
 
         <RevealItem>
-          <div className="mt-14 space-y-7 text-lg text-white/85">
-            <p>
-              Ik ben Vera, 26 jaar oud, keramist en maker achter Veramiek.
-              Samen met mijn partner Kenny en onze nieuwsgierige hond Ollie
-              woon ik in Etten-Leur. Ollie loopt regelmatig rond in mijn
-              atelier en is altijd erg nieuwsgierig wat ik daar nou allemaal
-              aan het doen ben, dus grote kans dat je hem af en toe voorbij
-              ziet komen op mijn website of socials. Hij is mijn kleine
-              sidekick en grootste supporter.
+          <div className="mt-14 text-center">
+            <p className="mx-auto max-w-[60ch] text-lg text-white/85">
+              Ik ben Vera, keramist en maker achter Veramiek. Wat begon als
+              een cursus pottenbakken groeide uit tot een eigen atelier in
+              Etten-Leur, waar ik met klei werk aan stukken die generaties
+              meegaan. Ik geef ook workshops aan iedereen die hetzelfde
+              rustpunt zoekt als ik vond.
             </p>
-            <p>
-              Mijn atelier is de plek waar ik tot rust kom. Hier ontstaan
-              unieke, handgemaakte keramiekstukken, gemaakt met aandacht,
-              geduld en liefde voor het ambacht. De stukken die ik maak zijn
-              bedoeld om generaties lang mee te gaan en een mooi plekje te
-              krijgen in jouw huis.
+
+            <div aria-hidden className="mx-auto my-9 h-px w-10 bg-sage/60" />
+
+            <p className="mx-auto max-w-[85ch] font-display text-xl tracking-[0.03em] text-white italic">
+              Met je handen werken is bijna magisch: je wordt één met de
+              klei, komt volledig tot rust en je creëert iets dat blijft.
             </p>
-            <p>
-              Ik verkoop mijn collecties online, sta op verschillende markten
-              en geef workshops waarin ik mensen laat ervaren hoe bijzonder
-              het is om iets met je eigen handen te creëren.
-            </p>
-            <p>
-              Een tijd geleden zat ik niet goed in mijn vel. Ik voelde druk om
-              carrière te maken zoals mensen om me heen dat deden, maar wist
-              niet wat mijn eigen pad was. Toen kwam ik een cursus pottenbakken
-              tegen. Voor velen maar iets kleins, maar het raakte meteen iets
-              in mij.
-            </p>
-            <p>
-              Na de eerste les was ik verkocht. Het werken met klei bracht
-              rust, focus en plezier terug in mijn leven. In de vakantie kocht
-              ik een tweedehands draaischijf en oven, en vanaf dat moment wist
-              ik: dit is het. Zo ontstond mijn onderneming Veramiek: Vera plus
-              keramiek. Een naam die bijna vanzelf kwam, alsof het zo had
-              moeten zijn.
-            </p>
-            <p>
-              Keramiek is voor mij meer dan een ambacht. Het is een manier om
-              te vertragen, om offline te zijn en om te voelen hoe het is om
-              zelf iets te maken.
-            </p>
+
+            <div aria-hidden className="mx-auto my-9 h-px w-10 bg-sage/60" />
           </div>
         </RevealItem>
 
         <RevealItem>
-          <blockquote className="my-14 border-l border-sage/70 pl-8 font-display text-2xl leading-snug tracking-[0.04em] md:text-3xl">
-            Met je handen werken is bijna magisch: je wordt één met de klei,
-            komt volledig tot rust en je creëert iets dat blijft.
-          </blockquote>
-        </RevealItem>
-
-        <RevealItem>
-          <div className="space-y-7 text-lg text-white/85">
-            <p>
-              Ik geloof dat creativiteit en ambacht goed zijn voor je mentale
-              gezondheid. Voor mij is het een plek waar ik mezelf terugvind,
-              en dat is precies wat ik wil doorgeven via mijn werk en
-              workshops.
-            </p>
-            <p>
-              Kijk zeker even verder op mijn website en wie weet zie ik je
-              binnenkort op een markt of tijdens een workshop. Dan hoop ik dat
-              ik jou een stukje van mijn enthousiasme en liefde voor het vak
-              kan meegeven. Of dat nu is door een mooi stuk keramiek te kopen,
-              of door zelf met je handen in de klei te duiken tijdens een
-              workshop.
-            </p>
-          </div>
-        </RevealItem>
-
-        <RevealItem>
-          <div className="mt-14 flex flex-wrap justify-center gap-4">
-            <CtaButton href="/#collecties" variant="lightOutline">
-              Bekijk de collecties
+          <div className="mt-14 flex flex-col items-center gap-4">
+            <CtaButton href="/over-mij" variant="light" icon={<BookOpen size={18} />}>
+              Lees mijn volledige verhaal
             </CtaButton>
-            <CtaButton href="/workshops" variant="lightOutline">
-              Naar de workshops
-            </CtaButton>
+            <div className="flex flex-wrap justify-center gap-4">
+              <CtaButton href="/#collecties" variant="lightOutline" icon={<Gem size={18} />}>
+                Bekijk de collecties
+              </CtaButton>
+              <CtaButton href="/workshops" variant="lightOutline" icon={<Hand size={18} />}>
+                Naar de workshops
+              </CtaButton>
+            </div>
           </div>
         </RevealItem>
       </div>
