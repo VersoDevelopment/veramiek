@@ -36,7 +36,23 @@ const nextConfig: NextConfig = {
             },
           ]
         : []),
-      // Productie-API expliciet toegestaan, ongeacht env tijdens build.
+      // Productie: uploads worden geserveerd via veramiek.nl/api/uploads/*
+      // (zie de upload-URL in ../api/server.js).
+      {
+        protocol: "https",
+        hostname: "veramiek.nl",
+        port: "",
+        pathname: "/api/uploads/**",
+        search: "",
+      },
+      {
+        protocol: "https",
+        hostname: "www.veramiek.nl",
+        port: "",
+        pathname: "/api/uploads/**",
+        search: "",
+      },
+      // Losse API-subdomein-variant, mocht de upload-host later wijzigen.
       {
         protocol: "https",
         hostname: "api.veramiek.nl",
