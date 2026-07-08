@@ -60,7 +60,7 @@ function FilterGroup({
                 aria-pressed={isActive}
                 onClick={() => onSelect(option)}
                 className={`group relative inline-block text-left text-base tracking-[0.02em] transition-colors ${
-                  isActive ? "text-wine" : "text-wine/55 hover:text-wine"
+                  isActive ? "text-white" : "text-white/55 hover:text-white"
                 }`}
               >
                 {option}

@@ -19,7 +19,7 @@ export default async function CollectiesPage({
   ]);
 
   return (
-    <section className="bg-white px-5 pt-40 pb-28 md:px-10 md:pb-36">
+    <section className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
       <header className="mx-auto mb-14 max-w-3xl text-center md:mb-20">
         <h1 className="text-4xl md:text-5xl">Collecties</h1>
         <div aria-hidden className="mx-auto mt-8 h-px w-12 bg-sage/70" />

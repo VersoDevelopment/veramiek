@@ -50,7 +50,7 @@ export function Nav() {
     <header
       className={`fixed inset-x-0 top-0 z-50 antialiased transition-colors duration-300 ${
         solid
-          ? "bg-white/90 text-wine backdrop-blur-md"
+          ? "bg-wine/90 text-white backdrop-blur-md"
           : "bg-transparent text-white"
       }`}
     >
@@ -65,7 +65,7 @@ export function Nav() {
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             >
               <Image
-                src="/logo/logo-horizontal.png"
+                src="/logo/logo-horizontal-white.png"
                 alt="Veramiek"
                 width={520}
                 height={130}

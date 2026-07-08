@@ -151,7 +151,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
       <div>
         {workshops.length > 1 && (
           <div className="mb-8">
-            <p className="text-sm tracking-[0.14em] text-wine/70 uppercase">
+            <p className="text-sm tracking-[0.14em] text-white/70 uppercase">
               Kies een workshop
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -163,8 +163,8 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
                   aria-pressed={workshopId === w.id}
                   className={`rounded-full border px-5 py-2 text-base tracking-[0.03em] transition-colors ${
                     workshopId === w.id
-                      ? "border-wine bg-wine text-white"
-                      : "border-wine/25 text-wine hover:border-wine"
+                      ? "border-white bg-white text-wine"
+                      : "border-white/30 text-white hover:border-white"
                   }`}
                 >
                   {w.name}
@@ -205,7 +205,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
           {WEEKDAYS.map((d) => (
             <div
               key={d}
-              className="pb-2 text-sm tracking-[0.1em] text-wine/50 uppercase"
+              className="pb-2 text-sm tracking-[0.1em] text-white/50 uppercase"
             >
               {d}
             </div>
@@ -247,10 +247,10 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
                 onClick={() => setSelected(dateStr)}
                 className={`aspect-square text-base tabular-nums transition-colors ${
                   isSelected
-                    ? "bg-wine text-white"
+                    ? "bg-white text-wine"
                     : disabled
-                      ? "cursor-not-allowed text-wine/25 line-through"
-                      : "cursor-pointer text-wine hover:bg-sage/25"
+                      ? "cursor-not-allowed text-white/25 line-through"
+                      : "cursor-pointer text-white hover:bg-white/10"
                 }`}
               >
                 {day}
@@ -265,8 +265,8 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
         </p>
       </div>
 
-      {/* Formulier */}
-      <div>
+      {/* Formulier op een witte adempauze-kaart (leesbaarheid van de velden) */}
+      <div className="bg-white p-7 md:p-9">
         <h3 className="font-display text-2xl tracking-[0.06em]">
           {selected
             ? `Aanvraag voor ${new Intl.DateTimeFormat("nl-NL", {

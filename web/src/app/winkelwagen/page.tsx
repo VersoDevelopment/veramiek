@@ -64,7 +64,7 @@ export default function WinkelwagenPage() {
         </p>
         <Link
           href="/collecties"
-          className="mt-10 inline-flex rounded-full border border-wine px-8 py-3 text-base tracking-[0.03em] transition-colors hover:bg-wine hover:text-white"
+          className="mt-10 inline-flex rounded-full border border-white px-8 py-3 text-base tracking-[0.03em] transition-colors hover:bg-white hover:text-wine"
         >
           Verder kijken
         </Link>
@@ -73,7 +73,7 @@ export default function WinkelwagenPage() {
   }
 
   return (
-    <section className="bg-white px-5 pt-40 pb-28 md:px-10 md:pb-36">
+    <section className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
       <div className="mx-auto max-w-6xl">
         <h1 className="text-4xl md:text-5xl">Winkelwagen</h1>
         <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
@@ -83,7 +83,7 @@ export default function WinkelwagenPage() {
             <p className="text-lg opacity-80">Je winkelwagen is nog leeg.</p>
             <Link
               href="/collecties"
-              className="mt-8 inline-flex rounded-full bg-wine px-8 py-3 text-base tracking-[0.03em] text-white transition-opacity hover:opacity-85"
+              className="mt-8 inline-flex rounded-full bg-white px-8 py-3 text-base tracking-[0.03em] text-wine transition-opacity hover:opacity-85"
             >
               Bekijk de collecties
             </Link>
@@ -134,6 +134,7 @@ export default function WinkelwagenPage() {
                           qty={item.qty}
                           onChange={(q) => setQty(item.id, q)}
                           label={item.name}
+                          tone="light"
                         />
                         <span className="ml-auto text-lg">
                           {formatPrice(item.price * item.qty)}
@@ -154,8 +155,8 @@ export default function WinkelwagenPage() {
               </p>
             </div>
 
-            {/* Afrekenen */}
-            <div className="lg:pt-2">
+            {/* Afrekenen: witte adempauze-kaart voor leesbaarheid van het formulier */}
+            <div className="bg-white p-7 md:p-9 lg:sticky lg:top-28 lg:h-fit">
               <h2 className="font-display text-2xl tracking-[0.06em]">
                 Je gegevens
               </h2>

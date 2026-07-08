@@ -13,13 +13,13 @@ export default async function WorkshopsPage() {
   const workshops = await getWorkshops();
 
   return (
-    <div className="bg-white">
+    <div>
       {/* Intro */}
       <section className="px-5 pt-40 pb-16 md:px-10 md:pb-24">
         <header className="mx-auto max-w-3xl text-center">
           <h1 className="text-4xl md:text-5xl">Workshops</h1>
           <div aria-hidden className="mx-auto mt-8 h-px w-12 bg-sage/70" />
-          <p className="mx-auto mt-8 max-w-[52ch] text-lg text-wine/90">
+          <p className="mx-auto mt-8 max-w-[52ch] text-lg text-white/90">
             Ervaar zelf hoe klei onder je handen vorm krijgt. In een kleine
             groep, met alle tijd en aandacht, en je eigen gemaakte stuk mee naar
             huis.
@@ -52,13 +52,13 @@ export default async function WorkshopsPage() {
                 <div>
                   <h2 className="text-3xl md:text-4xl">{w.name}</h2>
                   <div aria-hidden className="mt-6 h-px w-12 bg-sage/70" />
-                  <p className="mt-8 max-w-[46ch] text-lg text-wine/90">
+                  <p className="mt-8 max-w-[46ch] text-lg text-white/90">
                     {w.desc}
                   </p>
                   <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-3 text-base">
                     {w.duration && (
                       <div>
-                        <dt className="text-sm tracking-[0.14em] text-wine/55 uppercase">
+                        <dt className="text-sm tracking-[0.14em] text-white/55 uppercase">
                           Duur
                         </dt>
                         <dd className="mt-1">{w.duration}</dd>
@@ -66,7 +66,7 @@ export default async function WorkshopsPage() {
                     )}
                     {w.groupSize && (
                       <div>
-                        <dt className="text-sm tracking-[0.14em] text-wine/55 uppercase">
+                        <dt className="text-sm tracking-[0.14em] text-white/55 uppercase">
                           Groep
                         </dt>
                         <dd className="mt-1">{w.groupSize}</dd>
@@ -74,7 +74,7 @@ export default async function WorkshopsPage() {
                     )}
                     {w.price && (
                       <div>
-                        <dt className="text-sm tracking-[0.14em] text-wine/55 uppercase">
+                        <dt className="text-sm tracking-[0.14em] text-white/55 uppercase">
                           Prijs
                         </dt>
                         <dd className="mt-1">{w.price}</dd>

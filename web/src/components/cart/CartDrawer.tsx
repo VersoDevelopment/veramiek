@@ -160,23 +160,34 @@ export function CartDrawer() {
   );
 }
 
-/** Kleine plus/min-stepper voor het aantal, gedeeld met de cart-pagina. */
+/**
+ * Kleine plus/min-stepper voor het aantal, gedeeld met de cart-pagina.
+ * `tone="light"` voor gebruik op een wijnrood vlak (witte rand/hover),
+ * standaard `dark` voor witte adempauze-vlakken (wine rand/hover).
+ */
 export function QtyStepper({
   qty,
   onChange,
   label,
+  tone = "dark",
 }: {
   qty: number;
   onChange: (qty: number) => void;
   label: string;
+  tone?: "dark" | "light";
 }) {
+  const border = tone === "light" ? "border-white/30" : "border-wine/25";
+  const hover =
+    tone === "light"
+      ? "hover:bg-white hover:text-wine"
+      : "hover:bg-wine hover:text-white";
   return (
-    <div className="inline-flex items-center border border-wine/25">
+    <div className={`inline-flex items-center border ${border}`}>
       <button
         type="button"
         onClick={() => onChange(qty - 1)}
         aria-label={`Minder ${label}`}
-        className="cursor-pointer px-2.5 py-1.5 transition-colors hover:bg-wine hover:text-white"
+        className={`cursor-pointer px-2.5 py-1.5 transition-colors ${hover}`}
       >
         <Minus size={16} strokeWidth={1.5} />
       </button>
@@ -190,7 +201,7 @@ export function QtyStepper({
         type="button"
         onClick={() => onChange(qty + 1)}
         aria-label={`Meer ${label}`}
-        className="cursor-pointer px-2.5 py-1.5 transition-colors hover:bg-wine hover:text-white"
+        className={`cursor-pointer px-2.5 py-1.5 transition-colors ${hover}`}
       >
         <Plus size={16} strokeWidth={1.5} />
       </button>

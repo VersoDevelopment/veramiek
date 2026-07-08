@@ -78,12 +78,23 @@
     }
   }
 
+  /*
+   * Rood-dominant systeem: Deep Wine is nu de drager (achtergrond), wit
+   * spreekt (tekst en de schaarse "adempauze"-vlakken), sage fluistert.
+   * Witte blokken (`.bg-white`) zetten lokaal weer wine-tekst neer voor
+   * leesbaarheid (formulieren, panelen).
+   */
   body {
-    background-color: #ffffff;
-    color: var(--color-wine);
+    background-color: var(--color-wine);
+    color: #ffffff;
     font-family: var(--font-body);
     font-size: 1.1875rem;
     line-height: 1.6;
+  }
+
+  /* Binnen witte adempauze-vlakken keert de tekstkleur terug naar wine. */
+  .bg-white {
+    color: var(--color-wine);
   }
 
   h1,
@@ -96,19 +107,19 @@
   }
 
   /*
-   * Zichtbare focus voor toetsenbordgebruik. Standaard een Deep Wine-ring
-   * (contrasteert op de witte galeriewand, ook rond gevulde wijn-knoppen).
-   * Binnen Deep Wine-vlakken wordt de ring wit, zodat hij altijd afsteekt.
+   * Zichtbare focus voor toetsenbordgebruik. Standaard een witte ring
+   * (contrasteert op het wijnrode vlak). Binnen witte adempauze-vlakken
+   * wordt de ring Deep Wine, zodat hij altijd afsteekt.
    */
   :focus-visible {
-    outline: 2px solid var(--color-wine);
+    outline: 2px solid #ffffff;
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  .bg-wine :focus-visible,
-  .bg-wine:focus-visible {
-    outline-color: #ffffff;
+  .bg-white :focus-visible,
+  .bg-white:focus-visible {
+    outline-color: var(--color-wine);
   }
 }
 

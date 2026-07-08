@@ -28,14 +28,14 @@ export default async function ContactPage() {
   const tiktokHandle = c.tiktokHandle ?? "@veramiek";
 
   return (
-    <section className="bg-white px-5 pt-40 pb-28 md:px-10 md:pb-36">
+    <section className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl">
           <h1 className="text-4xl md:text-5xl">
             {c.title ?? "Vragen of bestellen?"}
           </h1>
           <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
-          <p className="mt-8 text-lg text-wine/90">
+          <p className="mt-8 text-lg text-white/90">
             {c.desc ??
               "Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of een workshop boeken? Stuur me gerust een bericht, ik reageer zo snel mogelijk."}
           </p>
@@ -50,7 +50,7 @@ export default async function ContactPage() {
               rel="noopener noreferrer"
               className="group flex items-center gap-4 transition-opacity hover:opacity-70"
             >
-              <WhatsAppIcon className="h-6 w-6 shrink-0 text-wine" />
+              <WhatsAppIcon className="h-6 w-6 shrink-0 text-white" />
               <span className="text-lg">
                 {phone ? phone : "Stuur een WhatsApp"}
               </span>
@@ -87,7 +87,7 @@ export default async function ContactPage() {
                 aria-label={`Instagram ${instagramHandle}`}
                 className="transition-opacity hover:opacity-70"
               >
-                <InstagramIcon className="h-6 w-6 text-wine" />
+                <InstagramIcon className="h-6 w-6 text-white" />
               </a>
               <a
                 href={tiktokUrl}
@@ -96,13 +96,13 @@ export default async function ContactPage() {
                 aria-label={`TikTok ${tiktokHandle}`}
                 className="transition-opacity hover:opacity-70"
               >
-                <TikTokIcon className="h-6 w-6 text-wine" />
+                <TikTokIcon className="h-6 w-6 text-white" />
               </a>
             </div>
           </div>
 
-          {/* Formulier */}
-          <div>
+          {/* Formulier op een witte adempauze-kaart (leesbaarheid) */}
+          <div className="bg-white p-7 md:p-9">
             <ContactForm />
           </div>
         </div>

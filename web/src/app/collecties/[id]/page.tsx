@@ -28,7 +28,7 @@ export default async function ProductPage({ params }: Params) {
   const categorie = normalizeCategory(product.category);
 
   return (
-    <article className="bg-white px-5 pt-40 pb-28 md:px-10 md:pb-36">
+    <article className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
       <div className="mx-auto max-w-6xl">
         <nav className="mb-10 text-base tracking-[0.03em] opacity-70">
           <Link href="/collecties" className="transition-opacity hover:opacity-100">
@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: Params) {
           <ProductGallery images={product.images} alt={product.name} />
 
           <div className="md:pt-6">
-            <p className="text-base tracking-[0.22em] text-wine/55 uppercase">
+            <p className="text-base tracking-[0.22em] text-white/55 uppercase">
               {categorie}
             </p>
             <h1 className="mt-4 text-4xl md:text-5xl">{product.name}</h1>
@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: Params) {
             </p>
 
             {product.desc && (
-              <p className="mt-8 max-w-[46ch] text-lg text-wine/90">
+              <p className="mt-8 max-w-[46ch] text-lg text-white/90">
                 {product.desc}
               </p>
             )}
