@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import { ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { collections, contact, navLinks } from "@/lib/content";
@@ -133,13 +134,32 @@ export function MobileNav() {
                           onMouseEnter={() => setCollectionsOpen(true)}
                           onMouseLeave={() => setCollectionsOpen(false)}
                         >
-                          <MenuLink
-                            href={link.href}
-                            onClick={() => setOpen(false)}
-                            className="font-display text-2xl tracking-[0.08em]"
-                          >
-                            Collecties
-                          </MenuLink>
+                          <div className="flex items-center justify-between gap-3">
+                            <MenuLink
+                              href={link.href}
+                              onClick={() => setOpen(false)}
+                              className="font-display text-2xl tracking-[0.08em]"
+                            >
+                              Collecties
+                            </MenuLink>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setCollectionsOpen((value) => !value)
+                              }
+                              aria-expanded={collectionsOpen}
+                              aria-label="Collecties uitklappen"
+                              className="-m-2 flex cursor-pointer p-2 text-wine"
+                            >
+                              <ChevronDown
+                                size={20}
+                                strokeWidth={1.5}
+                                className={`transition-transform duration-300 ${
+                                  collectionsOpen ? "rotate-180" : ""
+                                }`}
+                              />
+                            </button>
+                          </div>
                           <AnimatePresence>
                             {collectionsOpen && (
                               <motion.ul
