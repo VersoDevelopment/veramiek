@@ -49,16 +49,16 @@ De eerste homepage-bouw (05/07/2026) bevestigde het lettertypepaar uit `_palette
 
 ## 2. Colors
 
-Precies drie rollen, geen uitgebreid palet: wit draagt, Deep Wine spreekt, Pastel Groen fluistert.
+Precies drie rollen, geen uitgebreid palet. Sinds de hero-herbouw (08/07/2026) is de rolverdeling omgedraaid t.o.v. de oorspronkelijke "wit draagt"-opzet: **Deep Wine draagt** (de body-achtergrond, site-breed), **wit spreekt** (tekst op het wijnrode vlak, en de schaarse witte "adempauze"-vlakken zoals panelen en formulieren), **Pastel Groen fluistert**.
 
 ### Primary
-- **Deep Wine** (#2F0410): Hoofdkleur voor tekst, knoppen en kaart-vullingen. Draagt vrijwel de volledige visuele identiteit; dit is het merk.
+- **Deep Wine** (#2F0410): Drager van de site: standaard `body`-achtergrondkleur. Binnen witte adempauze-vlakken (panelen, cart-drawer, formulieren) is Deep Wine juist de tekst-/interactiekleur (`.bg-white` zet dit lokaal terug via `globals.css`).
 
 ### Tertiary
 - **Pastel Groen** (#CBD1A1): Uiterst subtiel accent. Alleen voor kleine details: een dunne lijn onder een hero-titel of sectiekop, de footer-haarlijn. Nooit grote vlakken of achtergronden.
 
 ### Neutral
-- **Wit** (#FFFFFF): Achtergrond door de hele site. Fungeert als galeriewand, niet als "leeg" wit.
+- **Wit** (#FFFFFF): Standaard tekstkleur op het wijnrode vlak, en de kleur van de bewuste "adempauze"-vlakken (secties, panelen, kaarten) die het galerie-wit contrast terugbrengen tussen de overwegend wijnrode pagina's.
 
 ### Named Rules
 **The Whisper Rule.** Pastel Groen verschijnt nooit als vlak, alleen als lijn of kleine tekst. Zodra het accent groter wordt dan een paar pixels, is het te veel.
@@ -90,11 +90,11 @@ Vlak systeem, geen schaduwen. Diepte ontstaat door het contrast tussen wit en De
 Gebouwd tijdens de eerste homepage-implementatie (05/07/2026): navigatie, hero, twee full-bleed secties, een collectiewand, een redactioneel blograster, en twee CTA-secties. Componentenbestanden staan onder `web/src/components/`.
 
 ### Navigation
-- **Structuur:** Schermbrede (`fixed inset-x-0`), edge-to-edge balk zonder gecentreerde `max-w`-wrapper. Hoogte 72px.
-- **Transparante staat (boven de hero):** doorzichtige achtergrond, witte tekst, wit logo (`logo-horizontal-white.png`).
-- **Solid staat (na ~60px scroll, of altijd op subpagina's zonder hero):** wit/geblurd vlak (`bg-white/90` + `backdrop-blur-md`), Deep Wine tekst, Deep Wine logo, dunne Pastel Groen onderrand op 40% dekking.
-- **Megamenu ("Collecties"):** opent op hover, klik en focus. Eén paneel, twee kolommen die tegelijk verschijnen (geen geneste/sequentiële flyouts): links de collectienamen, rechts (`right-5 md:right-10`, dus naar rechts gedropt) de product-categorieën, gescheiden door een dunne Pastel Groen verticale lijn. Animatie ~180ms (Motion `AnimatePresence`), bewust sneller dan de 0.9s-secties-fades: dit is een UI-affordance, geen "luxe" moment.
-- **Mobiel:** hamburger-icoon (twee lijnen die naar een kruis roteren) opent een volledig Deep Wine vlak met gestapelde, platte links.
+- **Structuur:** Schermbrede (`fixed inset-x-0`), edge-to-edge balk zonder gecentreerde `max-w`-wrapper.
+- **Top-stand (alleen homepage, nog niet gescrold):** hoogte 92px, witte achtergrond met Deep Wine tekst/logo, kleurt bij hover om naar Deep Wine achtergrond met wit logo/tekst (logo-crossfade). Gecentreerde navigatielinks (alleen zichtbaar vanaf `lg:`), cart-icoon rechts. Geen hamburger/menu-paneel in deze stand.
+- **Solid-stand (na ~60px scroll op de homepage, of altijd op subpagina's zonder hero):** hoogte 56px, wit/geblurd vlak (`bg-white/90` + `backdrop-blur-md`), Deep Wine tekst en logo, dunne Pastel Groen onderrand op 40% dekking. Rechts: cart-icoon + hamburger.
+- **Megamenu bestaat niet meer.** Het vroegere hover-megamenu met collectie-/categoriekolommen op desktop is vervangen: op alle breedtes opent "Collecties" nu via het hamburger-paneel.
+- **Menu-paneel (voorheen alleen "Mobiel", nu de standaard voor het volledige navigatiemenu):** hamburger-icoon (twee lijnen die naar een kruis roteren) opent een wit paneel dat van rechts inschuift (`role="dialog"`, focus-trap, Escape-sluiten, body-scroll-lock). "Collecties" klapt de collectienamen uit via hover (desktop) of een aparte chevron-knop met `aria-expanded` (touch).
 
 ### Buttons (CtaButton)
 - **Vorm:** volledig afgeronde pil (`rounded-full`), geen scherpe hoeken.
@@ -103,9 +103,15 @@ Gebouwd tijdens de eerste homepage-implementatie (05/07/2026): navigatie, hero, 
 - **Light / Light Outline:** witte varianten voor gebruik op Deep Wine-vlakken of foto's.
 - **Hover/Active:** opacity-verlaging bij hover, lichte `scale-[0.98]` bij active-druk. Geen enkele CTA-tekst wrapt naar een tweede regel.
 
+### LoadIntro (homepage-only)
+- **Verloop:** een gecentreerd rond wit logo op een Deep Wine vlak houdt ~1,5s stand en fadet weg, waarna een wijnrood en (overlappend) een wit paneel van onder naar boven wegtrekken (`scaleY` 1→0, `transform-origin: top`) tot aan de header en de hero onthullen.
+- **Eenmalig per sessie:** speelt alleen bij het eerste bezoek van een browsersessie (`sessionStorage`-vlag, gezet na afloop van de animatie). Bij een herbezoek binnen dezelfde sessie wordt de intro direct overgeslagen en fadet de Hero-tekst meteen in plaats van na de volledige intro-duur te wachten.
+- **Reduced motion:** slaat de hele animatie over en toont de hero direct.
+
 ### Hero
-- **Stijl:** volledige viewport (`min-h-[100svh]`), atelierfoto (`studio-hero.webp`) met Deep Wine tint (`bg-wine/55`).
-- **Placeholder-affordance:** gecentreerde cirkel met alleen een rand (geen vulling, geen schaduw) rond een outline play-icoon, plus een kleine getrackte "Video binnenkort"-caption. Signaleert bewust "hier komt nog een echte video", geen echt afspeelbaar element.
+- **Stijl:** volledige viewport (`h-[100svh]`), fullscreen video (`hero-breda-warmrays-web.mp4`, gecomprimeerd, met poster-frame) met een donkere multiply-filter (`bg-black/30 mix-blend-multiply`) voor leesbaarheid die de kleurintensiteit van de video behoudt i.p.v. een platte zwarte scrim.
+- **Wordmark:** groot, uitgerekt (`scale-y-125`) "VERAMIEK" linksonder, `font-bold`, clamp-getallen tot 18rem. Faded in na de LoadIntro-panelen (of direct bij een geskipte intro).
+- **Tagline en collectierij (bewuste 19px-vloer-uitzondering):** de tagline (drie regels, 0.85rem) en de collectierij "Dune & Dust / Blush / Boeren bontjes" (1rem) onder het wordmark zijn kleiner dan de 19px-floor rule toestaat. Kenny heeft dit expliciet geaccepteerd in preview (08/07/2026); dit is de enige plek in de site waar de vloer bewust wordt doorbroken. Op mobiel (`< md:`) staat de tagline in normale flow onder het wordmark; vanaf `md:` staat hij absoluut gepositioneerd rechts van het wordmark op ooghoogte met de bovenkant.
 
 ### Collection Tile (Collecties-wand)
 - **Layout:** rand-aan-rand grid met 2px naad (`gap-[2px]`), geen padding tussen tegels. Tegelgroottes variëren bewust (7/5-kolomsplit) in plaats van vier identieke vakken.
