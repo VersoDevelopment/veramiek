@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { ProductTile } from "@/components/ui/ProductTile";
 import {
@@ -88,6 +89,8 @@ export function ShopFilter({
   initialCollection?: string;
 }) {
   const prefersReduced = usePrefersReducedMotion();
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Alleen categorieën / collecties tonen die daadwerkelijk producten hebben.
   const availableCategories = useMemo(() => {
@@ -130,6 +133,18 @@ export function ShopFilter({
 
   const hasFilters =
     availableCollections.length > 0 || availableCategories.length > 0;
+
+  // Filters naar de querystring schrijven zodat ze deelbaar zijn en de
+  // terugknop klopt, zonder per klik een nieuwe history-entry toe te voegen.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (activeCategory !== ALL) params.set("soort", activeCategory);
+    if (activeCollection !== ALL) params.set("collectie", activeCollection);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  }, [activeCategory, activeCollection, pathname, router]);
 
   return (
     <div className="flex flex-col gap-10 md:flex-row md:gap-12 lg:gap-16">
