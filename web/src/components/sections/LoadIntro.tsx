@@ -29,6 +29,7 @@ type Phase = "logo" | "logoOut" | "wine" | "white" | "done";
 export function LoadIntro() {
   const prefersReduced = usePrefersReducedMotion();
   const [phase, setPhase] = useState<Phase>("logo");
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (prefersReduced) {
@@ -49,6 +50,21 @@ export function LoadIntro() {
       window.setTimeout(() => setPhase("done"), INTRO_TOTAL_MS),
     ];
     return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [prefersReduced]);
+
+  // Laadpercentage 0→100 gelijk aan de logo-houdtijd, los van de fase-timers
+  // omdat de tekst per frame moet bijwerken i.p.v. via een CSS-transition.
+  useEffect(() => {
+    if (prefersReduced) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const ratio = Math.min(1, (now - start) / LOGO_HOLD_MS);
+      setProgress(Math.round(ratio * 100));
+      if (ratio < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [prefersReduced]);
 
   if (phase === "done") return null;
@@ -80,6 +96,7 @@ export function LoadIntro() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: logoVisible ? 1 : 0, scale: logoVisible ? 1 : 0.92 }}
           transition={{ duration: LOGO_FADE_MS / 1000, ease: luxEase }}
+          className="flex flex-col items-center"
         >
           <Image
             src="/logo/logo-round-white.png"
@@ -89,6 +106,18 @@ export function LoadIntro() {
             className="h-32 w-32"
             preload
           />
+
+          <div className="mt-6 h-px w-28 overflow-hidden bg-white/20">
+            <motion.div
+              className="h-full bg-sage"
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{ duration: LOGO_HOLD_MS / 1000, ease: "linear" }}
+            />
+          </div>
+          <p className="mt-3 font-body text-base tracking-[0.08em] text-white/70 tabular-nums">
+            {progress}%
+          </p>
         </motion.div>
       </motion.div>
     </div>
