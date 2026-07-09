@@ -113,7 +113,7 @@ export function LoadIntro() {
             width={600}
             height={600}
             className="h-32 w-32"
-            priority
+            preload
           />
         </motion.div>
       </motion.div>
