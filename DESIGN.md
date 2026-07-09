@@ -105,7 +105,7 @@ Gebouwd tijdens de eerste homepage-implementatie (05/07/2026): navigatie, hero, 
 
 ### LoadIntro (homepage-only)
 - **Verloop:** een gecentreerd rond wit logo op een Deep Wine vlak houdt ~1,5s stand en fadet weg, waarna een wijnrood en (overlappend) een wit paneel van onder naar boven wegtrekken (`scaleY` 1→0, `transform-origin: top`) tot aan de header en de hero onthullen.
-- **Eenmalig per sessie:** speelt alleen bij het eerste bezoek van een browsersessie (`sessionStorage`-vlag, gezet na afloop van de animatie). Bij een herbezoek binnen dezelfde sessie wordt de intro direct overgeslagen en fadet de Hero-tekst meteen in plaats van na de volledige intro-duur te wachten.
+- **Speelt bij elk bezoek:** geen sessie-onthouding; de intro toont bij iedere paginalaad van de homepage (bewuste keuze van Kenny, 09/07/2026).
 - **Reduced motion:** slaat de hele animatie over en toont de hero direct.
 
 ### Hero
