@@ -16,6 +16,23 @@ const WHITE_START_DELAY_MS = 450;
 export const INTRO_TOTAL_MS =
   LOGO_HOLD_MS + LOGO_FADE_MS + WHITE_START_DELAY_MS + revealDuration * 1000;
 
+const INTRO_SESSION_KEY = "veramiek-intro";
+
+/**
+ * True zodra de intro deze sessie al volledig is getoond (of geskipt via
+ * reduced motion). De vlag wordt pas na afloop gezet, niet bij het starten:
+ * zo blijft de eerste weergave altijd de volledige intro tonen, ook al
+ * mount Hero.tsx (dat dezelfde vlag leest) in dezelfde render-cyclus.
+ */
+export function hasSeenIntro(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.sessionStorage.getItem(INTRO_SESSION_KEY) === "1";
+}
+
+function markIntroSeen() {
+  window.sessionStorage.setItem(INTRO_SESSION_KEY, "1");
+}
+
 type Phase = "logo" | "logoOut" | "wine" | "white" | "done";
 
 /**
@@ -31,10 +48,17 @@ export function LoadIntro() {
   const [phase, setPhase] = useState<Phase>("logo");
 
   useEffect(() => {
-    if (prefersReduced) {
+    if (hasSeenIntro()) {
       setPhase("done");
       return;
     }
+
+    if (prefersReduced) {
+      markIntroSeen();
+      setPhase("done");
+      return;
+    }
+
     const timers = [
       window.setTimeout(() => setPhase("logoOut"), LOGO_HOLD_MS),
       window.setTimeout(
@@ -45,7 +69,10 @@ export function LoadIntro() {
         () => setPhase("white"),
         LOGO_HOLD_MS + LOGO_FADE_MS + WHITE_START_DELAY_MS,
       ),
-      window.setTimeout(() => setPhase("done"), INTRO_TOTAL_MS),
+      window.setTimeout(() => {
+        markIntroSeen();
+        setPhase("done");
+      }, INTRO_TOTAL_MS),
     ];
     return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [prefersReduced]);

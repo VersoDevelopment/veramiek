@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 import {
   InstagramIcon,
   TikTokIcon,
@@ -9,7 +10,7 @@ import {
 import { contact } from "@/lib/content";
 import { luxEase } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
-import { INTRO_TOTAL_MS } from "./LoadIntro";
+import { hasSeenIntro, INTRO_TOTAL_MS } from "./LoadIntro";
 
 /** Tekst/iconen faden al in tijdens de laatste fase van de LoadIntro-panelen. */
 const TEXT_INTRO_DELAY = (INTRO_TOTAL_MS - 100) / 1000;
@@ -30,6 +31,12 @@ const TEXT_FADE_DURATION = 1.3;
  */
 export function Hero() {
   const prefersReduced = usePrefersReducedMotion();
+  const [introDelay, setIntroDelay] = useState(TEXT_INTRO_DELAY);
+
+  // Bij een geskipte (al geziene) intro meteen faden i.p.v. de volledige intro-duur wachten.
+  useEffect(() => {
+    if (hasSeenIntro()) setIntroDelay(0);
+  }, []);
 
   return (
     <section className="relative flex h-[100svh] items-center justify-center overflow-hidden bg-wine">
@@ -55,7 +62,7 @@ export function Hero() {
         <motion.p
           initial={prefersReduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: TEXT_INTRO_DELAY }}
+          transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: introDelay }}
           className="origin-bottom-left scale-y-125 font-display text-[clamp(7rem,22vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white"
         >
           VERAMIEK
@@ -67,7 +74,7 @@ export function Hero() {
           transition={{
             duration: TEXT_FADE_DURATION,
             ease: luxEase,
-            delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+            delay: introDelay + TEXT_INTRO_STAGGER,
           }}
           className="mt-4 block font-body text-[0.85rem] leading-[1.6] tracking-[0.08em] text-white md:absolute md:top-0 md:left-full md:mt-0 md:ml-6 md:block md:whitespace-nowrap"
         >
@@ -84,7 +91,7 @@ export function Hero() {
           transition={{
             duration: TEXT_FADE_DURATION,
             ease: luxEase,
-            delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+            delay: introDelay + TEXT_INTRO_STAGGER,
           }}
           className="mt-5 flex w-full items-center justify-between font-body text-[1rem] tracking-[0.08em] text-white"
         >
@@ -100,7 +107,7 @@ export function Hero() {
         transition={{
           duration: TEXT_FADE_DURATION,
           ease: luxEase,
-          delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+          delay: introDelay + TEXT_INTRO_STAGGER,
         }}
         className="absolute right-6 bottom-8 z-20 flex items-center gap-8 md:right-12 md:bottom-10"
       >
