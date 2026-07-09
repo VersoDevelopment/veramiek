@@ -107,7 +107,7 @@ export function LoadIntro() {
             preload
           />
 
-          <div className="mt-6 h-px w-28 overflow-hidden bg-white/20">
+          <div className="mt-6 h-px w-[10.5rem] overflow-hidden bg-white/20">
             <motion.div
               className="h-full bg-sage"
               initial={{ width: "0%" }}
