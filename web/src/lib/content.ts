@@ -27,30 +27,30 @@ export type Collection = {
 /** De eerste drie zijn de uitgelichte rij op de homepage; het megamenu toont alles. */
 export const collections: Collection[] = [
   {
-    name: "Dune & Dust",
-    href: "/collecties?collectie=Dune%20%26%20Dust",
+    name: "Zeeuws Zand",
+    href: "/collecties?collectie=Zeeuws%20Zand",
     images: ["/images/schaal-1.png"],
-    alt: "Handgedraaide schaal uit de collectie Dune & Dust",
+    alt: "Handgedraaide schaal uit de collectie Zeeuws Zand",
   },
   {
-    name: "Blush",
-    href: "/collecties?collectie=Blush",
+    name: "Kust Koraal",
+    href: "/collecties?collectie=Kust%20Koraal",
     images: [
       "/images/collecties/blush/blush-1.jpeg",
       "/images/collecties/blush/blush-2.jpeg",
       "/images/collecties/blush/blush-3.jpeg",
     ],
-    alt: "Keramiek uit de collectie Blush",
+    alt: "Keramiek uit de collectie Kust Koraal",
   },
   {
-    name: "Boeren bontjes",
-    href: "/collecties?collectie=Boeren%20bontjes",
+    name: "Boeren Bontjes",
+    href: "/collecties?collectie=Boeren%20Bontjes",
     images: [
       "/images/collecties/boeren-bontjes/boeren-bontjes-1.jpeg",
       "/images/collecties/boeren-bontjes/boeren-bontjes-2.jpeg",
       "/images/collecties/boeren-bontjes/boeren-bontjes-3.jpeg",
     ],
-    alt: "Beschilderd keramiek uit de collectie Boeren bontjes",
+    alt: "Beschilderd keramiek uit de collectie Boeren Bontjes",
   },
   {
     name: "Placeholder",

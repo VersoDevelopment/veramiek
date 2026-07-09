@@ -24,7 +24,7 @@ export type Product = {
   price: number;
   /** Ruwe categorie zoals opgeslagen (bv. "mokken", "overige"). */
   category: string;
-  /** Collectienaam (bv. "Dune & Dust"); leeg als het product bij geen collectie hoort. */
+  /** Collectienaam (bv. "Zeeuws Zand"); leeg als het product bij geen collectie hoort. */
   collection?: string;
   badge: string | null;
   /** Absolute http(s)-URLs naar geüploade foto's, of lokale /images-paden bij seed. */

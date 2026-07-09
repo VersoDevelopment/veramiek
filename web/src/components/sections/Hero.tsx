@@ -7,8 +7,14 @@ import {
   WhatsAppIcon,
 } from "@/components/ui/SocialIcons";
 import { contact } from "@/lib/content";
-import { luxEase } from "@/lib/motion";
+import {
+  luxEase,
+  SCROLL_FADE_STAGGER,
+  SCROLL_FADE_TRIGGER,
+  SCROLL_TRIGGER_FADE_DURATION,
+} from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { useScrollTrigger } from "@/lib/useScrollTrigger";
 import { INTRO_TOTAL_MS } from "./LoadIntro";
 
 /** Tekst/iconen faden al in tijdens de laatste fase van de LoadIntro-panelen. */
@@ -30,6 +36,10 @@ const TEXT_FADE_DURATION = 1.3;
  */
 export function Hero() {
   const prefersReduced = usePrefersReducedMotion();
+  const textFadeTriggered = useScrollTrigger(SCROLL_FADE_TRIGGER);
+  /** Verdwijnen (omlaag) gaat meteen; terugkomen (omhoog) wacht tot Vera eerst weg is. */
+  const textOpacityTarget = textFadeTriggered ? 0 : 1;
+  const textFadeDelay = textOpacityTarget === 1 ? SCROLL_FADE_STAGGER : 0;
 
   return (
     <section className="relative flex h-[100svh] items-center justify-center overflow-hidden bg-wine">
@@ -51,12 +61,20 @@ export function Hero() {
         className="absolute inset-0 z-10 bg-black/30 mix-blend-multiply"
       />
 
-      <div className="absolute bottom-8 left-6 z-20 inline-block md:bottom-10 md:left-12">
+      <motion.div
+        animate={{ opacity: prefersReduced ? 1 : textOpacityTarget }}
+        transition={{
+          duration: SCROLL_TRIGGER_FADE_DURATION,
+          ease: luxEase,
+          delay: prefersReduced ? 0 : textFadeDelay,
+        }}
+        className="absolute bottom-8 left-6 z-20 inline-block md:bottom-10 md:left-12"
+      >
         <motion.p
           initial={prefersReduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: TEXT_INTRO_DELAY }}
-          className="origin-bottom-left scale-y-125 font-display text-[clamp(7rem,22vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white"
+          className="origin-bottom-left scale-y-125 font-display text-[clamp(7rem,11.8vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white"
         >
           VERAMIEK
         </motion.p>
@@ -88,11 +106,11 @@ export function Hero() {
           }}
           className="mt-5 flex w-full items-center justify-between font-body text-[1rem] tracking-[0.08em] text-white"
         >
-          <span>Dune &amp; Dust</span>
-          <span>Blush</span>
-          <span>Boeren bontjes</span>
+          <span>Zeeuws Zand</span>
+          <span>Kust Koraal</span>
+          <span>Boeren Bontjes</span>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div
         initial={prefersReduced ? false : { opacity: 0 }}
