@@ -37,10 +37,18 @@ export default function RootLayout({
       className={`${playfair.variable} ${gruppo.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-base focus:tracking-[0.03em] focus:text-wine focus-visible:outline-wine"
+        >
+          Direct naar inhoud
+        </a>
         <CartProvider>
           <PointerGlowProvider />
           <Nav />
-          <main className="flex-1">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer />
           <CartDrawer />
         </CartProvider>
