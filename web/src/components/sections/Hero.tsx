@@ -34,12 +34,13 @@ export function Hero() {
   return (
     <section className="relative flex h-[100svh] items-center justify-center overflow-hidden bg-wine">
       <video
-        src="/videos/hero-breda-warmrays.mp4"
+        src="/videos/hero-breda-warmrays-web.mp4"
+        poster="/videos/hero-poster.jpg"
         autoPlay={!prefersReduced}
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         disablePictureInPicture
         className="absolute inset-0 h-full w-full object-cover"
       />
