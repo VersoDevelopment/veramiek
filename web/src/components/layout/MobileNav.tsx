@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { collections, contact, navLinks } from "@/lib/content";
 import { menuTransition } from "@/lib/motion";
+import { useDialogFocus } from "@/lib/useDialogFocus";
 import {
   InstagramIcon,
   TikTokIcon,
@@ -56,12 +57,11 @@ export function MobileNav() {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
     if (!open) setCollectionsOpen(false);
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [open]);
+
+  const close = useCallback(() => setOpen(false), []);
+  const panelRef = useDialogFocus<HTMLDivElement>(open, close);
 
   return (
     <div>
@@ -104,6 +104,11 @@ export function MobileNav() {
                 />
                 <motion.div
                   key="panel"
+                  ref={panelRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Menu"
+                  tabIndex={-1}
                   initial={{ x: "100%" }}
                   animate={{ x: 0 }}
                   exit={{ x: "100%" }}

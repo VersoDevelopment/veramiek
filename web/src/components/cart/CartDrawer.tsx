@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Minus, Plus, X } from "lucide-react";
-import { useEffect } from "react";
 import { useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/api";
 import { menuTransition } from "@/lib/motion";
+import { useDialogFocus } from "@/lib/useDialogFocus";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 /**
@@ -18,16 +18,7 @@ import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 export function CartDrawer() {
   const { items, total, count, setQty, remove, isOpen, close } = useCart();
   const prefersReduced = usePrefersReducedMotion();
-
-  // Sluit met Escape.
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [isOpen, close]);
+  const panelRef = useDialogFocus<HTMLElement>(isOpen, close);
 
   const panelInitial = prefersReduced ? { opacity: 0 } : { x: "100%" };
   const panelAnimate = prefersReduced ? { opacity: 1 } : { x: 0 };
@@ -52,9 +43,11 @@ export function CartDrawer() {
 
           {/* Paneel */}
           <motion.aside
+            ref={panelRef}
             role="dialog"
             aria-label="Winkelwagen"
             aria-modal="true"
+            tabIndex={-1}
             initial={panelInitial}
             animate={panelAnimate}
             exit={panelInitial}
