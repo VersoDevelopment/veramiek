@@ -44,7 +44,7 @@ export function ProductTile({
           </span>
         )}
 
-        <span className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] whitespace-nowrap text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white">
+        <span className="absolute bottom-4 left-1/2 max-w-[calc(100%-2rem)] -translate-x-1/2 truncate bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white">
           {product.name}
         </span>
       </div>

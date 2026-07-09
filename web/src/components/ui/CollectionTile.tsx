@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Collection } from "@/lib/content";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 /** Hoe lang (ms) elke foto zichtbaar blijft voor de tegel doorwisselt. */
 const CYCLE_INTERVAL_MS = 3200;
@@ -24,14 +25,15 @@ const CYCLE_INTERVAL_MS = 3200;
 export function CollectionTile({ collection }: { collection: Collection }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const hasMultiple = collection.images.length > 1;
+  const prefersReduced = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!hasMultiple) return;
+    if (!hasMultiple || prefersReduced) return;
     const id = setInterval(() => {
       setActiveIndex((i) => (i + 1) % collection.images.length);
     }, CYCLE_INTERVAL_MS);
     return () => clearInterval(id);
-  }, [hasMultiple, collection.images.length]);
+  }, [hasMultiple, collection.images.length, prefersReduced]);
 
   return (
     <Link
@@ -57,7 +59,7 @@ export function CollectionTile({ collection }: { collection: Collection }) {
           />
         ))}
       </div>
-      <span className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] whitespace-nowrap text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white">
+      <span className="absolute bottom-5 left-1/2 max-w-[calc(100%-2rem)] -translate-x-1/2 truncate bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white">
         {collection.name}
       </span>
     </Link>
