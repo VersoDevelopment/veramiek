@@ -33,7 +33,7 @@ export function ProductTile({
             className="object-cover transition-transform duration-700 ease-out group-hover/tile:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-base opacity-40">
+          <div className="flex h-full items-center justify-center text-base opacity-70">
             Foto volgt
           </div>
         )}

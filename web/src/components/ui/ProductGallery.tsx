@@ -18,7 +18,7 @@ export function ProductGallery({
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-[4/5] items-center justify-center bg-sage/10 text-base opacity-40">
+      <div className="flex aspect-[4/5] items-center justify-center bg-sage/10 text-base opacity-70">
         Foto volgt
       </div>
     );
