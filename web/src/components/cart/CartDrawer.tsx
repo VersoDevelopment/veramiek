@@ -180,7 +180,7 @@ export function QtyStepper({
         type="button"
         onClick={() => onChange(qty - 1)}
         aria-label={`Minder ${label}`}
-        className={`cursor-pointer px-2.5 py-1.5 transition-colors ${hover}`}
+        className={`inline-flex cursor-pointer items-center justify-center p-3.5 transition-colors ${hover}`}
       >
         <Minus size={16} strokeWidth={1.5} />
       </button>
@@ -194,7 +194,7 @@ export function QtyStepper({
         type="button"
         onClick={() => onChange(qty + 1)}
         aria-label={`Meer ${label}`}
-        className={`cursor-pointer px-2.5 py-1.5 transition-colors ${hover}`}
+        className={`inline-flex cursor-pointer items-center justify-center p-3.5 transition-colors ${hover}`}
       >
         <Plus size={16} strokeWidth={1.5} />
       </button>
