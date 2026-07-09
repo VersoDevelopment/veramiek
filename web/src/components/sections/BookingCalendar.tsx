@@ -197,11 +197,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
           </button>
         </div>
 
-        <div
-          className="mt-6 grid grid-cols-7 gap-1 text-center"
-          role="grid"
-          aria-label="Beschikbare datums"
-        >
+        <div className="mt-6 grid grid-cols-7 gap-1 text-center">
           {WEEKDAYS.map((d) => (
             <div
               key={d}
@@ -215,6 +211,8 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
         <div
           ref={gridRef}
           onKeyDown={onGridKeyDown}
+          role="group"
+          aria-label="Beschikbare datums"
           className="grid grid-cols-7 gap-1 text-center"
         >
           {Array.from({ length: leading }).map((_, i) => (
