@@ -69,7 +69,7 @@ export function Hero() {
             ease: luxEase,
             delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
           }}
-          className="absolute top-0 left-full ml-6 font-body text-[0.85rem] leading-[1.6] tracking-[0.08em] whitespace-nowrap text-white"
+          className="mt-4 block font-body text-[0.85rem] leading-[1.6] tracking-[0.08em] text-white md:absolute md:top-0 md:left-full md:mt-0 md:ml-6 md:block md:whitespace-nowrap"
         >
           Met de hand gemaakt,
           <br />
