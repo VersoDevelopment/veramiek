@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { RevealItem, RevealSection } from "@/components/ui/RevealSection";
+import { RevealItem } from "@/components/ui/RevealSection";
 import {
   luxEase,
   SCROLL_FADE_STAGGER,
   SCROLL_FADE_TRIGGER,
   SCROLL_TRIGGER_FADE_DURATION,
+  staggerParent,
 } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { useScrollTrigger } from "@/lib/useScrollTrigger";
@@ -26,13 +27,20 @@ import { useScrollTrigger } from "@/lib/useScrollTrigger";
  */
 export function OverMij() {
   const prefersReduced = usePrefersReducedMotion();
-  const photoRevealTriggered = useScrollTrigger(SCROLL_FADE_TRIGGER);
+  /** Zelfde drempel als de foto: tekst en foto faden samen in/uit, in beide richtingen. */
+  const revealed = useScrollTrigger(SCROLL_FADE_TRIGGER);
   /** Verschijnen (omlaag) wacht tot hero eerst weg is; verdwijnen (omhoog) gaat meteen. */
-  const photoOpacityTarget = photoRevealTriggered ? 1 : 0;
+  const photoOpacityTarget = revealed ? 1 : 0;
   const photoFadeDelay = photoOpacityTarget === 1 ? SCROLL_FADE_STAGGER : 0;
 
   return (
-    <RevealSection id="over" stagger className="relative bg-wine text-white antialiased">
+    <motion.section
+      id="over"
+      className="relative bg-wine text-white antialiased"
+      variants={staggerParent}
+      initial={prefersReduced ? false : "hidden"}
+      animate={prefersReduced || revealed ? "visible" : "hidden"}
+    >
       <motion.div
         animate={{ opacity: prefersReduced ? 1 : photoOpacityTarget }}
         transition={{
@@ -138,6 +146,6 @@ export function OverMij() {
           </div>
         </RevealItem>
       </div>
-    </RevealSection>
+    </motion.section>
   );
 }

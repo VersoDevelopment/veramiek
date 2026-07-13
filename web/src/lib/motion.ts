@@ -7,7 +7,11 @@ export const revealDuration = 0.9;
 
 /** Standaard fade-in voor secties: subtiele opacity + kleine translateY. */
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: {
+    opacity: 0,
+    y: 14,
+    transition: { duration: revealDuration, ease: luxEase },
+  },
   visible: {
     opacity: 1,
     y: 0,
