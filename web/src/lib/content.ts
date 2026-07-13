@@ -22,6 +22,10 @@ export type Collection = {
   /** Eén of meerdere foto's; bij meerdere wisselt de tegel er automatisch tussen (crossfade). */
   images: string[];
   alt: string;
+  /** Foto voor de Collecties-accordion op de homepage (CollectionAccordion). */
+  accordionImage: string;
+  /** Optionele object-position-correctie voor die foto, bijv. bij een niet-gecentreerd product. */
+  accordionObjectPosition?: string;
 };
 
 /** De eerste drie zijn de uitgelichte rij op de homepage; het megamenu toont alles. */
@@ -31,6 +35,8 @@ export const collections: Collection[] = [
     href: "/collecties?collectie=Zeeuws%20Zand",
     images: ["/images/schaal-1.png"],
     alt: "Handgedraaide schaal uit de collectie Zeeuws Zand",
+    accordionImage: "/images/collecties/zeeuws-zand/zeeuws-zand-accordion.jpg",
+    accordionObjectPosition: "34% 58%",
   },
   {
     name: "Kust Koraal",
@@ -41,6 +47,7 @@ export const collections: Collection[] = [
       "/images/collecties/blush/blush-3.jpeg",
     ],
     alt: "Keramiek uit de collectie Kust Koraal",
+    accordionImage: "/images/collecties/blush/kust-koraal-accordion.jpg",
   },
   {
     name: "Boeren Bontjes",
@@ -51,12 +58,15 @@ export const collections: Collection[] = [
       "/images/collecties/boeren-bontjes/boeren-bontjes-3.jpeg",
     ],
     alt: "Beschilderd keramiek uit de collectie Boeren Bontjes",
+    accordionImage: "/images/collecties/boeren-bontjes/boeren-bontjes-accordion.jpg",
+    accordionObjectPosition: "44% 58%",
   },
   {
     name: "Placeholder",
     href: "/collecties?collectie=Placeholder",
     images: ["/images/matcha-set.png"],
     alt: "Matcha set uit een nieuwe collectie",
+    accordionImage: "/images/matcha-set.png",
   },
 ];
 

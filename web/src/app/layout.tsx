@@ -3,7 +3,6 @@ import { Gruppo, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
-import { PointerGlowProvider } from "@/components/ui/PointerGlow";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 
@@ -44,7 +43,6 @@ export default function RootLayout({
           Direct naar inhoud
         </a>
         <CartProvider>
-          <PointerGlowProvider />
           <Nav />
           <main id="main" className="flex-1">
             {children}
