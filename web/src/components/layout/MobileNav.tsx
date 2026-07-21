@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { collections, contact, navLinks } from "@/lib/content";
+import { collections, contact, mobileNavLinks } from "@/lib/content";
 import { menuTransition } from "@/lib/motion";
 import { useDialogFocus } from "@/lib/useDialogFocus";
 import {
@@ -114,20 +114,22 @@ export function MobileNav() {
                   animate={{ x: 0 }}
                   exit={{ x: "100%" }}
                   transition={menuTransition}
-                  className="fixed inset-y-0 right-0 z-40 flex w-full max-w-sm flex-col overflow-y-auto bg-white px-8 pt-[72px] pb-10 text-wine antialiased"
+                  className="fixed inset-y-0 right-0 z-40 flex w-full max-w-sm flex-col overflow-y-auto bg-white px-8 pt-[calc(var(--nav-h)+1.5rem)] pb-10 text-wine antialiased"
                 >
+                  {/* Geen negatieve marge meer: het logo begon daardoor boven de
+                      onderkant van de header en verdween er deels achter. */}
                   <Image
                     src="/logo/logo-round-v2.png"
                     alt="Veramiek"
                     width={600}
                     height={600}
-                    className="-mt-6 h-32 w-32 self-start"
+                    className="h-32 w-32 self-start"
                   />
                   <nav
                     aria-label="Mobiele navigatie"
                     className="mt-10 flex flex-1 flex-col gap-6"
                   >
-                    {navLinks.map((link) =>
+                    {mobileNavLinks.map((link) =>
                       link.label === "Collecties" ? (
                         <div
                           key={link.label}

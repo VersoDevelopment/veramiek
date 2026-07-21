@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<title>Veramiek — Hero split preview v2 (landscape video)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+  }
+
+  .hero-half {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .hero-half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-left img { object-position: right center; }
+  .hero-right img { object-position: left center; }
+
+  .hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 38vw;
+    aspect-ratio: 16 / 9;
+    min-width: 320px;
+    max-width: 640px;
+    z-index: 2;
+  }
+
+  .hero-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-half hero-left">
+    <img src="file:///C:/Users/kvant/Documents/Verso/Afbeeldingen/Veramiek/Collecties/Boeren%20bontjes/_grijze-achtergrond-preview/C2%20-%20grijze%20achtergrond.png" alt="" />
+  </div>
+  <div class="hero-half hero-right">
+    <img src="file:///C:/Users/kvant/Documents/Verso/Afbeeldingen/Veramiek/Collecties/Blush/_achtergrond-preview/WhatsApp%20Image%202026-07-07%20at%2016.24.44%20(1)%20-%20AI%20achtergrond.png" alt="" />
+  </div>
+  <div class="hero-video">
+    <video autoplay muted loop playsinline
+      src="file:///C:/Users/kvant/Documents/Verso/Projecten/Claude%20projecten/Websites/veramiek/web/public/videos/hero-breda-warmrays.mp4"></video>
+  </div>
+</div>
+
+</body>
+</html>

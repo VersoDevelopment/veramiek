@@ -8,3 +8,6 @@ index-v2.html
 # Tailwind build-dependencies (config + input.css worden wel getrackt)
 .build/node_modules/
 .backups/
+
+# Cache van de impeccable-hook
+.impeccable/

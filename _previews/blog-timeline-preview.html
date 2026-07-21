@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview · Blog-tijdlijn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Gruppo&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wine:#2F0410;
+    --white:#FFFFFF;
+    --sage:#CBD1A1;
+    --font-display:'Playfair Display', serif;
+    --font-body:'Gruppo', sans-serif;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--white);color:var(--wine);font-family:var(--font-body);font-size:1.1875rem;-webkit-font-smoothing:antialiased}
+
+  .note{max-width:1200px;margin:0 auto;padding:28px 24px 0;font-size:.85rem;color:rgba(47,4,16,.55)}
+
+  .section{background:var(--wine);color:var(--white);padding:96px 24px 260px}
+  .inner{max-width:1200px;margin:0 auto}
+  .head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:320px}
+  h2{font-family:var(--font-display);font-weight:400;font-size:2.4rem;margin:0}
+  .all-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid var(--white);
+    color:var(--white);
+    background:transparent;
+    border-radius:999px;
+    padding:12px 32px;
+    font-family:var(--font-body);
+    font-size:1.1875rem;
+    letter-spacing:.03em;
+    cursor:pointer;
+    transition:background-color .3s ease, color .3s ease, transform .15s ease;
+  }
+  .all-btn:hover{ background:var(--white); color:var(--wine); }
+  .all-btn:active{ transform:scale(.98); }
+
+  /* Golvende lijn */
+  .wave-wrap{position:relative;height:1px}
+  .wave-svg{position:absolute;left:0;top:-60px;width:100%;height:120px;overflow:visible;pointer-events:none}
+  .wave-path{fill:none;stroke:rgba(255,255,255,.22);stroke-width:1}
+
+  /* Elke tijdlijn-knoop: gepositioneerd op het golfpunt, groeit bij hover. */
+  .node{
+    position:absolute;
+    top:0;
+    transform:translate(-50%,-50%);
+  }
+  .node-hit{
+    position:absolute;
+    inset:-40px;
+    z-index:1;
+  }
+
+  /* Kleine ronde stip (altijd zichtbaar), puur transform/opacity-transities
+     (geen width/height-animatie, dat geeft layout-thrash). */
+  .thumb{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    overflow:hidden;
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.5);
+    transform:translate(-50%,-50%) scale(1);
+    opacity:1;
+    transition:transform .85s var(--ease), opacity .7s var(--ease);
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb.tinted img{filter:grayscale(1)}
+  .thumb.tinted::after{content:"";position:absolute;inset:0;background:rgba(47,4,16,.4);mix-blend-mode:multiply}
+
+  /* Uitgeklapte foto: vaste afmeting, groeit puur via transform: scale
+     vanuit hetzelfde ankerpunt (transform-origin), dus geen layout-thrash. */
+  .photo-full{
+    position:absolute;
+    left:50%;
+    width:190px;
+    height:253px;
+    border-radius:6px;
+    overflow:hidden;
+    opacity:0;
+    pointer-events:none;
+    transition:transform .9s var(--ease), opacity .75s var(--ease);
+  }
+  .photo-full img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo-full.tinted img{filter:grayscale(1)}
+  .photo-full.tinted::after{content:"";position:absolute;inset:0;background:rgba(47,4,16,.4);mix-blend-mode:multiply}
+
+  .node--above .photo-full{
+    top:calc(-46px);
+    transform-origin:50% 100%;
+    transform:translate(-50%,-100%) scale(.15);
+  }
+  .node--below .photo-full{
+    top:calc(46px);
+    transform-origin:50% 0%;
+    transform:translate(-50%,0) scale(.15);
+  }
+
+  .node.is-active .thumb{ opacity:0; transform:translate(-50%,-50%) scale(.4); }
+  .node--above.is-active .photo-full{ opacity:1; transform:translate(-50%,-100%) scale(1); }
+  .node--below.is-active .photo-full{ opacity:1; transform:translate(-50%,0) scale(1); }
+
+  /* Sneak peek: klein titeltje dat altijd zichtbaar is, dicht bij de stip. */
+  .label-mini{
+    position:absolute;
+    left:50%;
+    width:130px;
+    text-align:center;
+    font-size:.85rem;
+    line-height:1.3;
+    color:rgba(255,255,255,.75);
+    transform:translate(-50%, 0);
+    transition:opacity .6s var(--ease);
+  }
+  .node--above .label-mini{ top:38px; }
+  .node--below .label-mini{ top:-38px; transform:translate(-50%,-100%); }
+  .node.is-active .label-mini{ opacity:0; }
+
+  /* Volledige kaart: alleen zichtbaar op de actieve node. */
+  .label-full{
+    position:absolute;
+    left:50%;
+    width:240px;
+    transform:translate(-50%, 0);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .75s var(--ease), transform .75s var(--ease);
+  }
+  .node--above .label-full{ top:calc(46px); }
+  .node--below .label-full{ top:calc(-46px); transform:translate(-50%,-100%); }
+
+  .node--above.is-active .label-full{ opacity:1; transform:translate(-50%, 14px); }
+  .node--below.is-active .label-full{ opacity:1; transform:translate(-50%, calc(-100% - 14px)); }
+
+  .meta{
+    display:block;
+    font-size:.8rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.6);
+    margin-bottom:10px;
+  }
+  .label-full h3{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:400;
+    font-size:1.3rem;
+    line-height:1.2;
+    margin:0 0 8px;
+  }
+  .label-full p{
+    font-size:.95rem;
+    line-height:1.5;
+    color:rgba(255,255,255,.8);
+    margin:0;
+  }
+
+  .node.is-active{ z-index:20; }
+  .thumb, .node-hit{ cursor:pointer }
+  .node:not(.is-active) .thumb{
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.5);
+  }
+  .node.is-active .thumb{
+    box-shadow:0 0 0 1.5px var(--sage);
+  }
+
+  /* --- Galerijstand: verzamelen in het midden, dan uit elkaar spatten --- */
+  .wave-svg, .label-mini, .photo-full, .label-full{
+    transition:opacity .35s var(--ease), transform .35s var(--ease);
+  }
+  .gallery-mode .wave-svg{ opacity:0; }
+  .gallery-mode .thumb{ transition:opacity .4s var(--ease), transform .45s var(--ease); }
+
+  .node.is-converging .thumb{
+    transform:translate(calc(-50% + var(--gx,0)), calc(-50% + var(--gy,0))) scale(.7);
+  }
+  .node.is-scattered .thumb{ opacity:0; pointer-events:none; }
+  .node.is-scattered .label-mini{ opacity:0; }
+
+  .gallery-photo{
+    position:absolute;
+    left:50%;
+    top:0;
+    width:150px;
+    height:200px;
+    border-radius:6px;
+    overflow:hidden;
+    opacity:0;
+    pointer-events:none;
+    transform:translate(-50%,-50%) scale(.4);
+    transition:opacity 1.1s var(--ease), transform 1.1s var(--ease);
+    transition-delay:var(--sd, 0s);
+  }
+  .gallery-photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .gallery-photo.tinted img{filter:grayscale(1)}
+  .gallery-photo.tinted::after{content:"";position:absolute;inset:0;background:rgba(47,4,16,.4);mix-blend-mode:multiply}
+
+  .gallery-title{
+    position:absolute;
+    left:50%;
+    top:0;
+    width:160px;
+    text-align:center;
+    font-size:.85rem;
+    line-height:1.3;
+    color:rgba(255,255,255,.85);
+    opacity:0;
+    pointer-events:none;
+    transform:translate(-50%, 6px) translateY(var(--sgy,0));
+    transition:opacity 1.1s var(--ease), transform 1.1s var(--ease);
+    transition-delay:var(--sd, 0s);
+  }
+
+  .node.is-scattered .gallery-photo{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate(calc(-50% + var(--sx,0)), calc(-50% + var(--sy,0))) scale(1);
+  }
+  .node.is-scattered .gallery-title{
+    opacity:1;
+    transform:translate(calc(-50% + var(--sx,0)), calc(var(--sy,0) + 118px));
+  }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    Standalone preview &mdash; hover-versie: de stippen zijn kleine ronde foto's, bij hover groeien ze uit tot
+    het volledige beeld en floaten ze boven/onder de lijn (om en om), met de tekst aan de andere kant.
+  </div>
+
+  <section class="section">
+    <div class="inner">
+      <div class="head">
+        <h2>Mijn blogs</h2>
+        <button class="all-btn" id="toggleBtn" type="button">Bekijk alle blogs</button>
+      </div>
+
+      <div class="wave-wrap" id="waveWrap">
+        <svg class="wave-svg" id="waveSvg" viewBox="0 0 1000 120" preserveAspectRatio="none">
+          <path class="wave-path" id="wavePath"
+            d="M0,60 C120,10 180,10 300,60 C420,110 480,110 600,60 C720,10 780,10 900,60 C950,85 980,85 1000,70" />
+        </svg>
+        <div id="nodesLayer"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const posts = [
+      { meta: "Het begin, 2025", title: "Hoe Veramiek ontstond", excerpt: "In september 2025 begon ik aan een cursus keramiek, zonder enig idee waar het toe zou leiden.", image: "../web/public/images/kopjes.png", tinted: true },
+      { meta: "Glazuur, 2026", title: "Geen twee glazuren zijn hetzelfde", excerpt: "Hetzelfde recept, dezelfde oven, en toch elke keer een ander resultaat.", image: "../web/public/images/chip-and-dip-1.png", tinted: false },
+      { meta: "Atelier, 2025", title: "Een ochtend in het atelier", excerpt: "Koffie, klei en een stapel schetsen. Zo ziet een gewone ochtend achter de draaischijf eruit.", image: "../web/public/images/studio-hero.webp", tinted: true },
+      { meta: "Techniek, 2026", title: "Draaien leer je met je handen", excerpt: "Je kunt er tien boeken over lezen, maar centreren leer je pas als de klei tussen je vingers wegglipt.", image: "../web/public/images/schaaltje-2.png", tinted: false },
+      { meta: "Proces, 2025", title: "Van klomp klei tot diep bord", excerpt: "Zeven stappen, drie weken en één moment van paniek bij het afdraaien.", image: "../web/public/images/diep-bord.png", tinted: false },
+    ];
+
+    const fractions = [0.06, 0.28, 0.5, 0.72, 0.94];
+    const path = document.getElementById("wavePath");
+    const nodesLayer = document.getElementById("nodesLayer");
+    const svg = document.getElementById("waveSvg");
+    const wrap = document.getElementById("waveWrap");
+
+    const len = path.getTotalLength();
+    const svgRect = { w: 1000, h: 120 }; // viewBox units
+
+    posts.forEach((post, i) => {
+      const p = path.getPointAtLength(fractions[i] * len);
+      const leftPct = (p.x / svgRect.w) * 100;
+      const topPx = p.y - 60; // svg's top offset is -60px relative to wave-wrap
+
+      const node = document.createElement("div");
+      node.className = "node " + (i % 2 === 0 ? "node--above" : "node--below");
+      node.style.left = leftPct + "%";
+      node.style.top = topPx + "px";
+
+      node.innerHTML = `
+        <div class="node-hit"></div>
+        <div class="thumb${post.tinted ? " tinted" : ""}">
+          <img src="${post.image}" alt="">
+        </div>
+        <div class="photo-full${post.tinted ? " tinted" : ""}">
+          <img src="${post.image}" alt="">
+        </div>
+        <span class="label-mini">${post.title}</span>
+        <div class="label-full">
+          <span class="meta">${post.meta}</span>
+          <h3>${post.title}</h3>
+          <p>${post.excerpt}</p>
+        </div>
+        <div class="gallery-photo${post.tinted ? " tinted" : ""}">
+          <img src="${post.image}" alt="">
+        </div>
+        <span class="gallery-title">${post.title}</span>
+      `;
+      nodesLayer.appendChild(node);
+    });
+
+    const nodeEls = Array.from(nodesLayer.querySelectorAll(".node"));
+    let featuredIndex = 0;
+
+    function setActive(i) {
+      nodeEls.forEach((n, idx) => n.classList.toggle("is-active", idx === i));
+    }
+    setActive(featuredIndex);
+
+    // Hoveren geeft een preview; bij weggaan blijft de laatst-gehoverde node
+    // open staan (wordt de nieuwe "featured" node), niet terug naar de eerste.
+    nodeEls.forEach((n, i) => {
+      n.addEventListener("mouseenter", () => { if (!isGallery) setActive(i); });
+      n.addEventListener("mouseleave", () => {
+        if (isGallery) return;
+        featuredIndex = i;
+        setActive(featuredIndex);
+      });
+    });
+
+    // --- Galerijstand: verzamelen in het midden, dan uit elkaar spatten ---
+    const toggleBtn = document.getElementById("toggleBtn");
+    let isGallery = false;
+
+    // Losjes verspreide eindposities rond het midden (px t.o.v. het middelpunt van wave-wrap).
+    const scatterOffsets = [
+      { x: -430, y: -40 },
+      { x: -190, y: 70 },
+      { x: 0, y: -90 },
+      { x: 200, y: 60 },
+      { x: 430, y: -30 },
+    ];
+
+    // Middelpunt van de golf (px t.o.v. wave-wrap) waar alles eerst naartoe verzamelt.
+    function centerPoint() {
+      const rect = wrap.getBoundingClientRect();
+      return { cx: rect.width / 2 };
+    }
+
+    function openGallery() {
+      isGallery = true;
+      toggleBtn.textContent = "Timeline";
+      setActive(-1); // geen enkele node in de gewone hover/active-stand
+
+      const { cx } = centerPoint();
+      nodeEls.forEach((n, i) => {
+        const nodeLeftPx = (parseFloat(n.style.left) / 100) * wrap.getBoundingClientRect().width;
+        n.style.setProperty("--gx", `${cx - nodeLeftPx}px`);
+        n.style.setProperty("--gy", `${-parseFloat(n.style.top)}px`);
+        n.style.setProperty("--sx", `${scatterOffsets[i].x + (cx - nodeLeftPx)}px`);
+        n.style.setProperty("--sy", `${scatterOffsets[i].y - parseFloat(n.style.top)}px`);
+        n.style.setProperty("--sd", `${i * 90}ms`);
+      });
+
+      document.getElementById("waveWrap").classList.add("gallery-mode");
+      nodeEls.forEach((n) => n.classList.add("is-converging"));
+
+      window.setTimeout(() => {
+        nodeEls.forEach((n) => {
+          n.classList.remove("is-converging");
+          n.classList.add("is-scattered");
+        });
+      }, 850);
+    }
+
+    function closeGallery() {
+      isGallery = false;
+      toggleBtn.textContent = "Bekijk alle blogs";
+      nodeEls.forEach((n) => n.classList.remove("is-scattered", "is-converging"));
+      document.getElementById("waveWrap").classList.remove("gallery-mode");
+      setActive(featuredIndex);
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      isGallery ? closeGallery() : openGallery();
+    });
+  </script>
+
+</body>
+</html>

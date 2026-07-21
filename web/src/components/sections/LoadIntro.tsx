@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { introHasPlayed, markIntroPlayed } from "@/lib/introPlayed";
 import { luxEase, revealDuration } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
@@ -28,10 +29,16 @@ type Phase = "logo" | "logoOut" | "wine" | "white" | "done";
  */
 export function LoadIntro() {
   const prefersReduced = usePrefersReducedMotion();
-  const [phase, setPhase] = useState<Phase>("logo");
+  // Tijdens render lezen, niet in een effect: zo staat de eindstand er meteen bij
+  // een terugnavigatie, zonder dat de panelen eerst één frame oplichten.
+  const [skipIntro] = useState(introHasPlayed);
+  const [phase, setPhase] = useState<Phase>(skipIntro ? "done" : "logo");
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    markIntroPlayed();
+    if (skipIntro) return;
+
     if (prefersReduced) {
       setPhase("done");
       return;
@@ -50,12 +57,12 @@ export function LoadIntro() {
       window.setTimeout(() => setPhase("done"), INTRO_TOTAL_MS),
     ];
     return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [prefersReduced]);
+  }, [prefersReduced, skipIntro]);
 
   // Laadpercentage 0→100 gelijk aan de logo-houdtijd, los van de fase-timers
   // omdat de tekst per frame moet bijwerken i.p.v. via een CSS-transition.
   useEffect(() => {
-    if (prefersReduced) return;
+    if (prefersReduced || skipIntro) return;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
@@ -65,7 +72,7 @@ export function LoadIntro() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [prefersReduced]);
+  }, [prefersReduced, skipIntro]);
 
   if (phase === "done") return null;
 
@@ -76,7 +83,7 @@ export function LoadIntro() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-x-0 top-[92px] bottom-0 z-[60] overflow-hidden"
+      className="pointer-events-none fixed inset-x-0 top-[var(--nav-h)] bottom-0 z-[60] overflow-hidden"
     >
       <motion.div
         className="absolute inset-0 bg-white"

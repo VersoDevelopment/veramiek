@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { navLinks } from "@/lib/content";
 import { MobileNav } from "./MobileNav";
@@ -19,6 +20,7 @@ const SCROLL_THRESHOLD = 60;
  */
 export function Nav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const ticking = useRef(false);
 
@@ -38,7 +40,26 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const solid = scrolled || pathname !== "/";
+  const isSubpage = pathname !== "/";
+  const solid = scrolled || isSubpage;
+
+  /**
+   * Terug in de geschiedenis, maar alleen als die er is. Wie rechtstreeks op een
+   * subpagina binnenkomt (deellink, zoekresultaat) heeft niets om naar terug te
+   * gaan en belandt anders buiten de site; die sturen we naar de homepage.
+   */
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push("/");
+  };
+
+  // Publiceert de actuele balkhoogte als --nav-h (zie globals.css), zodat het
+  // gordijn van LoadIntro er exact tegenaan blijft staan in beide standen.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (solid) root.dataset.nav = "solid";
+    else delete root.dataset.nav;
+  }, [solid]);
 
   return (
     <header
@@ -50,8 +71,20 @@ export function Nav() {
     >
       {solid ? (
         <div className="px-5 md:px-10">
-          <div className="flex h-[56px] items-center justify-between border-b border-sage/40 transition-colors duration-300">
-            <Link href="/" aria-label="Veramiek, naar de homepage">
+          <div className="flex h-[var(--nav-h)] items-center justify-between border-b border-sage/40 transition-colors duration-300">
+            <div className="flex items-center gap-4">
+              {isSubpage ? (
+                <button
+                  type="button"
+                  onClick={goBack}
+                  aria-label="Terug naar de vorige pagina"
+                  className="-m-2 cursor-pointer p-2 text-wine transition-opacity duration-300 hover:opacity-60"
+                >
+                  <ArrowLeft className="h-5 w-5" strokeWidth={1.5} />
+                </button>
+              ) : null}
+
+              <Link href="/" aria-label="Veramiek, naar de homepage">
               <Image
                 src="/logo/logo-horizontal.png"
                 alt="Veramiek"
@@ -60,7 +93,8 @@ export function Nav() {
                 className="h-8 w-auto"
                 preload
               />
-            </Link>
+              </Link>
+            </div>
 
             <div className="flex items-center gap-5">
               <CartButton />
@@ -69,7 +103,7 @@ export function Nav() {
           </div>
         </div>
       ) : (
-        <div className="group relative flex h-[92px] items-center justify-between bg-white px-5 text-wine transition-colors duration-300 hover:bg-wine hover:text-white md:px-10">
+        <div className="group relative flex h-[var(--nav-h)] items-center justify-between bg-white px-5 text-wine transition-colors duration-300 hover:bg-wine hover:text-white md:px-10">
           <Link
             href="/"
             aria-label="Veramiek, naar de homepage"

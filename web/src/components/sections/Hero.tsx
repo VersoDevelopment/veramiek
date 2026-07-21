@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useState } from "react";
 import {
   InstagramIcon,
   TikTokIcon,
   WhatsAppIcon,
 } from "@/components/ui/SocialIcons";
 import { contact } from "@/lib/content";
+import { introHasPlayed } from "@/lib/introPlayed";
 import {
   luxEase,
   SCROLL_FADE_STAGGER,
@@ -36,6 +38,14 @@ const TEXT_FADE_DURATION = 1.3;
  */
 export function Hero() {
   const prefersReduced = usePrefersReducedMotion();
+  /**
+   * Bij een terugnavigatie draait de LoadIntro niet opnieuw, dus dan mag de
+   * herotekst er ook niet meer op wachten: die staat er dan meteen.
+   */
+  const [skipIntro] = useState(introHasPlayed);
+  const instant = prefersReduced || skipIntro;
+  const introDelay = instant ? 0 : TEXT_INTRO_DELAY;
+  const introDelayLate = instant ? 0 : TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER;
   const textFadeTriggered = useScrollTrigger(SCROLL_FADE_TRIGGER);
   /** Verdwijnen (omlaag) gaat meteen; terugkomen (omhoog) wacht tot Vera eerst weg is. */
   const textOpacityTarget = textFadeTriggered ? 0 : 1;
@@ -71,21 +81,21 @@ export function Hero() {
         className="absolute bottom-8 left-6 z-20 inline-block md:bottom-10 md:left-12"
       >
         <motion.p
-          initial={prefersReduced ? false : { opacity: 0 }}
+          initial={instant ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: TEXT_INTRO_DELAY }}
+          transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: introDelay }}
           className="origin-bottom-left scale-y-125 font-display text-[clamp(7rem,11.8vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white"
         >
           VERAMIEK
         </motion.p>
 
         <motion.span
-          initial={prefersReduced ? false : { opacity: 0 }}
+          initial={instant ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
             duration: TEXT_FADE_DURATION,
             ease: luxEase,
-            delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+            delay: introDelayLate,
           }}
           className="mt-4 block font-body text-[0.85rem] leading-[1.6] tracking-[0.08em] text-white md:absolute md:top-0 md:left-full md:mt-0 md:ml-6 md:block md:whitespace-nowrap"
         >
@@ -97,12 +107,12 @@ export function Hero() {
         </motion.span>
 
         <motion.div
-          initial={prefersReduced ? false : { opacity: 0 }}
+          initial={instant ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
             duration: TEXT_FADE_DURATION,
             ease: luxEase,
-            delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+            delay: introDelayLate,
           }}
           className="mt-5 flex w-full items-center justify-between font-body text-[1rem] tracking-[0.08em] text-white"
         >
@@ -113,12 +123,12 @@ export function Hero() {
       </motion.div>
 
       <motion.div
-        initial={prefersReduced ? false : { opacity: 0 }}
+        initial={instant ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
           duration: TEXT_FADE_DURATION,
           ease: luxEase,
-          delay: TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER,
+          delay: introDelayLate,
         }}
         className="absolute right-6 bottom-8 z-20 flex items-center gap-8 md:right-12 md:bottom-10"
       >
