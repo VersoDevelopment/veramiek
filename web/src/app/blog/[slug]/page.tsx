@@ -16,8 +16,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = findPost(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | Veramiek`,
+    title: post.title,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `/blog/${post.slug}`,
+      images: [{ url: post.image, alt: post.alt }],
+    },
   };
 }
 

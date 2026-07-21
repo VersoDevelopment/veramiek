@@ -12,10 +12,20 @@ export async function generateMetadata({
 }: Params): Promise<Metadata> {
   const { id } = await params;
   const product = await getProduct(id);
-  if (!product) return { title: "Product | Veramiek" };
+  if (!product) return { title: "Product niet gevonden" };
   return {
-    title: `${product.name} | Veramiek`,
+    title: product.name,
     description: product.desc || undefined,
+    alternates: { canonical: `/collecties/${product.id}` },
+    openGraph: {
+      type: "website",
+      title: product.name,
+      description: product.desc || undefined,
+      url: `/collecties/${product.id}`,
+      images: product.images[0]
+        ? [{ url: product.images[0], alt: product.name }]
+        : undefined,
+    },
   };
 }
 
@@ -27,8 +37,38 @@ export default async function ProductPage({ params }: Params) {
 
   const categorie = normalizeCategory(product.category);
 
+  /**
+   * Product-markup zodat Google prijs en beschikbaarheid bij het zoekresultaat
+   * kan tonen. Alleen gegevens die ook op de pagina zelf staan.
+   */
+  const siteUrl = process.env.SITE_URL ?? "https://veramiek.nl";
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.desc || undefined,
+    image: product.images.length ? product.images : undefined,
+    category: categorie,
+    brand: { "@type": "Brand", name: "Veramiek" },
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/collecties/${product.id}`,
+      price: product.price.toFixed(2),
+      priceCurrency: "EUR",
+      availability:
+        product.available === false
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      seller: { "@type": "Organization", name: "Veramiek" },
+    },
+  };
+
   return (
     <article className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <div className="mx-auto max-w-6xl">
         <nav className="mb-10 text-base tracking-[0.03em] opacity-70">
           <Link href="/collecties" className="transition-opacity hover:opacity-100">

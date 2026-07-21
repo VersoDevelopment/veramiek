@@ -34,6 +34,12 @@ export default function Error({
         >
           Probeer opnieuw
         </button>
+        {/*
+          Bewust een gewone link en geen next/link: dit is een foutgrens, en
+          een harde navigatie zet de kapotte staat helemaal terug. Een
+          client-side overgang zou die juist kunnen meenemen.
+        */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/"
           className="inline-flex items-center rounded-full border border-white px-8 py-3 text-base tracking-[0.03em] transition-colors duration-300 hover:bg-white hover:text-wine"

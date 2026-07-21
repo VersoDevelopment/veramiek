@@ -3,9 +3,10 @@ import { ShopFilter } from "@/components/sections/ShopFilter";
 import { getProducts } from "@/lib/api";
 
 export const metadata: Metadata = {
-  title: "Collecties | Veramiek",
+  title: "Collecties",
   description:
     "Handgemaakt keramiek uit het atelier van Vera. Elk stuk is uniek, met de hand gevormd en met aandacht afgewerkt.",
+  alternates: { canonical: "/collecties" },
 };
 
 export default async function CollectiesPage({

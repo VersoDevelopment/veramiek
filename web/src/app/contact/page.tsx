@@ -9,9 +9,10 @@ import { getContent } from "@/lib/api";
 import { contact as fallback } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Contact | Veramiek",
+  title: "Contact",
   description:
     "Een vraag over mijn werk, een maatwerkwens of een workshop boeken? Stuur een bericht, ik denk graag met je mee.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

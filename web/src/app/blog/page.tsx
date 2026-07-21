@@ -5,9 +5,10 @@ import { RevealSection } from "@/components/ui/RevealSection";
 import { publishedPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Blogs | Veramiek",
+  title: "Blogs",
   description:
     "Verhalen uit het atelier: hoe een cursus keramiek in september 2025 uitgroeide tot Veramiek.",
+  alternates: { canonical: "/blog" },
 };
 
 /**

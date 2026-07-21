@@ -3,9 +3,10 @@ import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealSection } from "@/components/ui/RevealSection";
 
 export const metadata: Metadata = {
-  title: "Over mij | Veramiek",
+  title: "Over mij",
   description:
     "Ik ben Vera, keramist en maker achter Veramiek. Lees hoe een cursus pottenbakken uitgroeide tot een eigen atelier in Etten-Leur.",
+  alternates: { canonical: "/over-mij" },
 };
 
 export default function OverMijPage() {

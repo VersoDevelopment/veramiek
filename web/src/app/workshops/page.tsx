@@ -4,9 +4,10 @@ import { BookingCalendar } from "@/components/sections/BookingCalendar";
 import { getWorkshops } from "@/lib/api";
 
 export const metadata: Metadata = {
-  title: "Workshops | Veramiek",
+  title: "Workshops",
   description:
     "Kom zelf aan de draaischijf of boek een keramiekworkshop op locatie. Kleine groepen, alle aandacht, en je eigen handgemaakte stuk mee naar huis.",
+  alternates: { canonical: "/workshops" },
 };
 
 export default async function WorkshopsPage() {

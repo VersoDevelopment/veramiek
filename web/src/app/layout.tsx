@@ -20,13 +20,14 @@ const gruppo = Gruppo({
 });
 
 /**
- * Basis-URL voor alle absolute URL's in metadata (canonical, og:image).
- * Op staging staat SITE_URL op het stagingdomein, zodat de
- * canonicals daar niet stiekem naar de live site wijzen.
+ * Basis-URL voor alle absolute URL's in metadata (canonical, og:image). Staat
+ * ook op de proefversie al op het definitieve domein, zodat de cutover geen
+ * herbouw vraagt; de proefversie wordt afgeschermd met een wachtwoord en een
+ * X-Robots-Tag in nginx-app.conf.
  */
 const siteUrl = process.env.SITE_URL ?? "https://veramiek.nl";
 
-/** Staging en previews mogen niet in Google terechtkomen. */
+/** Noodrem om de hele site uit Google te houden. Wordt bij de build vastgelegd. */
 const indexable = process.env.SITE_NOINDEX !== "true";
 
 export const metadata: Metadata = {
@@ -47,7 +48,9 @@ export const metadata: Metadata = {
     "handgedraaide mokken",
     "Veramiek",
   ],
-  alternates: { canonical: "/" },
+  // Bewust GEEN alternates.canonical hier: metadata erft door, dus een
+  // canonical in de layout zou elke pagina naar de homepage laten wijzen.
+  // Elke pagina zet zijn eigen canonical.
   openGraph: {
     type: "website",
     locale: "nl_NL",
@@ -58,7 +61,7 @@ export const metadata: Metadata = {
       "Handgemaakt keramiek uit het atelier van Vera. Unieke stukken, workshops en verhalen van achter de draaischijf.",
     images: [
       {
-        url: "/images/studio-hero.webp",
+        url: "/images/og-veramiek.jpg",
         width: 1200,
         height: 630,
         alt: "Keramiek uit het atelier van Veramiek",
@@ -70,7 +73,7 @@ export const metadata: Metadata = {
     title: "Veramiek | Handgemaakt keramiek uit Etten-Leur",
     description:
       "Handgemaakt keramiek uit het atelier van Vera. Unieke stukken, workshops en verhalen van achter de draaischijf.",
-    images: ["/images/studio-hero.webp"],
+    images: ["/images/og-veramiek.jpg"],
   },
   robots: indexable
     ? { index: true, follow: true }
@@ -89,7 +92,7 @@ const orgJsonLd = {
   description:
     "Atelier voor handgemaakt keramiek in Etten-Leur. Unieke handgedraaide stukken en workshops aan de draaischijf.",
   url: siteUrl,
-  image: `${siteUrl}/images/studio-hero.webp`,
+  image: `${siteUrl}/images/og-veramiek.jpg`,
   logo: `${siteUrl}/logo/logo-horizontal.png`,
   address: {
     "@type": "PostalAddress",
