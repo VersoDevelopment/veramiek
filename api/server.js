@@ -185,7 +185,26 @@ app.use(cors({
   credentials: true
 }));
 
+/**
+ * Verzoeken van binnen het docker-netwerk tellen niet mee voor de algemene
+ * limiet. De Next.js-site rendert server-side en haalt producten, workshops en
+ * content dus rechtstreeks bij deze API op; al dat verkeer komt van hetzelfde
+ * container-IP. Zonder deze uitzondering zou een enkele zoekmachine die snel
+ * door de productpagina's loopt de limiet voor de hele site opsouperen, en
+ * kregen bezoekers 429's terug.
+ *
+ * Veilig omdat publiek verkeer altijd via NGINX Proxy Manager binnenkomt, die
+ * X-Forwarded-For zet; met trust proxy 1 is req.ip dan het echte bezoekers-IP
+ * en nooit een privéadres. Alleen wie al op het docker-netwerk zit, kan deze
+ * kant op.
+ */
+function isInternalRequest(req) {
+  const ip = String(req.ip || '').replace(/^::ffff:/, '');
+  return /^(10\.|127\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/.test(ip) || ip === '::1';
+}
+
 const globalLimit  = rateLimit({ windowMs: 60_000, max: 200, standardHeaders: true, legacyHeaders: false,
+  skip: isInternalRequest,
   message: { error: 'Te veel verzoeken. Probeer het later opnieuw.' } });
 const contactLimit = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
 const orderLimit   = rateLimit({ windowMs: 60_000, max: 3, standardHeaders: true, legacyHeaders: false });
