@@ -2,16 +2,37 @@
  * Getypeerde client voor de Veramiek Express-API (../../api/server.js).
  * Alle data (producten, content, workshops, beschikbaarheid) komt hier live
  * vandaan; bestellingen, contact- en boekingsberichten gaan er via mail
- * doorheen. Basis-URL uit NEXT_PUBLIC_API_BASE (zie .env.local).
+ * doorheen.
+ *
+ * Twee basis-URL's, bewust gescheiden:
+ * - Browser: NEXT_PUBLIC_API_BASE. In productie is dat het relatieve `/api`,
+ *   zodat elke aanroep same-origin is. Dat scheelt CORS (de API kent alleen
+ *   veramiek.nl als origin) en werkt daardoor ook op een stagingdomein.
+ * - Server (SSR in de Next-container): API_BASE_INTERNAL, dat rechtstreeks
+ *   naar de API-container wijst. Zonder die variabele zou een SSR-fetch via
+ *   het publieke domein naar buiten en weer naar binnen lopen.
  */
 
-const API_BASE = (
-  process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:3001"
-).replace(/\/$/, "");
+function normalize(base: string): string {
+  return base.replace(/\/$/, "");
+}
 
-/** Bouwt een absolute API-URL. */
+/** Basis voor fetches vanuit de browser. */
+const CLIENT_API_BASE = normalize(
+  process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:3001",
+);
+
+/** Basis voor fetches vanuit de server; valt terug op de publieke basis. */
+const SERVER_API_BASE = normalize(
+  process.env.API_BASE_INTERNAL ??
+    process.env.NEXT_PUBLIC_API_BASE ??
+    "http://localhost:3001",
+);
+
+/** Bouwt een API-URL, passend bij waar de code draait. */
 function apiUrl(path: string): string {
-  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  const base = typeof window === "undefined" ? SERVER_API_BASE : CLIENT_API_BASE;
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 /* ── Producten ─────────────────────────────────────────────────────── */

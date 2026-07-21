@@ -44,8 +44,17 @@ export function Footer() {
           </ul>
         </nav>
 
-        <p className="text-sm opacity-60">
-          &copy; {new Date().getFullYear()} Veramiek. Handgemaakt keramiek.
+        <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm opacity-60">
+          <span>
+            &copy; {new Date().getFullYear()} Veramiek. Handgemaakt keramiek.
+          </span>
+          <span aria-hidden>&middot;</span>
+          <Link
+            href="/privacy"
+            className="transition-opacity hover:opacity-100"
+          >
+            Privacybeleid
+          </Link>
         </p>
       </div>
     </footer>

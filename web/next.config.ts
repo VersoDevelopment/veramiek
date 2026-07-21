@@ -17,8 +17,26 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  // Standalone bundelt server + alleen de gebruikte node_modules, zodat de
+  // productie-image klein blijft (zie web/Dockerfile).
+  output: "standalone",
   turbopack: {
     root: path.join(__dirname),
+  },
+  poweredByHeader: false,
+  /**
+   * De oude statische site had .html-URL's. Die blijven in Google staan en in
+   * links van derden, dus ze worden permanent doorgezet naar hun opvolger.
+   */
+  async redirects() {
+    return [
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/collectie.html", destination: "/collecties", permanent: true },
+      { source: "/collectie", destination: "/collecties", permanent: true },
+      { source: "/shop", destination: "/collecties", permanent: true },
+      { source: "/workshop", destination: "/workshops", permanent: true },
+      { source: "/over", destination: "/over-mij", permanent: true },
+    ];
   },
   images: {
     remotePatterns: [

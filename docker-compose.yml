@@ -1,5 +1,8 @@
-version: '3'
 services:
+  # ── Oude statische site ───────────────────────────────────────────
+  # Blijft draaien zolang veramiek.nl er in NGINX Proxy Manager naar wijst.
+  # Dit is tijdens en na de cutover de terugval: niet weghalen voordat de
+  # nieuwe site een tijd goed heeft gedraaid.
   web:
     image: nginx:alpine
     volumes:
@@ -14,8 +17,59 @@ services:
       - default
       - npm_default
 
+  # ── Nieuwe site: voorkant ─────────────────────────────────────────
+  # Proxyt / naar de Next-container en /api/ naar de Express-API, zodat alles
+  # over hetzelfde domein loopt. Regelt ook de security headers en het
+  # wachtwoord op het stagingdomein (zie nginx-app.conf).
+  app:
+    image: nginx:alpine
+    container_name: veramiek-app-1
+    volumes:
+      - ./nginx-app.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./.htpasswd:/etc/nginx/.htpasswd:ro
+    ports:
+      - "127.0.0.1:8083:80"
+    restart: unless-stopped
+    depends_on:
+      - next
+      - api
+    networks:
+      - default
+      - npm_default
+
+  # ── Nieuwe site: Next.js ──────────────────────────────────────────
+  next:
+    build:
+      context: ./web
+      args:
+        # Relatief, dus de browser praat altijd same-origin met de API.
+        NEXT_PUBLIC_API_BASE: /api
+    container_name: veramiek-next-1
+    environment:
+      # Server-side fetches gaan rechtstreeks naar de API-container. Bewust de
+      # containernaam en niet de alias "api": die alias bestaat op npm_default
+      # ook bij andere projecten en resolvet dan willekeurig.
+      API_BASE_INTERNAL: http://veramiek-api-1:3001
+      # Bewust al de definitieve URL, ook zolang de site nog op het
+      # stagingdomein staat: canonicals en og:url wijzen dan meteen goed en de
+      # cutover vraagt geen herbouw. De proefversie wordt afgeschermd door het
+      # wachtwoord en de X-Robots-Tag in nginx-app.conf, niet door deze waarde.
+      # (SITE_NOINDEX bestaat nog als noodrem, maar wordt bij de build vastgelegd.)
+      SITE_URL: https://veramiek.nl
+      NODE_ENV: production
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - api
+    networks:
+      - default
+      - npm_default
+
+  # ── API (gedeeld door oude en nieuwe site) ────────────────────────
   api:
     build: ./api
+    container_name: veramiek-api-1
     env_file: ./api/.env
     restart: unless-stopped
     expose:

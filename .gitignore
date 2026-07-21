@@ -11,3 +11,6 @@ index-v2.html
 
 # Cache van de impeccable-hook
 .impeccable/
+
+# Wachtwoordbestand voor de afgeschermde proefversie (staat op de server)
+.htpasswd

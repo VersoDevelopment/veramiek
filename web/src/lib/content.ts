@@ -37,7 +37,10 @@ export type Collection = {
   accordionObjectPosition?: string;
 };
 
-/** De eerste drie zijn de uitgelichte rij op de homepage; het megamenu toont alles. */
+/**
+ * De eerste drie vullen de accordion op de homepage; het mobiele menu toont
+ * alles wat hier staat. Alleen echte, bestaande collecties dus.
+ */
 export const collections: Collection[] = [
   {
     name: "Zeeuws Zand",
@@ -69,13 +72,6 @@ export const collections: Collection[] = [
     alt: "Beschilderd keramiek uit de collectie Boeren Bontjes",
     accordionImage: "/images/collecties/boeren-bontjes/boeren-bontjes-accordion.jpg",
     accordionObjectPosition: "44% 58%",
-  },
-  {
-    name: "Placeholder",
-    href: "/collecties?collectie=Placeholder",
-    images: ["/images/matcha-set.png"],
-    alt: "Matcha set uit een nieuwe collectie",
-    accordionImage: "/images/matcha-set.png",
   },
 ];
 
