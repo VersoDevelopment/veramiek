@@ -45,33 +45,35 @@ export const collections: Collection[] = [
   {
     name: "Zeeuws Zand",
     href: "/collecties?collectie=Zeeuws%20Zand",
-    images: ["/images/schaal-1.png"],
-    alt: "Handgedraaide schaal uit de collectie Zeeuws Zand",
+    images: [
+      "/images/collecties/zeeuws-zand/zeeuws-zand-1.jpg",
+      "/images/collecties/zeeuws-zand/zeeuws-zand-2.jpg",
+      "/images/collecties/zeeuws-zand/zeeuws-zand-3.jpg",
+    ],
+    alt: "Handgedraaid keramiek uit de collectie Zeeuws Zand",
     accordionImage: "/images/collecties/zeeuws-zand/zeeuws-zand-accordion.jpg",
-    accordionObjectPosition: "34% 58%",
   },
   {
     name: "Kust Koraal",
     href: "/collecties?collectie=Kust%20Koraal",
     images: [
-      "/images/collecties/blush/blush-1.jpeg",
-      "/images/collecties/blush/blush-2.jpeg",
-      "/images/collecties/blush/blush-3.jpeg",
+      "/images/collecties/kust-koraal/kust-koraal-1.jpg",
+      "/images/collecties/kust-koraal/kust-koraal-2.jpg",
+      "/images/collecties/kust-koraal/kust-koraal-3.jpg",
     ],
     alt: "Keramiek uit de collectie Kust Koraal",
-    accordionImage: "/images/collecties/blush/kust-koraal-accordion.jpg",
+    accordionImage: "/images/collecties/kust-koraal/kust-koraal-accordion.jpg",
   },
   {
     name: "Boeren Bontjes",
     href: "/collecties?collectie=Boeren%20Bontjes",
     images: [
-      "/images/collecties/boeren-bontjes/boeren-bontjes-1.jpeg",
-      "/images/collecties/boeren-bontjes/boeren-bontjes-2.jpeg",
-      "/images/collecties/boeren-bontjes/boeren-bontjes-3.jpeg",
+      "/images/collecties/boeren-bontjes/boeren-bontjes-1.jpg",
+      "/images/collecties/boeren-bontjes/boeren-bontjes-2.jpg",
+      "/images/collecties/boeren-bontjes/boeren-bontjes-3.jpg",
     ],
     alt: "Beschilderd keramiek uit de collectie Boeren Bontjes",
     accordionImage: "/images/collecties/boeren-bontjes/boeren-bontjes-accordion.jpg",
-    accordionObjectPosition: "44% 58%",
   },
 ];
 
