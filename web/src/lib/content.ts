@@ -213,11 +213,8 @@ export const blogPosts: BlogPost[] = [
 export const contact = {
   /** Echt nummer, door Kenny aangeleverd. */
   whatsappUrl: "https://wa.me/31648145413",
-  /** PLACEHOLDER: echt e-mailadres volgt nog van de klant. */
-  email: "hallo@veramiek.nl",
-  /** PLACEHOLDER: echte Instagram-handle volgt nog van de klant. */
-  instagramUrl: "https://www.instagram.com/veramiek",
-  instagramHandle: "@veramiek",
-  /** PLACEHOLDER: echte TikTok-handle volgt nog van de klant. */
+  email: "info@veramiek.nl",
+  instagramUrl: "https://www.instagram.com/veramiek.nl",
+  instagramHandle: "@veramiek.nl",
   tiktokUrl: "https://www.tiktok.com/@veramiek",
 };

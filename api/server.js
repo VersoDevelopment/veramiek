@@ -421,6 +421,13 @@ app.post('/admin/upload', auth, uploadLimit, upload.single('image'), (req, res) 
 });
 
 // ── Bestelling e-mail (bestaand) ──
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'info@veramiek.nl';
+const FROM_EMAIL = process.env.FROM_EMAIL || CONTACT_EMAIL;
+
+function mailFrom(label) {
+  return '"' + label + '" <' + FROM_EMAIL + '>';
+}
+
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.eu', port: 587, secure: false, requireTLS: true,
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
@@ -533,9 +540,9 @@ app.post('/send-contact', contactLimit, async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Ongeldig e-mailadres' });
     if (String(naam).length > 100 || String(bericht).length > 5000) return res.status(400).json({ error: 'Invoer te lang' });
     await transporter.sendMail({
-      from: '"Veramiek Website" <info@versodevelopment.nl>',
+      from: mailFrom('Veramiek Website'),
       replyTo: email,
-      to: 'info@veramiek.nl',
+      to: CONTACT_EMAIL,
       subject: `Nieuw bericht van ${naam}`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
@@ -560,8 +567,8 @@ app.post('/send-contact', contactLimit, async (req, res) => {
 </body></html>`
     });
     await transporter.sendMail({
-      from: '"Vera, Veramiek" <info@versodevelopment.nl>',
-      replyTo: 'info@veramiek.nl',
+      from: mailFrom('Vera, Veramiek'),
+      replyTo: CONTACT_EMAIL,
       to: email,
       subject: `Bedankt voor je bericht, ${escapeHtml(naam)}!`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
@@ -599,15 +606,15 @@ app.post('/send-order', orderLimit, async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Ongeldig e-mailadres' });
     if (items.length > 50) return res.status(400).json({ error: 'Te veel producten' });
     await transporter.sendMail({
-      from: '"Veramiek Webshop" <info@versodevelopment.nl>',
-      replyTo: 'info@veramiek.nl',
-      to: 'info@veramiek.nl',
+      from: mailFrom('Veramiek Webshop'),
+      replyTo: CONTACT_EMAIL,
+      to: CONTACT_EMAIL,
       subject: `Nieuwe bestelling van ${naam}`,
       html: buildVeraEmail({ naam, email, tel, adres, items, totaal }),
     });
     await transporter.sendMail({
-      from: '"Vera, Veramiek" <info@versodevelopment.nl>',
-      replyTo: 'info@veramiek.nl',
+      from: mailFrom('Vera, Veramiek'),
+      replyTo: CONTACT_EMAIL,
       to: email,
       subject: 'Bedankt voor je bestelling bij Veramiek!',
       html: buildBuyerEmail({ naam, items, totaal }),
@@ -806,16 +813,16 @@ app.post('/book', bookLimit, async (req, res) => {
         contentType: 'text/calendar; charset=utf-8; method=PUBLISH',
       }] : [];
       await transporter.sendMail({
-        from: '"Veramiek Workshops" <info@versodevelopment.nl>',
+        from: mailFrom('Veramiek Workshops'),
         replyTo: booking.email,
-        to: 'info@veramiek.nl',
+        to: CONTACT_EMAIL,
         subject: `Nieuwe workshopaanvraag van ${booking.naam}`,
         html: buildVeraBookingEmail(booking),
         attachments,
       });
       await transporter.sendMail({
-        from: '"Vera, Veramiek" <info@versodevelopment.nl>',
-        replyTo: 'info@veramiek.nl',
+        from: mailFrom('Vera, Veramiek'),
+        replyTo: CONTACT_EMAIL,
         to: booking.email,
         subject: 'Je workshopaanvraag bij Veramiek',
         html: buildDeelnemerBookingEmail(booking),

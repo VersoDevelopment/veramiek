@@ -10,6 +10,13 @@ nog niet in staan (productdata-sync, e-mail-fix, smoke-test, nazorg).
 
 ---
 
+## Update 22/07/2026, Codex
+
+- API-codefix lokaal gedaan: alle mailheaders gebruiken nu `FROM_EMAIL` met fallback naar `CONTACT_EMAIL`, standaard `info@veramiek.nl`. `api/.env.example` is bijgewerkt. Nog open: server-`.env` met Zoho app-wachtwoord vullen, API rebuilden en echte mailtest doen.
+- Frontendcontact lokaal gelijkgetrokken naar `info@veramiek.nl`, Instagram `@veramiek.nl` en TikTok `@veramiek`.
+- Lokale `api/data/products.json` aangepast: 25 producten totaal, 22 zichtbaar, 3 zonder foto tijdelijk `available:false` (Berry Bowl, Gebaksbordje, Dinerbord). Let op: dit bestand is runtime-data en moet nog los naar de server gesynchroniseerd worden.
+- Verificatie lokaal: `node --check api/server.js` schoon, `npm run build` in `web` schoon.
+
 ## Fase 0 — Readiness-checklist (vóór je aan de cutover begint)
 
 Vink dit allemaal af voordat je Fase 3 (cutover) start.
