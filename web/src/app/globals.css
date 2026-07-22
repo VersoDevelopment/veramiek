@@ -33,6 +33,8 @@
 @theme {
   --color-wine: #2f0410;
   --color-sage: #cbd1a1;
+  /** Warme crèmetint voor losse adempauze-vlakken die niet vlak-wit hoeven te zijn (bv. het contactformulier). */
+  --color-ivory: #f8f4ec;
 
   /* Type-schaal met 19px-vloer (Gruppo-leesbaarheid) */
   --text-xs: 1.1875rem;
@@ -107,7 +109,8 @@
   }
 
   /* Binnen witte adempauze-vlakken keert de tekstkleur terug naar wine. */
-  .bg-white {
+  .bg-white,
+  .bg-ivory {
     color: var(--color-wine);
   }
 
@@ -132,7 +135,9 @@
   }
 
   .bg-white :focus-visible,
-  .bg-white:focus-visible {
+  .bg-white:focus-visible,
+  .bg-ivory :focus-visible,
+  .bg-ivory:focus-visible {
     outline-color: var(--color-wine);
   }
 }

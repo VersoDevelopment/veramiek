@@ -109,7 +109,7 @@ export default async function ContactPage() {
           </div>
 
           {/* Formulier op een witte adempauze-kaart (leesbaarheid) */}
-          <div className="bg-white p-7 md:p-9">
+          <div className="bg-ivory p-7 md:p-9">
             <ContactForm />
           </div>
         </div>
