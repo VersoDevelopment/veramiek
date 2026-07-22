@@ -209,7 +209,7 @@ export function BlogCarousel({
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="mx-auto grid w-full max-w-7xl gap-16 outline-none md:grid-cols-[1.7fr_1fr] md:items-center md:gap-16"
+      className="mx-auto grid w-full max-w-7xl gap-10 outline-none md:grid-cols-[1.7fr_1fr] md:items-center md:gap-16"
     >
       {/* Geen perspective meer: de foto's staan recht, zonder 3D-kanteling. */}
       <div ref={imageContainerRef} className="relative aspect-[1.85/1] w-full">
@@ -233,7 +233,7 @@ export function BlogCarousel({
       </div>
 
       {/* z-10: de zijfoto's steken buiten hun kolom en mogen niet over de tekst vallen. */}
-      <div className="relative z-10 flex flex-col justify-between">
+      <div className="relative z-10 flex flex-col">
         {/*
          * Alle tekstblokken liggen in dezelfde grid-cel: de onzichtbare kopieën
          * houden de hoogte van het langste item vast, de zichtbare ligt erover.
@@ -251,10 +251,10 @@ export function BlogCarousel({
               <h3 className="mt-4 font-display text-3xl md:text-4xl">
                 {post.title}
               </h3>
-              <div className="mt-8 h-px w-12" />
+              <div className="mt-5 h-px w-12 md:mt-8" />
               {/* Zelfde opmaak als hieronder: losse inline-block woorden breken
                   anders af dan doorlopende tekst, en dan klopt de hoogte niet. */}
-              <p className="mt-8 text-lg leading-[1.75]">
+              <p className="mt-5 text-base leading-[1.7] md:mt-8 md:text-lg md:leading-[1.75]">
                 {post.excerpt.split(" ").map((word, i) => (
                   <span key={`${index}-${i}`} className="inline-block">
                     {word}&nbsp;
@@ -280,8 +280,8 @@ export function BlogCarousel({
               <h3 className="mt-4 font-display text-3xl md:text-4xl">
                 {active.title}
               </h3>
-              <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
-              <p className="mt-8 text-lg leading-[1.75] opacity-85">
+              <div aria-hidden className="mt-5 h-px w-12 bg-sage/70 md:mt-8" />
+              <p className="mt-5 text-base leading-[1.7] opacity-85 md:mt-8 md:text-lg md:leading-[1.75]">
                 {prefersReduced
                   ? active.excerpt
                   : active.excerpt.split(" ").map((word, i) => (
@@ -300,7 +300,7 @@ export function BlogCarousel({
           </AnimatePresence>
         </div>
 
-        <div className="mt-12 flex items-center gap-6">
+        <div className="mt-5 flex items-center gap-4 md:mt-8 md:gap-6">
           <button
             type="button"
             onClick={() => goTo(-1)}

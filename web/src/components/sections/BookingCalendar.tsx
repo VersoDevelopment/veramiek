@@ -150,11 +150,11 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
   }
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+    <div className="grid gap-7 lg:grid-cols-[1fr_1fr] lg:gap-16">
       {/* Kalender */}
-      <div>
+      <div className="order-2 lg:order-none">
         {workshops.length > 1 && (
-          <div className="mb-8">
+          <div className="mb-5 md:mb-8">
             <p className="text-sm tracking-[0.14em] text-white/70 uppercase">
               Kies een workshop
             </p>
@@ -201,7 +201,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
           </button>
         </div>
 
-        <div className="mt-6 grid grid-cols-7 gap-1 text-center">
+        <div className="mt-4 grid grid-cols-7 gap-1 text-center md:mt-6">
           {WEEKDAYS.map((d) => (
             <div
               key={d}
@@ -250,7 +250,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
                   setSelected(dateStr);
                   setNoDatePreference(false);
                 }}
-                className={`aspect-square text-base tabular-nums transition-colors ${
+                className={`aspect-square text-sm tabular-nums transition-colors sm:text-base ${
                   isSelected
                     ? "bg-white text-wine"
                     : disabled
@@ -264,16 +264,16 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
           })}
         </div>
 
-        <p className="mt-6 text-base opacity-60">
+        <p className="mt-4 text-sm leading-[1.6] opacity-60 md:mt-6 md:text-base">
           Doorgestreepte datums zijn al bezet of niet beschikbaar. Kies een vrije
           dag, of doe je aanvraag zonder datum.
         </p>
 
-        <div className="mt-5 border border-white/20 bg-white/[0.06] p-5">
+        <div className="mt-4 border border-white/20 bg-white/[0.06] p-4 md:mt-5 md:p-5">
           <p className="text-base font-medium text-white">
             Nog geen datum in gedachten?
           </p>
-          <p className="mt-2 text-base text-white/70">
+          <p className="mt-2 text-sm leading-[1.6] text-white/70 md:text-base">
             Geen probleem. Stuur alvast je aanvraag, dan stem ik later samen met
             je een passende datum af.
           </p>
@@ -298,7 +298,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
       </div>
 
       {/* Formulier op een witte adempauze-kaart (leesbaarheid van de velden) */}
-      <div className="bg-white p-7 md:p-9">
+      <div className="order-1 bg-white p-5 md:p-9 lg:order-none">
         <h3 className="font-display text-2xl tracking-[0.06em]">
           {selected
             ? `Aanvraag voor ${new Intl.DateTimeFormat("nl-NL", {
@@ -310,10 +310,24 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
               : "Kies een datum, of ga verder zonder"}
         </h3>
 
-        <form onSubmit={handleSubmit} className="relative mt-8">
+        {!canSubmit && (
+          <button
+            type="button"
+            onClick={() => {
+              setNoDatePreference(true);
+              setSelected(null);
+            }}
+            className="mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-wine bg-white px-5 py-3 text-center text-base tracking-[0.03em] text-wine transition-colors hover:bg-wine hover:text-white active:scale-[0.98] sm:w-auto"
+          >
+            <Calendar size={18} strokeWidth={1.7} aria-hidden />
+            Ga verder zonder datum
+          </button>
+        )}
+
+        <form onSubmit={handleSubmit} className="relative mt-6 md:mt-8">
           <fieldset
             disabled={!canSubmit}
-            className={`m-0 space-y-6 border-0 p-0 transition-opacity ${
+            className={`m-0 space-y-5 border-0 p-0 transition-opacity md:space-y-6 ${
               canSubmit ? "opacity-100" : "opacity-40"
             }`}
           >

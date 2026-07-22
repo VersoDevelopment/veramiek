@@ -62,7 +62,7 @@ export function Hero() {
         playsInline
         preload="metadata"
         disablePictureInPicture
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-[58%_center] md:object-center"
       />
 
       {/* Multiply behoudt de kleurintensiteit van de video, i.t.t. een platte zwarte scrim. */}
@@ -78,13 +78,13 @@ export function Hero() {
           ease: luxEase,
           delay: prefersReduced ? 0 : textFadeDelay,
         }}
-        className="absolute bottom-8 left-6 z-20 inline-block md:bottom-10 md:left-12"
+        className="absolute bottom-24 left-5 z-20 inline-block sm:bottom-8 sm:left-6 md:bottom-10 md:left-12"
       >
         <motion.p
           initial={instant ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: introDelay }}
-          className="origin-bottom-left scale-y-125 font-display text-[clamp(7rem,11.8vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white"
+          className="origin-bottom-left scale-y-125 font-display text-[clamp(3.7rem,16vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white sm:text-[clamp(7rem,11.8vw,18rem)]"
         >
           VERAMIEK
         </motion.p>
@@ -114,7 +114,7 @@ export function Hero() {
             ease: luxEase,
             delay: introDelayLate,
           }}
-          className="mt-5 flex w-full items-center justify-between font-body text-[1rem] tracking-[0.08em] text-white"
+          className="mt-5 flex w-full items-center justify-between gap-4 font-body text-[0.78rem] tracking-[0.08em] text-white sm:text-[1rem]"
         >
           <span>Zeeuws Zand</span>
           <span>Kust Koraal</span>
@@ -130,7 +130,7 @@ export function Hero() {
           ease: luxEase,
           delay: introDelayLate,
         }}
-        className="absolute right-6 bottom-8 z-20 flex items-center gap-8 md:right-12 md:bottom-10"
+        className="absolute right-5 bottom-8 z-20 flex items-center gap-5 sm:right-6 sm:gap-8 md:right-12 md:bottom-10"
       >
         <a
           href={contact.instagramUrl}
