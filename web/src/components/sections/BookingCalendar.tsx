@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Field, TextAreaField, Honeypot } from "@/components/ui/Field";
 import {
   createBooking,
@@ -266,22 +266,35 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
 
         <p className="mt-6 text-base opacity-60">
           Doorgestreepte datums zijn al bezet of niet beschikbaar. Kies een vrije
-          dag om je aanvraag te doen.
+          dag, of doe je aanvraag zonder datum.
         </p>
 
-        <button
-          type="button"
-          onClick={() => {
-            setNoDatePreference(true);
-            setSelected(null);
-          }}
-          aria-pressed={noDatePreference}
-          className={`mt-4 cursor-pointer text-base underline decoration-sage decoration-1 underline-offset-4 transition-opacity hover:opacity-70 ${
-            noDatePreference ? "text-sage" : ""
-          }`}
-        >
-          Ik heb nog geen voorkeursdatum, doe toch een aanvraag
-        </button>
+        <div className="mt-5 border border-white/20 bg-white/[0.06] p-5">
+          <p className="text-base font-medium text-white">
+            Nog geen datum in gedachten?
+          </p>
+          <p className="mt-2 text-base text-white/70">
+            Geen probleem. Stuur alvast je aanvraag, dan stem ik later samen met
+            je een passende datum af.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setNoDatePreference(true);
+              setSelected(null);
+            }}
+            aria-pressed={noDatePreference}
+            className={[
+              "mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border px-5 py-3 text-center text-base tracking-[0.03em] transition-colors active:scale-[0.98] sm:w-auto",
+              noDatePreference
+                ? "border-sage bg-sage text-wine"
+                : "border-white/40 text-white hover:border-white hover:bg-white/10",
+            ].join(" ")}
+          >
+            <Calendar size={18} strokeWidth={1.7} aria-hidden />
+            Doe aanvraag zonder datum
+          </button>
+        </div>
       </div>
 
       {/* Formulier op een witte adempauze-kaart (leesbaarheid van de velden) */}
