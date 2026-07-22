@@ -63,6 +63,7 @@ export const collections: Collection[] = [
     ],
     alt: "Keramiek uit de collectie Kust Koraal",
     accordionImage: "/images/collecties/kust-koraal/kust-koraal-accordion.jpg",
+    accordionObjectPosition: "50% 78%",
   },
   {
     name: "Boeren Bontjes",
