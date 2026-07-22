@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Home } from "lucide-react";
 import { ContactForm } from "@/components/sections/ContactForm";
 import {
   InstagramIcon,
@@ -69,7 +70,7 @@ export default async function ContactPage() {
             >
               <span
                 aria-hidden
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center"
+                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-2xl leading-none"
               >
                 @
               </span>
@@ -77,12 +78,7 @@ export default async function ContactPage() {
             </a>
 
             <div className="flex items-center gap-4">
-              <span
-                aria-hidden
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-sage"
-              >
-                •
-              </span>
+              <Home aria-hidden className="h-6 w-6 shrink-0 text-sage" />
               <span className="text-lg opacity-85">{location}</span>
             </div>
 
