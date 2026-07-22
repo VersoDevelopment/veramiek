@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { ShopFilter } from "@/components/sections/ShopFilter";
 import { getProducts } from "@/lib/api";
 
@@ -22,12 +21,10 @@ export default async function CollectiesPage({
 
   return (
     <section className="relative px-5 pt-40 pb-28 md:px-10 md:pb-36">
-      <Image
-        src="/images/backgrounds/takken-wijnrood.webp"
-        alt=""
+      <div
         aria-hidden
-        fill
-        className="absolute inset-0 -z-10 object-cover"
+        className="fixed inset-0 -z-10 bg-cover bg-center"
+        style={{ backgroundImage: "url(/images/backgrounds/takken-wijnrood.webp)" }}
       />
       <header className="mx-auto mb-14 max-w-3xl text-center md:mb-20">
         <h1 className="text-4xl md:text-5xl">Collecties</h1>

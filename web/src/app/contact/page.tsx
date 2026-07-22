@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { ContactForm } from "@/components/sections/ContactForm";
 import {
   InstagramIcon,
@@ -31,12 +30,10 @@ export default async function ContactPage() {
 
   return (
     <section className="relative px-5 pt-40 pb-28 md:px-10 md:pb-36">
-      <Image
-        src="/images/backgrounds/takken-wijnrood.webp"
-        alt=""
+      <div
         aria-hidden
-        fill
-        className="absolute inset-0 -z-10 object-cover"
+        className="fixed inset-0 -z-10 bg-cover bg-center"
+        style={{ backgroundImage: "url(/images/backgrounds/takken-wijnrood.webp)" }}
       />
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl">
