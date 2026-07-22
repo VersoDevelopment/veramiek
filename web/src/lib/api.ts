@@ -264,8 +264,8 @@ export async function getAvailability(maand: string): Promise<Availability> {
 
 export type BookingPayload = {
   workshopId: string;
-  /** YYYY-MM-DD */
-  datum: string;
+  /** YYYY-MM-DD; leeg als de aanvrager nog geen voorkeursdatum heeft. */
+  datum?: string;
   naam: string;
   email: string;
   tel: string;

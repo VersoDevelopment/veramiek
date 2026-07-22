@@ -35,6 +35,8 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
   const [month, setMonth] = useState(now.getMonth()); // 0-based
   const [availability, setAvailability] = useState<Availability>({});
   const [selected, setSelected] = useState<string | null>(null);
+  /** Aanvrager heeft bewust geen voorkeursdatum; dan mag het formulier ook zonder `selected` open. */
+  const [noDatePreference, setNoDatePreference] = useState(false);
   const [workshopId, setWorkshopId] = useState(workshops[0]?.id ?? "");
 
   const [naam, setNaam] = useState("");
@@ -82,14 +84,16 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
     return availability[dateStr] ?? "free";
   }
 
+  const canSubmit = Boolean(selected || noDatePreference);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selected || !workshopId) return;
+    if (!canSubmit || !workshopId) return;
     setStatus("sending");
     setError("");
     const result = await createBooking({
       workshopId,
-      datum: selected,
+      datum: selected ?? undefined,
       naam,
       email,
       tel,
@@ -242,7 +246,10 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
                     : `${label}, beschikbaar`
                 }
                 aria-pressed={isSelected}
-                onClick={() => setSelected(dateStr)}
+                onClick={() => {
+                  setSelected(dateStr);
+                  setNoDatePreference(false);
+                }}
                 className={`aspect-square text-base tabular-nums transition-colors ${
                   isSelected
                     ? "bg-white text-wine"
@@ -261,6 +268,20 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
           Doorgestreepte datums zijn al bezet of niet beschikbaar. Kies een vrije
           dag om je aanvraag te doen.
         </p>
+
+        <button
+          type="button"
+          onClick={() => {
+            setNoDatePreference(true);
+            setSelected(null);
+          }}
+          aria-pressed={noDatePreference}
+          className={`mt-4 cursor-pointer text-base underline decoration-sage decoration-1 underline-offset-4 transition-opacity hover:opacity-70 ${
+            noDatePreference ? "text-sage" : ""
+          }`}
+        >
+          Ik heb nog geen voorkeursdatum, doe toch een aanvraag
+        </button>
       </div>
 
       {/* Formulier op een witte adempauze-kaart (leesbaarheid van de velden) */}
@@ -271,14 +292,16 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
                 day: "numeric",
                 month: "long",
               }).format(new Date(`${selected}T00:00:00`))}`
-            : "Kies eerst een datum"}
+            : noDatePreference
+              ? "Aanvraag zonder vaste datum"
+              : "Kies een datum, of ga verder zonder"}
         </h3>
 
         <form onSubmit={handleSubmit} className="relative mt-8">
           <fieldset
-            disabled={!selected}
+            disabled={!canSubmit}
             className={`m-0 space-y-6 border-0 p-0 transition-opacity ${
-              selected ? "opacity-100" : "opacity-40"
+              canSubmit ? "opacity-100" : "opacity-40"
             }`}
           >
             <Honeypot value={website} onChange={setWebsite} />
@@ -342,7 +365,7 @@ export function BookingCalendar({ workshops }: { workshops: Workshop[] }) {
 
           <button
             type="submit"
-            disabled={!selected || status === "sending"}
+            disabled={!canSubmit || status === "sending"}
             className="inline-flex cursor-pointer items-center rounded-full bg-wine px-10 py-4 text-lg tracking-[0.03em] text-white transition-opacity duration-300 hover:opacity-85 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {status === "sending" ? "Versturen..." : "Aanvraag versturen"}

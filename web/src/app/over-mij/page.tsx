@@ -40,9 +40,6 @@ export default function OverMijPage() {
 
         <RevealItem className="my-14">
           <OverMijPhoto />
-          <p className="mx-auto mt-6 max-w-sm text-center text-sm tracking-[0.05em] text-white/60">
-            Vera, in haar atelier in Etten-Leur.
-          </p>
         </RevealItem>
 
         <RevealItem className="space-y-7 text-lg text-white/90">

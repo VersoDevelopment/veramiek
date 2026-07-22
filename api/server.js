@@ -635,6 +635,10 @@ function nlDate(s) {
   const [y, m, d] = String(s).split('-');
   return `${d}/${m}/${y}`;
 }
+/** Zelfde, maar met een nette fallback als er nog geen voorkeursdatum is. */
+function nlDateOrOverleg(s) {
+  return s ? nlDate(s) : 'Nog in overleg';
+}
 
 /** Escapet tekst voor een .ics-veld. */
 function icsEscape(s) {
@@ -688,7 +692,7 @@ function buildVeraBookingEmail(b) {
     <table cellpadding="0" cellspacing="0" style="font-size:14px;">
       ${detailRows([
         ['Workshop', b.workshopName],
-        ['Datum', nlDate(b.datum)],
+        ['Datum', nlDateOrOverleg(b.datum)],
         ['Aantal personen', String(b.aantalPersonen)],
         ['Naam', b.naam],
         ['E-mail', b.email],
@@ -696,7 +700,7 @@ function buildVeraBookingEmail(b) {
       ])}
     </table>
     ${b.bericht ? `<p style="margin:16px 0 0;padding:14px 18px;background:#faf7f2;border:1px solid #ede5db;border-radius:3px;font-size:14px;color:#2d1f17;line-height:1.7;white-space:pre-wrap;">${escapeHtml(b.bericht)}</p>` : ''}
-    <p style="margin:18px 0 4px;color:#7a6259;font-size:13px;line-height:1.7;">De aanvraag staat in je agenda (bijlage). Neem contact op met de deelnemer om de tijd te bevestigen.</p>
+    <p style="margin:18px 0 4px;color:#7a6259;font-size:13px;line-height:1.7;">${b.datum ? 'De aanvraag staat in je agenda (bijlage). ' : ''}Neem contact op met de deelnemer om de datum en tijd te bevestigen.</p>
   </td></tr>`);
 }
 function buildDeelnemerBookingEmail(b) {
@@ -707,11 +711,11 @@ function buildDeelnemerBookingEmail(b) {
     <table cellpadding="0" cellspacing="0" style="font-size:14px;">
       ${detailRows([
         ['Workshop', b.workshopName],
-        ['Voorkeursdatum', nlDate(b.datum)],
+        ['Voorkeursdatum', nlDateOrOverleg(b.datum)],
         ['Aantal personen', String(b.aantalPersonen)],
       ])}
     </table>
-    <p style="margin:18px 0 0;color:#7a6259;font-size:13px;line-height:1.7;">In de bijlage vind je een agenda-item zodat je de datum alvast kunt noteren.</p>
+    ${b.datum ? '<p style="margin:18px 0 0;color:#7a6259;font-size:13px;line-height:1.7;">In de bijlage vind je een agenda-item zodat je de datum alvast kunt noteren.</p>' : '<p style="margin:18px 0 0;color:#7a6259;font-size:13px;line-height:1.7;">Zodra we een datum hebben afgestemd, ontvang je alsnog een agenda-item.</p>'}
   </td></tr>`);
 }
 
@@ -750,16 +754,19 @@ app.post('/book', bookLimit, async (req, res) => {
   try {
     const { workshopId, datum, naam, email, tel, aantalPersonen, bericht, website } = req.body || {};
     if (website) return res.json({ ok: true }); // honeypot
-    if (!workshopId || !datum || !naam || !email || !tel || !aantalPersonen) {
+    if (!workshopId || !naam || !email || !tel || !aantalPersonen) {
       return res.status(400).json({ error: 'Vul alle verplichte velden in' });
     }
     const workshop = workshops.find(w => w.id === workshopId);
     if (!workshop) return res.status(400).json({ error: 'Onbekende workshop' });
-    if (!isValidDateStr(datum) || datum < todayStr()) {
-      return res.status(400).json({ error: 'Kies een geldige datum' });
-    }
-    if (blockedDates.includes(datum) || bookings.some(b => b.status !== 'cancelled' && b.datum === datum)) {
-      return res.status(409).json({ error: 'Deze datum is niet meer beschikbaar' });
+    // Datum is optioneel: een aanvrager mag ook zonder voorkeursdatum aanvragen.
+    if (datum) {
+      if (!isValidDateStr(datum) || datum < todayStr()) {
+        return res.status(400).json({ error: 'Kies een geldige datum' });
+      }
+      if (blockedDates.includes(datum) || bookings.some(b => b.status !== 'cancelled' && b.datum === datum)) {
+        return res.status(409).json({ error: 'Deze datum is niet meer beschikbaar' });
+      }
     }
     const aantal = Number(aantalPersonen);
     if (!Number.isInteger(aantal) || aantal < 1 || aantal > 50) {
@@ -774,7 +781,7 @@ app.post('/book', bookLimit, async (req, res) => {
       id: crypto.randomUUID(),
       workshopId,
       workshopName: workshop.name,
-      datum,
+      datum: datum || '',
       naam: String(naam).trim(),
       email: String(email).trim(),
       tel: String(tel).trim(),
@@ -786,19 +793,18 @@ app.post('/book', bookLimit, async (req, res) => {
     bookings.push(booking);
     saveBookings();
 
-    // Mail Vera + deelnemer met een .ics-agenda-item (best effort).
+    // Mail Vera + deelnemer, met een .ics-agenda-item als er al een datum is (best effort).
     try {
-      const ics = buildIcs({
-        uid: `${booking.id}@veramiek.nl`,
-        datum,
-        summary: `Workshop: ${workshop.name}`,
-        description: `${aantal} personen. Aangevraagd door ${booking.naam} (${booking.email}, ${booking.tel}).`,
-      });
-      const attachments = [{
+      const attachments = booking.datum ? [{
         filename: 'workshop-veramiek.ics',
-        content: ics,
+        content: buildIcs({
+          uid: `${booking.id}@veramiek.nl`,
+          datum: booking.datum,
+          summary: `Workshop: ${workshop.name}`,
+          description: `${aantal} personen. Aangevraagd door ${booking.naam} (${booking.email}, ${booking.tel}).`,
+        }),
         contentType: 'text/calendar; charset=utf-8; method=PUBLISH',
-      }];
+      }] : [];
       await transporter.sendMail({
         from: '"Veramiek Workshops" <info@versodevelopment.nl>',
         replyTo: booking.email,

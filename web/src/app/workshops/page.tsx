@@ -93,11 +93,11 @@ export default async function WorkshopsPage() {
       <section id="boeken" className="px-5 py-24 md:px-10 md:py-32">
         <div className="mx-auto max-w-6xl">
           <header className="mb-14 text-center md:mb-20">
-            <h2 className="text-3xl md:text-4xl">Reserveer je plek</h2>
+            <h2 className="text-3xl md:text-4xl">Doe een aanvraag</h2>
             <div aria-hidden className="mx-auto mt-8 h-px w-12 bg-sage/70" />
             <p className="mx-auto mt-8 max-w-[48ch] text-base opacity-85">
-              Kies een datum die jou schikt en doe je aanvraag. Ik bevestig de
-              datum en tijd daarna persoonlijk met je.
+              Kies een datum die jou schikt, of doe je aanvraag zonder vaste
+              datum. Ik bevestig de datum en tijd daarna persoonlijk met je.
             </p>
           </header>
 
