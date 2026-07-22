@@ -8,14 +8,16 @@ import { luxEase, revealDuration } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 /** Hoe lang het ronde logo volledig zichtbaar blijft voor het wegfadet. */
-const LOGO_HOLD_MS = 1500;
-const LOGO_FADE_MS = 400;
+const LOGO_HOLD_MS = 1000;
+const LOGO_FADE_MS = 267;
 /** Wit trekt overlappend weg, ruim voordat wijnrood klaar is. */
-const WHITE_START_DELAY_MS = 450;
+const WHITE_START_DELAY_MS = 300;
+/** 33% sneller dan de standaard scroll-reveal duur, alleen voor deze intro. */
+const PANEL_RETRACT_DURATION = (revealDuration * 2) / 3;
 
 /** Totale tijd tot beide panelen volledig zijn weggetrokken; Hero.tsx bouwt hierop voort voor zijn eigen intro-fade. */
 export const INTRO_TOTAL_MS =
-  LOGO_HOLD_MS + LOGO_FADE_MS + WHITE_START_DELAY_MS + revealDuration * 1000;
+  LOGO_HOLD_MS + LOGO_FADE_MS + WHITE_START_DELAY_MS + PANEL_RETRACT_DURATION * 1000;
 
 type Phase = "logo" | "logoOut" | "wine" | "white" | "done";
 
@@ -90,14 +92,14 @@ export function LoadIntro() {
         style={{ transformOrigin: "top" }}
         initial={{ scaleY: 1 }}
         animate={{ scaleY: whiteRetracted ? 0 : 1 }}
-        transition={{ duration: revealDuration, ease: luxEase }}
+        transition={{ duration: PANEL_RETRACT_DURATION, ease: luxEase }}
       />
       <motion.div
         className="absolute inset-0 flex items-center justify-center bg-wine"
         style={{ transformOrigin: "top" }}
         initial={{ scaleY: 1 }}
         animate={{ scaleY: wineRetracted ? 0 : 1 }}
-        transition={{ duration: revealDuration, ease: luxEase }}
+        transition={{ duration: PANEL_RETRACT_DURATION, ease: luxEase }}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
