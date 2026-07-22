@@ -72,24 +72,26 @@ export default async function ContactPage() {
               <span className="text-lg opacity-85">{location}</span>
             </div>
 
-            <div className="flex gap-5 pt-2">
+            <div className="flex flex-col gap-4 pt-2">
               <a
                 href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Instagram ${instagramHandle}`}
-                className="transition-opacity hover:opacity-70"
+                className="flex items-center gap-4 transition-opacity hover:opacity-70"
               >
-                <InstagramIcon className="h-6 w-6 text-sage" />
+                <InstagramIcon className="h-6 w-6 shrink-0 text-sage" />
+                <span className="text-lg">{instagramHandle}</span>
               </a>
               <a
                 href={tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`TikTok ${tiktokHandle}`}
-                className="transition-opacity hover:opacity-70"
+                className="flex items-center gap-4 transition-opacity hover:opacity-70"
               >
-                <TikTokIcon className="h-6 w-6 text-sage" />
+                <TikTokIcon className="h-6 w-6 shrink-0 text-sage" />
+                <span className="text-lg">{tiktokHandle}</span>
               </a>
             </div>
           </div>
