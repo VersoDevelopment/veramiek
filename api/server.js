@@ -105,15 +105,6 @@ const DEFAULT_WORKSHOPS = [
     price: 'Vanaf € 30 p.p.',
     images: ['/images/workshop.jpeg'],
   },
-  {
-    id: 'draaimiddag',
-    name: 'Draaimiddag in het atelier',
-    desc: 'Kom een middag naar mijn atelier en leer draaien aan de schijf. In een klein groepje neem ik je stap voor stap mee, van een klomp klei tot je eigen kom of kopje. Rustig, met alle aandacht en tijd om te oefenen. Je stukken worden na het bakken en glazuren voor je klaargezet om op te halen.',
-    duration: '~2 uur',
-    groupSize: '1 tot 3 personen',
-    price: '€ 45 p.p.',
-    images: ['/images/studio-hero.webp'],
-  },
 ];
 
 let workshops = [];

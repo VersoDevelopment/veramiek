@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { OverMijPhoto } from "@/components/sections/OverMijPhoto";
 import { CtaButton } from "@/components/ui/CtaButton";
-import { RevealSection } from "@/components/ui/RevealSection";
+import { RevealItem, RevealSection } from "@/components/ui/RevealSection";
 
 export const metadata: Metadata = {
   title: "Over mij",
@@ -11,12 +12,14 @@ export const metadata: Metadata = {
 
 export default function OverMijPage() {
   return (
-    <RevealSection className="px-6 pt-44 pb-28 md:pb-36">
+    <RevealSection className="px-6 pt-44 pb-28 md:pb-36" stagger>
       <div className="mx-auto max-w-[65ch]">
-        <h1 className="text-4xl md:text-5xl">Over mij</h1>
-        <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
+        <RevealItem>
+          <h1 className="text-4xl md:text-5xl">Over mij</h1>
+          <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
+        </RevealItem>
 
-        <div className="mt-12 space-y-7 text-lg text-white/90">
+        <RevealItem className="mt-12 space-y-7 text-lg text-white/90">
           <p>
             Ik ben Vera, 26 jaar oud, keramist en maker achter Veramiek. Samen
             met mijn partner Kenny en onze nieuwsgierige hond Ollie woon ik in
@@ -33,6 +36,16 @@ export default function OverMijPage() {
             generaties lang mee te gaan en een mooi plekje te krijgen in jouw
             huis.
           </p>
+        </RevealItem>
+
+        <RevealItem className="my-14">
+          <OverMijPhoto />
+          <p className="mx-auto mt-6 max-w-sm text-center text-sm tracking-[0.05em] text-white/60">
+            Vera, in haar atelier in Etten-Leur.
+          </p>
+        </RevealItem>
+
+        <RevealItem className="space-y-7 text-lg text-white/90">
           <p>
             Ik verkoop mijn collecties online, sta op verschillende markten en
             geef workshops waarin ik mensen laat ervaren hoe bijzonder het is
@@ -56,14 +69,16 @@ export default function OverMijPage() {
             vertragen, om offline te zijn en om te voelen hoe het is om zelf
             iets te maken.
           </p>
-        </div>
+        </RevealItem>
 
-        <blockquote className="my-14 border-l border-sage/70 pl-8 font-display text-2xl leading-snug tracking-[0.04em] md:text-3xl">
-          Met je handen werken is bijna magisch: je wordt één met de klei, komt
-          volledig tot rust en je creëert iets dat blijft.
-        </blockquote>
+        <RevealItem>
+          <blockquote className="my-14 border-l border-sage/70 pl-8 font-display text-2xl leading-snug tracking-[0.04em] md:text-3xl">
+            Met je handen werken is bijna magisch: je wordt één met de klei,
+            komt volledig tot rust en je creëert iets dat blijft.
+          </blockquote>
+        </RevealItem>
 
-        <div className="space-y-7 text-lg text-white/90">
+        <RevealItem className="space-y-7 text-lg text-white/90">
           <p>
             Ik geloof dat creativiteit en ambacht goed zijn voor je mentale
             gezondheid. Voor mij is het een plek waar ik mezelf terugvind, en
@@ -76,16 +91,16 @@ export default function OverMijPage() {
             meegeven. Of dat nu is door een mooi stuk keramiek te kopen, of
             door zelf met je handen in de klei te duiken tijdens een workshop.
           </p>
-        </div>
+        </RevealItem>
 
-        <div className="mt-14 flex flex-wrap gap-4">
+        <RevealItem className="mt-14 flex flex-wrap gap-4">
           <CtaButton href="/#collecties" variant="lightOutline">
             Bekijk de collecties
           </CtaButton>
           <CtaButton href="/workshops" variant="lightOutline">
             Naar de workshops
           </CtaButton>
-        </div>
+        </RevealItem>
       </div>
     </RevealSection>
   );
