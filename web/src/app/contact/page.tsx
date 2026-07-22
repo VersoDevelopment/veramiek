@@ -58,7 +58,7 @@ export default async function ContactPage() {
               rel="noopener noreferrer"
               className="group flex items-center gap-4 transition-opacity hover:opacity-70"
             >
-              <WhatsAppIcon className="h-6 w-6 shrink-0 text-white" />
+              <WhatsAppIcon className="h-6 w-6 shrink-0 text-sage" />
               <span className="text-lg">
                 {phone ? phone : "Stuur een WhatsApp"}
               </span>
@@ -70,7 +70,7 @@ export default async function ContactPage() {
             >
               <span
                 aria-hidden
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-2xl leading-none"
+                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-2xl leading-none text-sage"
               >
                 @
               </span>
@@ -90,7 +90,7 @@ export default async function ContactPage() {
                 aria-label={`Instagram ${instagramHandle}`}
                 className="transition-opacity hover:opacity-70"
               >
-                <InstagramIcon className="h-6 w-6 text-white" />
+                <InstagramIcon className="h-6 w-6 text-sage" />
               </a>
               <a
                 href={tiktokUrl}
@@ -99,13 +99,13 @@ export default async function ContactPage() {
                 aria-label={`TikTok ${tiktokHandle}`}
                 className="transition-opacity hover:opacity-70"
               >
-                <TikTokIcon className="h-6 w-6 text-white" />
+                <TikTokIcon className="h-6 w-6 text-sage" />
               </a>
             </div>
           </div>
 
           {/* Formulier op een witte adempauze-kaart (leesbaarheid) */}
-          <div className="bg-ivory p-7 md:p-9">
+          <div className="bg-white p-7 md:p-9">
             <ContactForm />
           </div>
         </div>
