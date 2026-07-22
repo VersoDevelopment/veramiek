@@ -44,13 +44,14 @@ export function ProductTile({
           </span>
         )}
 
-        <span className="absolute bottom-4 left-1/2 max-w-[calc(100%-2rem)] -translate-x-1/2 truncate bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white">
+        <span className="absolute bottom-4 left-1/2 hidden max-w-[calc(100%-2rem)] -translate-x-1/2 truncate bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white md:block">
           {product.name}
         </span>
       </div>
-      <p className="mt-3 text-base tracking-[0.03em] opacity-80">
-        {formatPrice(product.price)}
-      </p>
+      <div className="mt-3 flex items-start justify-between gap-3 text-base tracking-[0.03em] opacity-85 md:block">
+        <p className="min-w-0 truncate md:hidden">{product.name}</p>
+        <p className="shrink-0 md:mt-3">{formatPrice(product.price)}</p>
+      </div>
     </Link>
   );
 }

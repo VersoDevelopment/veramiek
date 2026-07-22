@@ -124,13 +124,15 @@ export function Hero() {
 
       <motion.div
         initial={instant ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: prefersReduced ? 1 : textOpacityTarget }}
         transition={{
-          duration: TEXT_FADE_DURATION,
+          duration: textOpacityTarget === 1 ? TEXT_FADE_DURATION : SCROLL_TRIGGER_FADE_DURATION,
           ease: luxEase,
-          delay: introDelayLate,
+          delay: textOpacityTarget === 1 ? introDelayLate : 0,
         }}
-        className="absolute right-5 bottom-8 z-20 flex items-center gap-5 sm:right-6 sm:gap-8 md:right-12 md:bottom-10"
+        className={`absolute right-5 bottom-8 z-20 flex items-center gap-5 sm:right-6 sm:gap-8 md:right-12 md:bottom-10 ${
+          textFadeTriggered ? "pointer-events-none" : ""
+        }`}
       >
         <a
           href={contact.instagramUrl}

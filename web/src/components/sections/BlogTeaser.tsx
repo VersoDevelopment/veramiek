@@ -9,6 +9,16 @@ import { blogPosts, CAROUSEL_POST_COUNT } from "@/lib/content";
  *
  * De carrousel toont de eerste drie posts; blogPosts zelf bevat er meer.
  */
+const FIRST_BLOG_META = "Het begin, 2025";
+
+function homepagePosts() {
+  return [...blogPosts].sort((a, b) => {
+    if (a.meta === FIRST_BLOG_META) return -1;
+    if (b.meta === FIRST_BLOG_META) return 1;
+    return 0;
+  });
+}
+
 export function BlogTeaser() {
   return (
     <RevealSection
@@ -16,7 +26,7 @@ export function BlogTeaser() {
       className="bg-wine px-5 py-24 text-white antialiased md:px-10 md:py-32"
     >
       <BlogCarousel
-        posts={blogPosts.slice(0, CAROUSEL_POST_COUNT).map((post) => ({
+        posts={homepagePosts().slice(0, CAROUSEL_POST_COUNT).map((post) => ({
           ...post,
           // Alleen posts met een geschreven artikel krijgen een link.
           href: post.body?.length ? `/blog/${post.slug}` : undefined,

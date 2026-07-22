@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Home } from "lucide-react";
 import { ContactForm } from "@/components/sections/ContactForm";
+import { EmailAction } from "@/components/ui/EmailAction";
 import {
   InstagramIcon,
   TikTokIcon,
@@ -64,18 +65,7 @@ export default async function ContactPage() {
               </span>
             </a>
 
-            <a
-              href={`mailto:${email}`}
-              className="flex items-center gap-4 transition-opacity hover:opacity-70"
-            >
-              <span
-                aria-hidden
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-2xl leading-none text-sage"
-              >
-                @
-              </span>
-              <span className="text-lg">{email}</span>
-            </a>
+            <EmailAction email={email} label={email} variant="row" />
 
             <div className="flex items-center gap-4">
               <Home aria-hidden className="h-6 w-6 shrink-0 text-sage" />

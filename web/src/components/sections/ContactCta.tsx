@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CtaButton } from "@/components/ui/CtaButton";
+import { EmailAction } from "@/components/ui/EmailAction";
 import { RevealSection } from "@/components/ui/RevealSection";
 import { contact } from "@/lib/content";
 
@@ -43,12 +44,7 @@ export function ContactCta() {
           Stuur mij een WhatsApp
         </CtaButton>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-          <CtaButton
-            href={`mailto:${contact.email}`}
-            variant="lightOutline"
-          >
-            E-mail
-          </CtaButton>
+          <EmailAction email={contact.email} />
           <CtaButton href={contact.instagramUrl} external variant="lightOutline">
             Instagram
           </CtaButton>
