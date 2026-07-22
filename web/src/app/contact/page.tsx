@@ -41,15 +41,16 @@ export default async function ContactPage() {
             {c.title ?? "Vragen of bestellen?"}
           </h1>
           <div aria-hidden className="mt-8 h-px w-12 bg-sage/70" />
-          <p className="mt-8 text-lg text-white/90">
-            {c.desc ??
-              "Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of een workshop boeken? Stuur me gerust een bericht, ik reageer zo snel mogelijk."}
-          </p>
         </header>
 
-        <div className="mt-16 grid gap-16 md:grid-cols-[1fr_1.3fr] md:gap-24">
+        <div className="mt-8 grid gap-16 md:grid-cols-[1fr_1.3fr] md:gap-24">
           {/* Gegevens */}
           <div className="space-y-8">
+            <p className="text-lg text-white/90">
+              {c.desc ??
+                "Heb je een vraag over mijn werk, wil je een maatwerkopdracht bespreken of een workshop boeken? Stuur me gerust een bericht, ik reageer zo snel mogelijk."}
+            </p>
+
             <a
               href={whatsappUrl}
               target="_blank"
