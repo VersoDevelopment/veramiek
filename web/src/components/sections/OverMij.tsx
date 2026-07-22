@@ -6,6 +6,7 @@ import { RevealItem } from "@/components/ui/RevealSection";
 import {
   luxEase,
   SCROLL_FADE_STAGGER,
+  MOBILE_SCROLL_FADE_TRIGGER,
   SCROLL_FADE_TRIGGER,
   SCROLL_TRIGGER_FADE_DURATION,
   staggerParent,
@@ -28,7 +29,7 @@ import { useScrollTrigger } from "@/lib/useScrollTrigger";
 export function OverMij() {
   const prefersReduced = usePrefersReducedMotion();
   /** Zelfde drempel als de foto: tekst en foto faden samen in/uit, in beide richtingen. */
-  const revealed = useScrollTrigger(SCROLL_FADE_TRIGGER);
+  const revealed = useScrollTrigger(SCROLL_FADE_TRIGGER, MOBILE_SCROLL_FADE_TRIGGER);
   /** Verschijnen (omlaag) wacht tot hero eerst weg is; verdwijnen (omhoog) gaat meteen. */
   const photoOpacityTarget = revealed ? 1 : 0;
   const photoFadeDelay = photoOpacityTarget === 1 ? SCROLL_FADE_STAGGER : 0;

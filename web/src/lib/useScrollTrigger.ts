@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 
 /**
@@ -9,12 +9,33 @@ import { useMotionValueEvent, useScroll } from "motion/react";
  * waarna de aanroepende component er zelf een tijdgestuurde animatie (vaste
  * duration, los van scrollsnelheid) op kan laten reageren via `animate`.
  */
-export function useScrollTrigger(threshold: number): boolean {
+export function useScrollTrigger(
+  threshold: number,
+  mobileThreshold = threshold,
+): boolean {
   const { scrollY } = useScroll();
   const [pastThreshold, setPastThreshold] = useState(false);
 
+  function activeThreshold() {
+    if (typeof window === "undefined") return threshold;
+    return window.matchMedia("(max-width: 767px)").matches
+      ? mobileThreshold
+      : threshold;
+  }
+
+  useEffect(() => {
+    setPastThreshold(scrollY.get() >= activeThreshold());
+
+    function onResize() {
+      setPastThreshold(scrollY.get() >= activeThreshold());
+    }
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [mobileThreshold, scrollY, threshold]);
+
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setPastThreshold(latest >= threshold);
+    setPastThreshold(latest >= activeThreshold());
   });
 
   return pastThreshold;

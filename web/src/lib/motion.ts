@@ -45,6 +45,8 @@ export const menuTransition = { duration: 0.18, ease: luxEase } as const;
 export const SCROLL_UNIT = 100;
 /** Zowel hero-tekst als Vera-foto reageren op deze ene scrolldrempel (scroll 5). */
 export const SCROLL_FADE_TRIGGER = SCROLL_UNIT * 5;
+/** Op telefoon moet de overgang eerder gebeuren, voordat de socials de tweede sectie raken. */
+export const MOBILE_SCROLL_FADE_TRIGGER = SCROLL_UNIT * 2.4;
 /** Duur van beide getriggerde fades. Kort, anders mis je 'm bij hard scrollen. */
 export const SCROLL_TRIGGER_FADE_DURATION = 0.6;
 /** Wachttijd voor wie verschijnt, zodat wie verdwijnt eerst op gang is. */

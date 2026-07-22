@@ -12,6 +12,7 @@ import { introHasPlayed } from "@/lib/introPlayed";
 import {
   luxEase,
   SCROLL_FADE_STAGGER,
+  MOBILE_SCROLL_FADE_TRIGGER,
   SCROLL_FADE_TRIGGER,
   SCROLL_TRIGGER_FADE_DURATION,
 } from "@/lib/motion";
@@ -46,7 +47,7 @@ export function Hero() {
   const instant = prefersReduced || skipIntro;
   const introDelay = instant ? 0 : TEXT_INTRO_DELAY;
   const introDelayLate = instant ? 0 : TEXT_INTRO_DELAY + TEXT_INTRO_STAGGER;
-  const textFadeTriggered = useScrollTrigger(SCROLL_FADE_TRIGGER);
+  const textFadeTriggered = useScrollTrigger(SCROLL_FADE_TRIGGER, MOBILE_SCROLL_FADE_TRIGGER);
   /** Verdwijnen (omlaag) gaat meteen; terugkomen (omhoog) wacht tot Vera eerst weg is. */
   const textOpacityTarget = textFadeTriggered ? 0 : 1;
   const textFadeDelay = textOpacityTarget === 1 ? SCROLL_FADE_STAGGER : 0;

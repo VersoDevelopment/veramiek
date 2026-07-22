@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
-
 type EmailActionProps = {
   email: string;
   label?: string;
@@ -19,38 +17,11 @@ export function EmailAction({
   variant = "button",
   className = "",
 }: EmailActionProps) {
-  const [copied, setCopied] = useState(false);
   const href = "mailto:" + email;
   const classes = (variant === "row" ? rowClasses : buttonClasses) + " " + className;
 
-  async function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    const isMobile = window.matchMedia("(pointer: coarse)").matches;
-    if (!isMobile) return;
-
-    if (navigator.share) {
-      event.preventDefault();
-      try {
-        await navigator.share({
-          title: "E-mail Veramiek",
-          text: email,
-          url: href,
-        });
-        return;
-      } catch (error) {
-        if ((error as DOMException).name === "AbortError") return;
-      }
-    }
-
-    if (navigator.clipboard?.writeText) {
-      event.preventDefault();
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    }
-  }
-
   return (
-    <a href={href} onClick={handleClick} className={classes}>
+    <a href={href} className={classes}>
       {variant === "row" && (
         <span
           aria-hidden
@@ -59,9 +30,7 @@ export function EmailAction({
           @
         </span>
       )}
-      <span className={variant === "row" ? "text-lg" : undefined}>
-        {copied ? "E-mailadres gekopieerd" : label}
-      </span>
+      <span className={variant === "row" ? "text-lg" : undefined}>{label}</span>
     </a>
   );
 }
