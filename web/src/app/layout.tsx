@@ -78,6 +78,15 @@ export const metadata: Metadata = {
   robots: indexable
     ? { index: true, follow: true }
     : { index: false, follow: false },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 /**
@@ -101,7 +110,7 @@ const orgJsonLd = {
     addressCountry: "NL",
   },
   sameAs: [
-    "https://www.instagram.com/veramiek",
+    "https://www.instagram.com/veramiek.nl",
     "https://www.tiktok.com/@veramiek",
   ],
 };
