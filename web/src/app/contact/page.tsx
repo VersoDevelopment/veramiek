@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ContactForm } from "@/components/sections/ContactForm";
 import {
   InstagramIcon,
@@ -29,7 +30,14 @@ export default async function ContactPage() {
   const tiktokHandle = c.tiktokHandle ?? "@veramiek";
 
   return (
-    <section className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
+    <section className="relative px-5 pt-40 pb-28 md:px-10 md:pb-36">
+      <Image
+        src="/images/backgrounds/takken-wijnrood.webp"
+        alt=""
+        aria-hidden
+        fill
+        className="absolute inset-0 -z-10 object-cover"
+      />
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl">
           <h1 className="text-4xl md:text-5xl">
@@ -42,7 +50,7 @@ export default async function ContactPage() {
           </p>
         </header>
 
-        <div className="mt-16 grid gap-16 lg:grid-cols-[1fr_1.3fr] lg:gap-24">
+        <div className="mt-16 grid gap-16 md:grid-cols-[1fr_1.3fr] md:gap-24">
           {/* Gegevens */}
           <div className="space-y-8">
             <a

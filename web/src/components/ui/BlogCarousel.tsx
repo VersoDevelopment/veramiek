@@ -321,7 +321,7 @@ export function BlogCarousel({
           {active.href ? (
             <Link
               href={active.href}
-              className="ml-auto text-base tracking-[0.03em] underline underline-offset-8 opacity-85 transition-opacity hover:opacity-100"
+              className="ml-auto text-base tracking-[0.03em] underline underline-offset-8 opacity-85 transition-colors hover:text-sage hover:opacity-100"
             >
               Lees verder
             </Link>

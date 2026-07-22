@@ -48,7 +48,7 @@ export default function BlogIndexPage() {
                 </p>
                 <h2 className="mt-4 text-3xl md:text-4xl">{post.title}</h2>
                 <p className="mt-6 text-lg text-white/85">{post.excerpt}</p>
-                <span className="mt-6 inline-block text-base tracking-[0.03em] underline underline-offset-8 opacity-85 transition-opacity group-hover:opacity-100">
+                <span className="mt-6 inline-block text-base tracking-[0.03em] underline underline-offset-8 opacity-85 transition-colors group-hover:text-sage group-hover:opacity-100">
                   Lees verder
                 </span>
               </Link>
