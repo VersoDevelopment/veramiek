@@ -86,6 +86,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /*
+     * Deze site heeft geen dark-mode variant; zonder deze regel laat een
+     * browser met donkere-modus/forced-dark de tekst-cursor (caret) en
+     * andere systeem-UI soms in het donkere schema tekenen (wit), wat hem
+     * onzichtbaar maakt op onze lichte formulierkaarten.
+     */
+    color-scheme: light;
   }
 
   @media (prefers-reduced-motion: reduce) {

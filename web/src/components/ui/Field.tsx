@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  */
 
 const fieldBase =
-  "mt-2 w-full border-b border-wine/25 bg-transparent pb-2 text-base text-wine transition-colors placeholder:text-wine/40 focus:border-wine focus:outline-none";
+  "mt-2 w-full border-b border-wine/25 bg-transparent pb-2 text-base text-wine caret-wine transition-colors placeholder:text-wine/40 focus:border-wine focus:outline-none";
 
 function Label({
   htmlFor,
