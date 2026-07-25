@@ -1,17 +1,23 @@
-# CSRF Fix Plan
+# Csrf Fix Plan
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Changes
 
-None required.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] Admin routes use JWT Bearer (not cookie), immune to CSRF
-- [x] JWT stored in sessionStorage, not cookies
-- [x] CORS restricted to known origins
+- [x] Geen sessiecookie in gebruik
+- [x] Auth via `Authorization`-header, niet via cookie
+- [x] Body parsing accepteert alleen `application/json`
+- [x] Een cross-origin formulier-POST naar een schrijfroute levert 400, niet een verwerkte actie
 
 ## Manual verification (for Kenny)
 
-1. Open browser console on a different domain (e.g., about:blank).
-2. Try: `fetch('https://veramiek.nl/api/admin/products', { headers: { Authorization: 'Bearer fake' } })`. Should get 401.
-3. A cross-origin POST with a form (not JSON) to `/send-contact` should be blocked by CORS preflight.
+Geen.

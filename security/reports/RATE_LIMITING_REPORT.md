@@ -1,43 +1,36 @@
 # Rate Limiting Security Report
 
-## Status: MEDIUM
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
+## Status: PASS
 
 ## Findings
 
-Rate limiting is applied via `express-rate-limit` for several endpoints:
+| Limiet | Venster | Max | Routes |
+|---|---|---|---|
+| `globalLimit` | 60s | 200 | alles (met uitzondering voor intern verkeer) |
+| `loginLimit` | 15 min | 5 | `POST /admin/login` |
+| `setupLimit` | 15 min | 5 | `POST /admin/setup` |
+| `contactLimit` | 60s | 3 | `POST /send-contact` |
+| `orderLimit` | 60s | 3 | `POST /send-order` |
+| `bookLimit` | 60s | 3 | `POST /book` |
+| `uploadLimit` | 60s | 20 | `POST /admin/upload` |
 
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| `POST /send-contact` | 3 requests | 60 seconds |
-| `POST /send-order` | 3 requests | 60 seconds |
-| `GET+POST /admin/setup` | 5 requests | 15 minutes |
-| `POST /admin/login` | 5 requests | 15 minutes (fixed, see AUTH report) |
+`app.set('trust proxy', 1)` past bij de opstelling: NGINX Proxy Manager zet `X-Forwarded-For`, en `nginx-app.conf` geeft die bewust door met `$http_x_forwarded_for` in plaats van hem aan te vullen. Zou de app-nginx zijn eigen IP toevoegen, dan zag de limiter iedereen als dezelfde bezoeker.
 
-`app.set('trust proxy', 1)` is configured, which allows `express-rate-limit` to read the real client IP from `X-Forwarded-For` (set by nginx). This is correct for a reverse-proxy setup.
+`isInternalRequest()` slaat de globale limiet over voor privé-IP's. Dat is nodig omdat de Next-container server-side rendert en al zijn API-verkeer vanaf een enkel container-IP komt; zonder de uitzondering zou een zoekmachine die snel door de productpagina's loopt de limiet voor de hele site opsouperen. De uitzondering is veilig omdat publiek verkeer altijd via de proxy komt en `req.ip` dan het echte bezoekers-IP is, nooit een privéadres.
 
-**Issues:**
-
-1. **MEDIUM: No rate limit on `GET /products` or `GET /content`.** These endpoints read from memory and respond quickly, but an aggressive scraper or DDoS could still cause issues. Low risk for this scale of site, but worth noting.
-
-2. **MEDIUM: Rate limits are in-memory (not distributed).** If multiple API container replicas were running, each would have its own counter. Currently only one replica runs (single Docker container), so this is not an active problem.
-
-3. **LOW: `POST /admin/upload` has no explicit rate limit beyond authentication.** A logged-in admin could upload many large files quickly. The 10MB file size limit per upload is set, which mitigates this somewhat, but there is no per-session upload frequency limit.
-
-4. **LOW: No global rate limit middleware.** A general `rateLimit({ windowMs: 60_000, max: 100 })` applied to all routes would provide a baseline defence against scanning/scraping.
+Live getest: 7 mislukte inlogpogingen achter elkaar geven `401 401 401 401 429 429 429`. Een poging met `X-Forwarded-For: 1.2.3.4` kreeg ook 429, dus de teller is niet te resetten door de header te vervalsen.
 
 ## What's at risk
 
-- Contact and order forms are protected against spam/flood (3/min is appropriate).
-- Login is rate-limited (5 attempts / 15 min).
-- Public content endpoints could be scraped or used in a minor DDoS, but impact is low (static memory reads).
+Niets ernstigs. Het contactformulier laat 3 mails per minuut per IP toe; over een langere periode is dat nog steeds mailruis als iemand doorzet, maar de honeypot vangt de meeste bots af.
 
 ## What's already secure
 
-- Contact and order form rate limits prevent email spam abuse.
-- Login rate limit prevents brute force.
-- Trust proxy is correctly set.
+Login op 5 per 15 minuten, alle mailroutes op 3 per minuut, een globale bovengrens, en een proxy-instelling die klopt met de werkelijke keten.
 
 ## Recommendations
 
-1. Add a global rate limit (e.g., 200 requests/min per IP) as a baseline.
-2. Consider adding a rate limit to `POST /admin/upload` even for authenticated users.
+Geen. De aanbeveling uit het framework (10 per 15 min op login) is hier strenger ingevuld.

@@ -1,23 +1,24 @@
 # Payment Webhooks Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: N/A
 
 ## Findings
 
-This project has no payment processing integration. There is no Stripe, Mollie, PayPal, or any other payment provider integrated.
+Geen betalingen op veramiek.nl. Geen Stripe, Mollie of andere PSP in `api/package.json` of in de frontend. Bestellingen lopen via `POST /send-order`, dat twee mails verstuurt (een naar Vera, een bevestiging naar de koper); de afhandeling en betaling gaan daarna buiten de site om.
 
-The "order" flow is entirely email-based: the customer submits their details and product list via `/send-order`, and Vera contacts them manually to arrange payment. No financial transactions are processed server-side.
-
-Therefore there are no payment webhooks to secure, no signature verification to implement, and no payment credentials to protect.
+Er is dus ook geen webhook-endpoint dat een handtekening zou moeten controleren.
 
 ## What's at risk
 
-Nothing payment-related. The business model relies on manual confirmation and payment outside the website.
+Niets binnen deze categorie. Wel goed om te weten: omdat er geen betaling in de flow zit, is een bestelling niet meer dan een aanvraag per mail. Dat is een bewuste keuze en geen kwetsbaarheid.
 
 ## What's already secure
 
-No payment data flows through the system.
+Niet van toepassing.
 
 ## Recommendations
 
-If a payment provider is added in the future (e.g., Mollie for Dutch iDEAL payments), webhook signature verification must be implemented and webhook endpoints must not be rate-limited in a way that blocks legitimate provider calls.
+Komt er later iDEAL of Stripe bij, dan geldt deze categorie volledig: handtekeningverificatie op elke webhook, verwerkte event-id's opslaan tegen dubbele verwerking, en handlers voor mislukte betalingen.

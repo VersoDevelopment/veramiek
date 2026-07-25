@@ -1,16 +1,23 @@
-# CORS Fix Plan
+# Cors Fix Plan
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Changes
 
-None required.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] No wildcard origin in CORS config
-- [x] credentials: true only used with explicit origin whitelist
-- [x] Origin list is minimal (production + localhost only)
+- [x] CORS-origin is een expliciete lijst met echte domeinen
+- [x] Geen wildcard
+- [x] `credentials: true` alleen in combinatie met specifieke origins
+- [x] Live: `Origin: https://evil.com` krijgt geen `Access-Control-Allow-Origin` terug
 
 ## Manual verification (for Kenny)
 
-Run: `curl -H "Origin: https://evil.com" -I https://veramiek.nl/api/products`
-The response should NOT include `Access-Control-Allow-Origin: https://evil.com`.
+`curl -I -H "Origin: https://evil.com" https://veramiek.nl/api/products` en controleer dat `evil.com` niet wordt teruggegeven.

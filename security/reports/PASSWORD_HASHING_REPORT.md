@@ -1,36 +1,34 @@
 # Password Hashing Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: PASS
 
 ## Findings
 
-Password handling is reviewed in `api/server.js`:
+Een wachtwoord in het systeem: het beheerderswachtwoord.
 
-```javascript
+```js
 const adminHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 12);
 ```
 
-- `bcryptjs ^2.4.3` is used for hashing.
-- Cost factor is **12**, which is above the commonly recommended minimum of 10. This provides good brute-force resistance.
-- The hash is computed at server startup from the environment variable. The plaintext password is never stored or logged.
-- Password comparison uses `bcrypt.compareSync()` which is timing-safe (bcrypt implementations include a constant-time comparison step).
-- The TOTP secret stored in `api/data/totp_secret.txt` is a random base32 string, not a password, and is stored plaintext - this is standard and correct for TOTP seeds.
+bcryptjs met cost 12, wat ruim boven het gangbare minimum van 10 ligt. Verificatie gebeurt met `bcrypt.compareSync()` op twee plekken (`/admin/login` en `/admin/setup`), allebei met `String()` om de invoer heen zodat een JSON-object of array geen typefout in bcrypt kan veroorzaken.
 
-**Notes:**
-- There are no user accounts or user passwords to manage. The single admin password is the only credential.
-- No password reset flow exists, which means if the admin password is lost, it must be changed directly in the `.env` file and the container restarted.
+Geen MD5, SHA-1 of kale SHA-256 in het project. Geen zelfgebouwde vergelijking met `===` op hashes.
+
+Naast het wachtwoord staat er een TOTP-tweede factor op de login (`otplib`), met een sleutel die in een Docker-volume staat en niet in git.
+
+Kanttekening, geen bevinding: het wachtwoord staat als platte tekst in `api/.env` en wordt bij elke start opnieuw gehasht. Dat is nodig omdat er geen gebruikersdatabase is en dus geen plek om de hash op te slaan. Zolang `.env` alleen op de server staat en niet in git (geverifieerd, zie SECRETS_EXPOSURE) is dat verdedigbaar.
 
 ## What's at risk
 
-Nothing. bcrypt with cost 12 is appropriate and correctly implemented.
+Wie het `.env`-bestand op de server kan lezen, heeft het wachtwoord in platte tekst. Dat vraagt echter al toegang tot de container of de host, en dan is de TOTP-sleutel in hetzelfde volume ook binnen bereik.
 
 ## What's already secure
 
-- bcrypt cost factor 12.
-- Hash computed from env var at startup.
-- No plaintext passwords stored.
-- Timing-safe comparison.
+bcrypt met cost 12, invoer afgedwongen naar string, en een tweede factor bovenop het wachtwoord.
 
 ## Recommendations
 
-No changes required.
+Geen. Bij een wachtwoordwissel: `ADMIN_PASSWORD` in `api/.env` aanpassen en de container herstarten.

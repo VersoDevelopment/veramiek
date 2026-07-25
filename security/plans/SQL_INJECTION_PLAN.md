@@ -1,14 +1,22 @@
-# SQL Injection Fix Plan
+# Sql Injection Fix Plan
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Changes
 
-None required. No SQL database present.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] No SQL queries in codebase
-- [x] No database connection
+- [x] Geen SQL-driver of ORM in `package.json`
+- [x] Geen bestandspad opgebouwd uit gebruikersinvoer
+- [x] Grep op string-concatenatie in queries geeft niets
 
 ## Manual verification (for Kenny)
 
-N/A
+Geen.

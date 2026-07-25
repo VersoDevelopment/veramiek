@@ -1,28 +1,28 @@
 # Database Access Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: N/A
 
 ## Findings
 
-This project uses no relational or NoSQL database. Persistence is handled via two JSON flat-files:
+Veramiek heeft geen database. Alle state staat in JSON-bestanden in `api/data/`, die in productie een Docker-volume is (`api_data` in `docker-compose.yml`):
 
-- `api/data/products.json` - product catalogue
-- `api/data/site_content.json` - editable website text
+- `products.json`, `site_content.json`, `workshops.json` (publiek leesbaar via `/products`, `/content`, `/workshops`)
+- `bookings.json` (bevat NAW van aanvragers, alleen via `/admin/bookings` achter JWT-auth)
+- `blocked_dates.json`, `totp_secret.txt`
 
-Both files live inside a named Docker volume (`api_data`) that is not bind-mounted to the host filesystem in production. Data is loaded into memory at startup and written synchronously via `fs.writeFileSync`.
-
-No database connection strings, ORM, query builder, or raw SQL are present anywhere in the codebase.
+Geen Supabase, Firebase, RLS-policies of anon key. Geen databaseclient in `package.json`.
 
 ## What's at risk
 
-- If the Docker volume were misconfigured and mounted world-readable, the JSON files (containing product data and site content) would be readable. Neither file contains PII beyond what is already public.
-- There is no database to inject into, no credentials to steal.
+De bestanden zijn alleen bereikbaar via de API-routes. De enige publieke route die uit `bookings.json` put is `GET /availability`, en die geeft uitsluitend `{datum: "full"|"blocked"}` terug, geen namen, e-mailadressen of telefoonnummers. Live gecontroleerd: `GET /api/availability?maand=2026-08` geeft `{"2026-08-19":"full"}`.
 
 ## What's already secure
 
-- No database used; no connection string to protect.
-- Docker volume is named, not bind-mounted.
+Boekingsgegevens zitten achter de `auth`-middleware; de publieke beschikbaarheidsroute is bewust een projectie zonder persoonsgegevens.
 
 ## Recommendations
 
-No action required for this category.
+Geen. Als er ooit een database bij komt, dan geldt deze categorie opnieuw.

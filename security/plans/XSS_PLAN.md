@@ -1,18 +1,25 @@
-# XSS Fix Plan
+# Xss Fix Plan
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Changes
 
-- `index.html` - Add HTML escaping function and use it for `p.name`, `p.desc`, `p.badge`, `x.name` in all innerHTML template literals in the product render and cart render.
+- `web/src/lib/jsonLd.ts` (nieuw) - `jsonLdScript()` die `&`, `<`, `>`, U+2028 en U+2029 naar unicode-escapes omzet, zodat de JSON geldig blijft maar nooit een tag kan afsluiten.
+- `web/src/app/collecties/[id]/page.tsx` - gebruikt `jsonLdScript(productJsonLd)`.
+- `web/src/app/layout.tsx` - gebruikt `jsonLdScript(orgJsonLd)`, zodat er maar een manier is om JSON-LD te schrijven.
+
+## New files
+
+- `web/src/lib/jsonLd.ts`
 
 ## Verification goals
 
-- [x] Server-side email HTML uses escapeHtml() for all user input
-- [ ] Frontend renderProducts() escapes product name, desc, badge
-- [ ] Frontend cart render escapes product names
-- [ ] No unescaped API data inserted via innerHTML
+- [x] Geen `dangerouslySetInnerHTML` meer met kale `JSON.stringify`
+- [x] `jsonLdScript({name: "</script><img src=x onerror=alert(1)>"})` bevat geen `</script` en geen rauwe `<` of `>`
+- [x] De uitvoer blijft geldige JSON (`JSON.parse` geeft de oorspronkelijke waarde terug)
+- [x] `npx tsc --noEmit` en `npm run build` slagen
 
 ## Manual verification (for Kenny)
 
-1. In the admin panel, create a product with name: `<img src=x onerror="alert('XSS')">`.
-2. Visit the public website product section.
-3. The product name should appear as literal text, not trigger a JS alert.
+Openstaand, lage prioriteit: `esc()` in `api/admin.html` uitbreiden met `.replace(/'/g,'&#39;')` en `p.images[0]` erdoorheen halen. Alleen relevant als een productnaam of foto-URL ooit een apostrof of aanhalingsteken bevat.

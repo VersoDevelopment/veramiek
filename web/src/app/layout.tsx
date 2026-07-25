@@ -5,6 +5,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { jsonLdScript } from "@/lib/jsonLd";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -128,7 +129,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(orgJsonLd) }}
         />
         <a
           href="#main"

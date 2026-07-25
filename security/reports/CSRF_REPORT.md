@@ -1,31 +1,30 @@
-# CSRF (Cross-Site Request Forgery) Security Report
+# Csrf Security Report
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Status: PASS
 
 ## Findings
 
-CSRF protection is evaluated for the API endpoints.
+Er zijn geen sessiecookies. Authenticatie loopt volledig via een JWT dat het adminpaneel in `sessionStorage` bewaart en handmatig als `Authorization: Bearer`-header meestuurt (`api/admin.html:685`). Een browser stuurt zo'n header niet automatisch mee bij een cross-site verzoek, dus het klassieke CSRF-scenario bestaat hier niet.
 
-**Admin endpoints** are protected by JWT Bearer token authentication. CSRF attacks require the victim's browser to send a forged request - Bearer tokens in the Authorization header cannot be set by cross-origin forms or `<img>` tags. The JWT is stored in `sessionStorage` (not cookies), so it is never automatically sent by the browser. This makes admin endpoints immune to CSRF.
+De publieke schrijfroutes (`/send-contact`, `/send-order`, `/book`) zijn wel via POST te bereiken, maar:
 
-**Public endpoints** (`/send-contact`, `/send-order`):
-- These accept `Content-Type: application/json` requests.
-- The CORS configuration restricts origins to `['https://veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001']` with `credentials: true`.
-- Simple cross-origin form POST (with `application/x-www-form-urlencoded`) would be blocked because the API expects JSON and the CORS preflight would reject unexpected origins.
-- The contact form has a honeypot field (`website`) as a basic bot deterrent.
+- `express.json()` verwerkt alleen `Content-Type: application/json`. Een cross-origin HTML-formulier kan alleen `application/x-www-form-urlencoded`, `multipart/form-data` of `text/plain` sturen, en dan blijft `req.body` leeg en volgt een 400.
+- Een `fetch` met JSON-content-type is een preflighted verzoek en loopt tegen de CORS-allowlist aan.
+- Er valt met deze routes ook niets te bereiken wat een aanvaller niet rechtstreeks kan: ze versturen alleen mail, en dat is al beperkt tot 3 per minuut plus een honeypot.
 
-The public form endpoints do not require authentication and do not perform privileged actions (they only send emails), so CSRF on them would at most send a spam email to info@veramiek.nl - not a meaningful attack.
+`/admin/upload` gebruikt `multipart/form-data`, wat een formulier wel kan sturen, maar de route zit achter `auth` en dat token gaat niet vanzelf mee.
 
 ## What's at risk
 
-Very low. The worst case CSRF on public endpoints is someone sending a contact form message on behalf of another user's email address - which is also achievable by just filling in the form directly.
+Niets. Geen ambient credentials, dus geen CSRF-oppervlak.
 
 ## What's already secure
 
-- JWT Bearer token (not cookie) for admin routes eliminates CSRF risk on admin actions.
-- CORS restricted to known origins.
-- JSON content-type requirement blocks simple form-based CSRF.
+Tokenauthenticatie in plaats van cookies, JSON-only body parsing, en een CORS-allowlist met vier vaste origins.
 
 ## Recommendations
 
-No action required.
+Als er ooit cookie-authenticatie bijkomt: `SameSite=Lax` plus `HttpOnly` plus `Secure`, en dan opnieuw naar deze categorie kijken.

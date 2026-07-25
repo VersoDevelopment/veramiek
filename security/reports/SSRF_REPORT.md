@@ -1,39 +1,28 @@
-# SSRF (Server-Side Request Forgery) Security Report
+# Ssrf Security Report
 
-## Status: LOW
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
+## Status: PASS
 
 ## Findings
 
-Server-Side Request Forgery occurs when user-supplied URLs are fetched server-side, potentially targeting internal services.
+Drie plekken waar een URL uit data een verzoek kan veroorzaken:
 
-The server does make outbound HTTP requests, but only in one context: sending email via `nodemailer` to `smtp.zoho.eu:587`. The SMTP host is hardcoded, not user-controlled.
+1. **`imgUrl()` in `api/server.js`** (bestelmails). Laat alleen `https://veramiek.nl/` door; alles wat met `http` begint maar niet met dat prefix wordt `null`, en relatieve paden worden per segment ge-encodeerd en onder `https://veramiek.nl/` gehangen. Externe URL's komen dus nooit in een mail terecht, wat ook tracking via mailclients uitsluit.
+2. **`next/image`**. `web/next.config.ts` beperkt `remotePatterns` tot `veramiek.nl/api/uploads/**`, `www.veramiek.nl/api/uploads/**`, `api.veramiek.nl/uploads/**` en de host uit `NEXT_PUBLIC_API_BASE`. Next weigert elke andere host, dus de optimizer is niet als proxy naar interne adressen te gebruiken.
+3. **Product-`images[]`**. `POST/PUT /admin/products` filtert op `u.startsWith('http')`, wat op zich ruim is, maar de waarden worden alleen door `next/image` (met bovenstaande allowlist) en door `imgUrl()` (veramiek.nl-only) gebruikt. Bovendien is deze route admin-only.
 
-**One area of indirect concern:**
-
-In `buildVeraEmail` and `buildBuyerEmail`, product image URLs passed by the client in `/send-order` are embedded in HTML email via the `imgUrl()` helper:
-
-```javascript
-function imgUrl(src) {
-  if (!src) return null;
-  if (String(src).startsWith('http')) return String(src);
-  return 'https://veramiek.nl/' + String(src).split('/').map(encodeURIComponent).join('/');
-}
-```
-
-These URLs are embedded as `<img src="...">` tags in the email HTML. When the email client (Outlook, Gmail) renders the email, **the email client** fetches these images, not the server. This is not a server-side request forgery. However, if a malicious user submits an order with `images: ["http://attacker.com/track.png"]`, the victim's email client will load an external image when viewing the email - this is an email tracking/privacy concern rather than SSRF.
-
-The server itself never fetches user-supplied URLs. No `axios`, `node-fetch`, `http.get`, or similar is used with user input.
+Geen linkpreviews, geen webhook-testknop, geen URL-validator die iets ophaalt.
 
 ## What's at risk
 
-- Low risk: A spoofed order could embed external image tracking pixels in the email sent to `info@veramiek.nl`. Vera's email client would load the external image, revealing her IP address and email open time to an attacker.
-- The server itself is not at risk of SSRF.
+Geen bekende route waarlangs een bezoeker de server een verzoek naar een adres naar keuze laat doen.
 
 ## What's already secure
 
-- No server-side URL fetching of user-supplied input.
-- SMTP host is hardcoded.
+Beide plekken waar een URL tot een verzoek leidt hebben een allowlist op host, niet een blocklist op IP-reeksen. Dat is de strengere variant en dekt daarmee ook `127.0.0.1`, `10.0.0.0/8`, `169.254.169.254` en DNS-rebinding.
 
 ## Recommendations
 
-1. In `/send-order`, validate that all image URLs in `items[].images` start with `https://veramiek.nl/` before including them in the email. This prevents external image injection.
+Optioneel: het filter `u.startsWith('http')` in de productroutes kan strakker (`https://veramiek.nl/api/uploads/`), zodat de opgeslagen data zelf al klopt in plaats van pas bij het renderen. Lage prioriteit, want beide consumenten filteren al.

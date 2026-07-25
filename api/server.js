@@ -142,10 +142,20 @@ function saveBlocked() {
 }
 
 // ── TOTP secret ──
+/**
+ * Is er al een 2FA-sleutel in gebruik? Zo ja, dan geeft /admin/setup die niet
+ * meer terug op alleen het wachtwoord (zie daar). Een sleutel uit .env of uit
+ * een bestaand secret-bestand telt als "in gebruik"; alleen een sleutel die
+ * deze start zelf aanmaakt is nog nergens gescand.
+ */
+let totpEnrolled = false;
 let totpSecret = (process.env.TOTP_SECRET || '').trim();
-if (!totpSecret) {
+if (totpSecret) {
+  totpEnrolled = true;
+} else {
   if (fs.existsSync(TOTP_F)) {
     totpSecret = fs.readFileSync(TOTP_F, 'utf8').trim();
+    totpEnrolled = true;
   } else {
     totpSecret = authenticator.generateSecret();
     fs.writeFileSync(TOTP_F, totpSecret);
@@ -208,20 +218,66 @@ app.use(globalLimit);
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── Multer (foto upload) ──
+/**
+ * Alleen deze vier rastertypes mogen erin, met een vaste extensie per type.
+ * Bewust NIET path.extname(file.originalname): die naam komt van de uploader,
+ * dus een bestand met mimetype image/png maar naam "x.html" belandde eerder
+ * als .html op schijf en werd door express.static als tekst/HTML uitgeserveerd.
+ * SVG staat er niet in: dat formaat kan script bevatten.
+ */
+const UPLOAD_TYPES = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+};
+
+/**
+ * Eerste bytes van elk toegestaan formaat. De mimetype uit de multipart-header
+ * is door de client te kiezen, dus die zegt niets; deze handtekeningen komen
+ * uit het bestand zelf en worden na de upload gecontroleerd.
+ */
+const MAGIC_BYTES = {
+  '.jpg':  [[0xff, 0xd8, 0xff]],
+  '.png':  [[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]],
+  '.gif':  [[0x47, 0x49, 0x46, 0x38]],
+  // WEBP: "RIFF" op 0, "WEBP" op 8. Byte 4-7 is de lengte en varieert.
+  '.webp': [[0x52, 0x49, 0x46, 0x46]],
+};
+
+/** Leest de eerste 12 bytes en toetst die aan de handtekening van `ext`. */
+function hasValidMagicBytes(filePath, ext) {
+  const head = Buffer.alloc(12);
+  let fd;
+  try {
+    fd = fs.openSync(filePath, 'r');
+    fs.readSync(fd, head, 0, 12, 0);
+  } catch {
+    return false;
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
+  }
+  const signatures = MAGIC_BYTES[ext] || [];
+  const matches = signatures.some(sig => sig.every((byte, i) => head[i] === byte));
+  if (!matches) return false;
+  if (ext === '.webp') return head.slice(8, 12).toString('latin1') === 'WEBP';
+  return true;
+}
+
 const storage = multer.diskStorage({
   destination: UPLOADS_DIR,
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    const ext = UPLOAD_TYPES[file.mimetype] || '.bin';
     cb(null, Date.now() + '-' + crypto.randomBytes(6).toString('hex') + ext);
   }
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) return cb(new Error('Alleen afbeeldingen toegestaan'));
-    // Reject SVG: can contain embedded JavaScript that executes in browsers
-    if (file.mimetype === 'image/svg+xml') return cb(new Error('SVG-bestanden zijn niet toegestaan'));
+    if (!UPLOAD_TYPES[file.mimetype]) {
+      return cb(new Error('Alleen JPG-, PNG-, WEBP- of GIF-afbeeldingen toegestaan'));
+    }
     cb(null, true);
   }
 });
@@ -243,6 +299,15 @@ function auth(req, res, next) {
 // ── Hulpfuncties e-mail ──
 function escapeHtml(str) {
   return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+/**
+ * Maakt een waarde geschikt voor een mailheader (Subject). nodemailer knipt
+ * CR/LF er zelf al uit, maar dat is een eigenschap van de library en geen
+ * garantie van deze code; hier gaan alle control characters eruit zodat er
+ * nooit een tweede header uit een bezoekersnaam kan ontstaan.
+ */
+function mailHeader(str) {
+  return String(str ?? '').replace(/[\r\n\t\x00-\x1f]/g, ' ').trim().slice(0, 120);
 }
 const ALLOWED_IMG_ORIGINS = ['https://veramiek.nl'];
 function imgUrl(src) {
@@ -284,9 +349,11 @@ a{color:#C8A49F;text-decoration:none}
 </style></head><body>
 <div class="card">
   <h1>2FA Instellen</h1>
-  <p class="sub">Voer je beheer-wachtwoord in om de QR-code te genereren. Scan die daarna met Google Authenticator of Authy.</p>
+  <p class="sub">Voer je beheer-wachtwoord in om de QR-code te genereren. Scan die daarna met Google Authenticator of Authy. Is 2FA al ingesteld, vul dan ook je huidige verificatiecode in.</p>
   <label for="pw">Wachtwoord</label>
   <input type="password" id="pw" placeholder="Beheer-wachtwoord" autocomplete="current-password">
+  <label for="totp">Huidige code (alleen als 2FA al werkt)</label>
+  <input type="text" id="totp" placeholder="6 cijfers" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
   <div class="err" id="err"></div>
   <button onclick="setup()">QR-code ophalen</button>
   <div id="result">
@@ -299,8 +366,9 @@ a{color:#C8A49F;text-decoration:none}
 <script>
 async function setup(){
   const pw=document.getElementById('pw').value;
+  const totp=document.getElementById('totp').value.trim();
   document.getElementById('err').textContent='';
-  const r=await fetch('/admin/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+  const r=await fetch('/admin/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,totp})});
   const d=await r.json();
   if(!r.ok){document.getElementById('err').textContent=d.error;return;}
   document.getElementById('qrimg').src=d.qr;
@@ -312,9 +380,19 @@ document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')
 });
 
 app.post('/admin/setup', setupLimit, async (req, res) => {
-  const { password } = req.body || {};
-  if (!password || !bcrypt.compareSync(password, adminHash)) {
+  const { password, totp } = req.body || {};
+  if (!password || !bcrypt.compareSync(String(password), adminHash)) {
     return res.status(401).json({ error: 'Onjuist wachtwoord' });
+  }
+  /**
+   * Zodra 2FA een keer is ingesteld, geeft deze route de geheime sleutel niet
+   * meer op alleen het wachtwoord. Anders is de tweede factor geen tweede
+   * factor: wie het wachtwoord heeft, haalt hier de sleutel op en zet de code
+   * in zijn eigen app. Bij een nieuwe installatie (nog geen enrollment) mag het
+   * wel, want dan is er nog niets om te beschermen.
+   */
+  if (totpEnrolled && !authenticator.check(String(totp || ''), totpSecret)) {
+    return res.status(401).json({ error: '2FA is al ingesteld. Vul ook je huidige verificatiecode in.' });
   }
   try {
     const otpauth = authenticator.keyuri('admin', 'Veramiek Beheer', totpSecret);
@@ -416,6 +494,15 @@ app.put('/admin/content', auth, (req, res) => {
 // ── Foto upload ──
 app.post('/admin/upload', auth, uploadLimit, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Geen bestand ontvangen' });
+  // Pas na het wegschrijven te controleren: multer streamt naar schijf, de
+  // eerste bytes zijn in fileFilter nog niet beschikbaar. Klopt de handtekening
+  // niet met de opgegeven mimetype, dan is het bestand geen echte afbeelding en
+  // gaat het meteen weer weg.
+  const ext = path.extname(req.file.filename);
+  if (!hasValidMagicBytes(req.file.path, ext)) {
+    try { fs.unlinkSync(req.file.path); } catch { /* al weg, prima */ }
+    return res.status(400).json({ error: 'Bestand is geen geldige afbeelding' });
+  }
   const url = `https://veramiek.nl/api/uploads/${req.file.filename}`;
   res.json({ url });
 });
@@ -543,7 +630,7 @@ app.post('/send-contact', contactLimit, async (req, res) => {
       from: mailFrom('Veramiek Website'),
       replyTo: email,
       to: CONTACT_EMAIL,
-      subject: `Nieuw bericht van ${naam}`,
+      subject: `Nieuw bericht van ${mailHeader(naam)}`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
@@ -570,7 +657,7 @@ app.post('/send-contact', contactLimit, async (req, res) => {
       from: mailFrom('Vera, Veramiek'),
       replyTo: CONTACT_EMAIL,
       to: email,
-      subject: `Bedankt voor je bericht, ${escapeHtml(naam)}!`,
+      subject: `Bedankt voor je bericht, ${mailHeader(naam)}!`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#faf7f2;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">
@@ -609,7 +696,7 @@ app.post('/send-order', orderLimit, async (req, res) => {
       from: mailFrom('Veramiek Webshop'),
       replyTo: CONTACT_EMAIL,
       to: CONTACT_EMAIL,
-      subject: `Nieuwe bestelling van ${naam}`,
+      subject: `Nieuwe bestelling van ${mailHeader(naam)}`,
       html: buildVeraEmail({ naam, email, tel, adres, items, totaal }),
     });
     await transporter.sendMail({
@@ -816,7 +903,7 @@ app.post('/book', bookLimit, async (req, res) => {
         from: mailFrom('Veramiek Workshops'),
         replyTo: booking.email,
         to: CONTACT_EMAIL,
-        subject: `Nieuwe workshopaanvraag van ${booking.naam}`,
+        subject: `Nieuwe workshopaanvraag van ${mailHeader(booking.naam)}`,
         html: buildVeraBookingEmail(booking),
         attachments,
       });

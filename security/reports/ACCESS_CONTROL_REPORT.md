@@ -1,40 +1,33 @@
 # Access Control Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: PASS
 
 ## Findings
 
-All mutation endpoints require a valid JWT from the `auth` middleware:
+Veramiek kent een enkele gebruiker: Vera als beheerder. Er zijn geen accounts, geen eigenaarsvelden en dus geen resources van gebruiker A die gebruiker B zou kunnen opvragen. Het JWT bevat alleen `{ admin: true }`.
 
-- `GET /admin/products` - protected
-- `POST /admin/products` - protected
-- `PUT /admin/products/:id` - protected
-- `DELETE /admin/products/:id` - protected
-- `PUT /admin/content` - protected
-- `POST /admin/upload` - protected
+Routes met een resource-id in het pad, allemaal met `auth` ervoor:
 
-Public endpoints that should be public:
-- `GET /products` - returns only `available !== false` products (correctly filtered)
-- `GET /content` - returns site text (no sensitive data)
-- `POST /send-contact` - rate-limited (3/min)
-- `POST /send-order` - rate-limited (3/min)
+- `PUT/DELETE /admin/products/:id`
+- `PUT/DELETE /admin/workshops/:id`
+- `PUT/DELETE /admin/bookings/:id`
+- `DELETE /admin/blocked-dates/:date`
 
-The nginx config does not expose any sensitive file paths. The `uploads/` directory is served as static files - this is intentional (product images need to be publicly accessible).
+Alle vier zoeken de resource op met `findIndex`/`find` en geven 404 als die niet bestaat. Omdat er maar een eigenaar is, valt eigendom samen met authenticatie.
 
-The admin setup route (`GET /admin/setup` and `POST /admin/setup`) requires the admin password to return the TOTP QR code, so it is not freely accessible.
-
-No horizontal privilege escalation is possible: there is only one admin role and no user accounts.
+Ook gecontroleerd of een id ooit als pad gebruikt wordt (path traversal via `:id`): nee, de id's worden alleen vergeleken met waarden in een array, nooit aan `path.join` of `fs` doorgegeven. `DELETE /admin/blocked-dates/:date` gebruikt `indexOf` op een array met strings.
 
 ## What's at risk
 
-Nothing significant. Access control is well-structured for a single-admin system.
+Niets binnen deze categorie. Het enige toegangsniveau is "beheerder of niet", en dat wordt door `auth` afgedwongen.
 
 ## What's already secure
 
-- Every write/read admin operation is JWT-protected.
-- Public product endpoint correctly filters out unavailable products.
-- No privilege levels to confuse (single admin, no user accounts).
+Geen ruwe id's naar het bestandssysteem, 404 op onbekende id's, en alle wijzigende routes achter dezelfde middleware.
 
 ## Recommendations
 
-No changes required.
+Komt er ooit een tweede beheerder of een klantaccount bij, dan moet deze categorie opnieuw: dan is `auth` alleen niet meer genoeg en is een expliciete eigendomscheck per resource nodig.

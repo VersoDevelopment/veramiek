@@ -1,14 +1,23 @@
-# SSRF Fix Plan
+# Ssrf Fix Plan
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Changes
 
-- `api/server.js` - In `/send-order` handler, validate that all image URLs in submitted items start with `https://veramiek.nl/` before passing to email builder.
+Geen wijziging doorgevoerd; de allowlists staan al op de plekken waar het uitmaakt.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] Server never fetches user-supplied URLs
-- [ ] Order email builder only includes images from `https://veramiek.nl/` domain
+- [x] Enige URL-ophalende code heeft een host-allowlist
+- [x] `next/image` `remotePatterns` staat alleen veramiek-hosts toe
+- [x] `imgUrl()` geeft `null` op externe URL's
+- [x] Geen endpoint dat een door de bezoeker aangeleverde URL ophaalt
 
 ## Manual verification (for Kenny)
 
-Send a test order with `items: [{ images: ["http://evil.com/x.png"] }]`. Verify the resulting email contains no external image tags (or that the image is stripped).
+Geen.

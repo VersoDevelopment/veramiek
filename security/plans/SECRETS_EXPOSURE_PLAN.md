@@ -1,20 +1,25 @@
 # Secrets Exposure Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-- `api/.dockerignore` (new file) - prevent `.env` from being copied into Docker image builds
+Geen. De categorie is schoon.
 
 ## New files
 
-- `api/.dockerignore`
+Geen.
 
 ## Verification goals
 
-- [x] `api/.env` is in `.gitignore`
-- [x] No secrets are hardcoded in any source file
-- [x] `docker-compose.yml` uses `env_file` directive, not inline values
-- [ ] `api/.dockerignore` exists and includes `.env` and `data/`
+- [x] `git ls-files` geeft geen `.env`, `.htpasswd` of `totp_secret.txt`
+- [x] `git log --all -- "*.env"` is leeg
+- [x] Grep op geheimpatronen over alle getrackte bestanden geeft geen treffers
+- [x] `api/.env.example` bevat alleen placeholders
+- [x] Geen `NEXT_PUBLIC_*`-variabele bevat een geheim
+- [x] Live 404 op `/api/.env` en `/.git/config`
 
 ## Manual verification (for Kenny)
 
-Run: `git log --all --full-history -- "api/.env"` on the server repo. If any commits appear, rotate all secrets immediately (SMTP password, JWT_SECRET, ADMIN_PASSWORD).
+Draai `gitleaks detect` over de veramiek-repo als je een tweede paar ogen wilt op de git-historie.

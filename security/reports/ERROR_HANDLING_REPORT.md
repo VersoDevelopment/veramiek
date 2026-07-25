@@ -1,45 +1,42 @@
 # Error Handling Security Report
 
-## Status: LOW
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
+## Status: PASS
 
 ## Findings
 
-Error handling is reviewed for information leakage that could help attackers.
+**API.** `api/server.js` sluit af met een globale error handler:
 
-**Server-side:**
+```js
+app.use((err, req, res, next) => {
+  console.error('[Error]', err.message, err.stack);
+  if (err.name === 'MulterError' || ...) return res.status(400).json({ error: err.message });
+  res.status(500).json({ error: 'Er is een interne fout opgetreden' });
+});
+```
 
-Most error responses return generic messages:
-- Auth failures: `'Niet ingelogd'`, `'Sessie verlopen, log opnieuw in'`
-- Login failure: `'Onjuist wachtwoord of verificatiecode'` (deliberately does not distinguish password from TOTP)
-- Email failures: `'Mail mislukt'`
-- Validation errors: specific and intentional (e.g., `'Naam is verplicht'`, `'Ongeldig e-mailadres'`)
+De volledige fout gaat naar het containerlog, de client krijgt een vaste zin. Alleen multer-fouten (bestandstype, grootte) geven hun eigen melding terug, en dat zijn teksten die de server zelf schrijft, geen interne details.
 
-**Issues:**
+Live getest met ongeldige JSON op `POST /api/send-contact`: `{"error":"Er is een interne fout opgetreden"}`. Geen stacktrace, geen bestandspad, geen versienummer.
 
-1. **LOW: Unhandled rejection on JSON parse errors in startup.** The startup code catches JSON parse errors with empty catches:
-   ```javascript
-   try { products = JSON.parse(fs.readFileSync(PRODUCTS_F, 'utf8')); } catch (_) {}
-   ```
-   If `products.json` is corrupted, the products array silently stays empty. No alert is logged. This is not a security issue but could cause silent data loss.
+Alle route-handlers met I/O zitten in `try/catch` en loggen server-side met `console.error` voordat ze een generieke 500 teruggeven.
 
-2. **LOW: Internal error details in multer errors.** When multer rejects a file (wrong type, too large), the error message from `cb(new Error(...))` is caught by Express and returned. The current messages are safe and user-friendly.
+**Next.js.** `web/src/app/error.tsx` en `web/src/app/not-found.tsx` bestaan, dus onverwachte fouten en 404's krijgen een eigen pagina in plaats van de Next-standaard. `poweredByHeader: false` in `next.config.ts` haalt de `X-Powered-By`-header weg.
 
-3. **LOW: `console.error(err)` on email failures and QR generation.** Full error objects are logged to stdout. On the server, this goes to Docker logs. If Docker logs are accessible to multiple people this leaks SMTP error details. For a single-admin setup this is acceptable.
+De API stuurt nog wel `X-Powered-By: Express` mee (gezien op `/api/uploads/`). Dat verraadt de stack maar geen versie; puur informatie-hygiene.
 
-4. **INFO: No global Express error handler.** If an unhandled error occurs in a route handler, Express's default error handler will respond with the error message and stack trace in development mode. In production (`NODE_ENV=production`), Express suppresses the stack trace. The Dockerfile does not set `NODE_ENV=production`.
+**Debug-modus.** `NODE_ENV=production` in beide containers, geverifieerd met `docker exec`.
 
 ## What's at risk
 
-- Without `NODE_ENV=production`, unhandled errors might leak stack traces to clients.
-- Silent JSON parse failures at startup could cause data loss without alerting the admin.
+Niets ernstigs. De `X-Powered-By`-header van de API vertelt een aanvaller dat het Express is, wat hooguit scheelt in de tijd die hij kwijt is aan verkennen.
 
 ## What's already secure
 
-- Login error messages do not distinguish password vs TOTP failure.
-- Auth errors are generic.
-- Email error messages are generic to clients.
+Globale handler, generieke meldingen, volledige details alleen in het log, eigen error- en 404-pagina's in Next, en productiemodus in beide containers.
 
 ## Recommendations
 
-1. Add `NODE_ENV=production` to the `.env.example` and set it in the Dockerfile or compose.
-2. Add a global Express error handler to catch and log unhandled errors without exposing stack traces.
+Optioneel: `app.disable('x-powered-by')` in `api/server.js`, zoals de Verso-API al doet. Een regel, geen risico.

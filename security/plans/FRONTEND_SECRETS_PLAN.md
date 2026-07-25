@@ -1,15 +1,22 @@
 # Frontend Secrets Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-None required.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] No API keys or tokens in index.html
-- [x] No API keys or tokens in admin.html
-- [x] JWT stored in sessionStorage, not localStorage
+- [x] Geen geheime sleutel in enig bestand onder `web/src` of `web/public`
+- [x] Alle gevoelige aanroepen lopen via de eigen backend
+- [x] Enige `NEXT_PUBLIC_*`-variabele is een pad, geen sleutel
 
 ## Manual verification (for Kenny)
 
-Open browser DevTools on veramiek.nl and admin.veramiek.nl. Check Application > Storage > Local Storage. Verify no sensitive tokens or keys are stored there.
+DevTools, tabblad Sources, zoek op `sk_`, `Bearer`, `secret` en `AKIA`. Verwacht: alleen de `Authorization: Bearer`-regel in het adminpaneel, met een token dat je zelf net hebt opgehaald.

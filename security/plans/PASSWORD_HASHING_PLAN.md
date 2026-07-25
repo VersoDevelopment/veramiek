@@ -1,16 +1,22 @@
 # Password Hashing Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-None required.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] bcrypt used for password hashing
-- [x] Cost factor >= 10 (currently 12)
-- [x] No plaintext passwords stored anywhere
-- [x] Timing-safe comparison used
+- [x] Wachtwoord gehasht met bcrypt (cost 12)
+- [x] Geen MD5, SHA-1 of SHA-256 op wachtwoorden
+- [x] Vergelijking via `bcrypt.compareSync`, niet via `===`
 
 ## Manual verification (for Kenny)
 
-Run `docker exec veramiek_api_1 node -e "const bcrypt=require('bcryptjs'); console.log(bcrypt.getRounds(process.env.ADMIN_PASSWORD))"` - this will error (getRounds on plaintext). Instead verify that the startup log does not print the ADMIN_PASSWORD value.
+Geen.

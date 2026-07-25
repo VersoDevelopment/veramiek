@@ -1,14 +1,22 @@
 # Database Access Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-None required. No database is used.
+Geen. Niet van toepassing.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] No database connection strings in source code
-- [x] Data files stored in Docker named volume, not host bind mount
+- [x] Geen databaseclient in `api/package.json`
+- [x] `GET /availability` geeft alleen datum plus status, geen persoonsgegevens
+- [x] `bookings.json` alleen bereikbaar via routes met `auth`
 
 ## Manual verification (for Kenny)
 
-On the server, run `docker volume inspect veramiek_api_data` to confirm the volume is not accidentally bind-mounted to a world-readable path.
+Geen.

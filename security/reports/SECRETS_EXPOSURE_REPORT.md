@@ -1,31 +1,42 @@
 # Secrets Exposure Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: PASS
 
 ## Findings
 
-Checked all files for hardcoded secrets, credentials, and sensitive data in source code.
+Onderzocht: `.gitignore` (root, `api/`, `web/`), alle getrackte bestanden, git-historie, env-gebruik in code, `NEXT_PUBLIC_*`-variabelen.
 
-- `api/.env` is correctly listed in `api/.gitignore` and not committed to the repository.
-- `api/.env.example` contains placeholder values only (no real credentials).
-- `api/server.js` reads all secrets exclusively from `process.env`: `ADMIN_PASSWORD`, `JWT_SECRET`, `SMTP_USER`, `SMTP_PASS`, `TOTP_SECRET`.
-- The server exits with a clear error if `ADMIN_PASSWORD` or `JWT_SECRET` are not set.
-- `docker-compose.yml` uses `env_file: ./api/.env` rather than hardcoding values inline.
-- No API keys, tokens, or passwords appear in `index.html` or `admin.html`.
-- The TOTP secret fallback: if `TOTP_SECRET` env var is absent, the server reads from `api/data/totp_secret.txt` (a Docker volume, not the repo). This is acceptable but the file path is within a named volume that should not be publicly accessible.
+Aanwezige geheimen en waar ze staan:
+
+| Geheim | Locatie | Getrackt in git |
+|---|---|---|
+| `SMTP_USER`, `SMTP_PASS` | `api/.env` | nee (`api/.gitignore:1`) |
+| `ADMIN_PASSWORD`, `JWT_SECRET` | `api/.env` | nee |
+| TOTP-sleutel | `api/data/totp_secret.txt` (Docker-volume) | nee (`api/.gitignore:4`) |
+| Staging-wachtwoord | `.htpasswd` (alleen op de server) | nee (`.gitignore:16`) |
+
+Controles:
+
+- `git ls-files` over de hele repo: geen `.env`, geen `.htpasswd`, geen `totp_secret.txt`, geen `node_modules`.
+- `git log --all -- "*.env"`: leeg, dus ook nooit gecommit geweest en later verwijderd.
+- Grep over alle getrackte bestanden op `sk_live_`, `sk_test_`, `AKIA`, `BEGIN (RSA|OPENSSH|PRIVATE)`, `password =`, `secret =`, `api_key =` en `Bearer <token>`: geen treffers buiten de security-documentatie zelf.
+- `api/.env.example` bevat alleen omschrijvingen (`kies_een_sterk_wachtwoord`, `vervang_dit_door_random_string...`), geen echte waarden.
+- `web/.env.local` bevat alleen `NEXT_PUBLIC_API_BASE=http://localhost:3001`, een dev-URL en geen sleutel.
+- Live: `GET /api/.env` en `GET /.git/config` geven allebei 404.
+
+De server dwingt af dat de geheimen er zijn: zonder `ADMIN_PASSWORD` of `JWT_SECRET` stopt `server.js` bij het opstarten (`api/server.js:169-177`). Dat voorkomt dat de API stilletjes met een leeg JWT-geheim draait.
 
 ## What's at risk
 
-If `.env` were ever committed, SMTP credentials, the admin password, and the JWT signing secret would be exposed in version history.
+Niets gevonden. Zou `api/.env` alsnog in git belanden, dan lekt in een klap het SMTP-wachtwoord (mail versturen namens info@veramiek.nl), het adminwachtwoord en het JWT-geheim (waarmee een aanvaller zelf geldige admintokens kan ondertekenen zonder 2FA te passeren).
 
 ## What's already secure
 
-- `.env` is gitignored.
-- All secrets come from environment variables.
-- Server refuses to start without the two critical secrets.
-- No hardcoded credentials anywhere in source files.
+Gescheiden `.gitignore` per deelmap, `.env.example` met placeholders, runtime-data in Docker-volumes buiten de repo, en een startcontrole op de verplichte variabelen.
 
 ## Recommendations
 
-1. Confirm `.env` is not present in any previous git commits (run `git log --all --full-history -- api/.env`).
-2. Consider adding a `.dockerignore` to prevent `.env` from ever being baked into a Docker image accidentally.
+Geen. Bij een volgende sleutelrotatie: `JWT_SECRET` vernieuwen maakt alle bestaande adminsessies ongeldig, dat is bedoeld gedrag.

@@ -1,14 +1,21 @@
 # Payment Webhooks Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-None required. No payment processing present.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] No payment provider credentials in source
-- [x] No webhook endpoints to secure
+- [x] Geen betaalprovider in de dependencies
+- [x] Geen webhook-endpoint aanwezig
 
 ## Manual verification (for Kenny)
 
-N/A. If Mollie or Stripe is added later, return to this category and implement HMAC signature verification on the webhook endpoint.
+Geen.

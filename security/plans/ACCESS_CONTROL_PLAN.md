@@ -1,17 +1,22 @@
 # Access Control Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-None required.
+Geen.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] All admin CRUD endpoints require valid JWT
-- [x] Public product endpoint filters unavailable products
-- [x] No unauthenticated access to admin data
+- [x] Elke route met een resource-id heeft `auth`
+- [x] Geen route gebruikt een id uit het pad in een bestandspad
+- [x] Onbekende id's geven 404, niet 500
 
 ## Manual verification (for Kenny)
 
-1. `curl https://veramiek.nl/api/admin/products` without Authorization header. Should return 401.
-2. `curl https://veramiek.nl/api/admin/upload` without Authorization header. Should return 401.
-3. `curl https://veramiek.nl/api/products` without token. Should return 200 with only available products.
+Geen. Wordt relevant zodra er meerdere gebruikers komen.

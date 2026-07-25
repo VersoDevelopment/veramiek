@@ -1,36 +1,38 @@
-# CORS Security Report
+# Cors Security Report
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Status: PASS
 
 ## Findings
 
-CORS is configured in `api/server.js`:
+`api/server.js:184-187`:
 
-```javascript
+```js
 app.use(cors({
-  origin: ['https://veramiek.nl', 'https://admin.veramiek.nl', 'http://localhost:8082', 'http://localhost:3001'],
+  origin: ['https://veramiek.nl', 'https://www.veramiek.nl', 'https://admin.veramiek.nl',
+           'http://localhost:8082', 'http://localhost:3001', 'http://localhost:3000'],
   credentials: true
 }));
 ```
 
-**Assessment:**
-- Origin whitelist is explicit and minimal: production domains plus two localhost ports for development.
-- No wildcard (`*`) origin.
-- `credentials: true` is set, which is appropriate because the admin panel sends the JWT Bearer token.
-- The `localhost` origins are acceptable for development but would only matter to an attacker with local network access (and even then, localhost is same-machine only).
-- The CORS configuration is applied at the Express level. The API is only accessible through nginx (not directly from the internet), so the CORS headers are an additional defence layer.
+Expliciete allowlist, geen wildcard, geen reflectie van de `Origin`-header. Live getest met `Origin: https://evil.com` op `/api/products`: er komt geen `Access-Control-Allow-Origin` terug, dus de browser blokkeert het antwoord.
 
-One minor note: `credentials: true` with an explicit origin whitelist is correct usage. If origin were `*`, `credentials: true` would be blocked by browsers anyway - this is properly implemented.
+In de praktijk staat de API achter dezelfde nginx als de site (`/api/` op hetzelfde domein), dus alle echte verkeer is same-origin en raakt CORS niet eens.
+
+Wel opgemerkt: het antwoord bevat `Access-Control-Allow-Credentials: true` ook wanneer de origin niet in de lijst staat. Zonder `Access-Control-Allow-Origin` heeft die header geen effect; de browser laat het antwoord toch niet door. Cosmetisch, geen kwetsbaarheid.
+
+De drie `localhost`-origins zijn ontwikkelwaarden. Ze staan ook in productie in de lijst, maar een aanvaller heeft er niets aan: hij zou de gebruiker een pagina op diens eigen `localhost:3000` moeten laten bezoeken, en dan heeft hij al code op de machine draaien.
 
 ## What's at risk
 
-Nothing significant. The whitelist is tight and correct.
+Niets. Geen wildcard, geen reflectie.
 
 ## What's already secure
 
-- Explicit origin whitelist (no wildcard).
-- Correct use of `credentials: true` with explicit origins.
+Vaste allowlist plus een same-origin opzet waardoor CORS voor normale bezoekers helemaal niet in beeld komt.
 
 ## Recommendations
 
-No changes required. Optionally, remove the localhost entries in production builds if a separate build pipeline is ever introduced, but this is very low priority.
+Optioneel: de `localhost`-origins alleen toevoegen als `NODE_ENV !== 'production'`, zoals de Verso-API doet. Netter, maar het lost geen concreet risico op.

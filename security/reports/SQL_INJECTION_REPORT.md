@@ -1,23 +1,28 @@
-# SQL Injection Security Report
+# Sql Injection Security Report
+
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
 
 ## Status: N/A
 
 ## Findings
 
-This project uses no SQL database. There are no SQL queries, no ORM, no query builders, and no database connection anywhere in the codebase.
+Geen SQL in het project. Geen database-driver, ORM of querybuilder in `api/package.json`. Alle opslag gaat via `fs.readFileSync`/`fs.writeFileSync` op JSON-bestanden.
 
-Data persistence is entirely via JSON flat-files read/written with Node.js `fs` module. Product lookups use in-memory JavaScript array methods (`Array.find`, `Array.findIndex`, `Array.filter`).
+Wel gecontroleerd op de verwante risico's van bestandsgebaseerde opslag:
 
-No injection attack surface exists for SQL.
+- Geen enkel pad wordt uit gebruikersinvoer opgebouwd. De vijf databestanden zijn constanten bovenaan `server.js`, samengesteld met `path.join(__dirname, ...)` op vaste namen.
+- Uploadnamen worden volledig door de server bepaald (tijdstempel plus 6 willekeurige bytes plus een extensie uit een vaste tabel), dus geen path traversal via `originalname`.
+- `JSON.parse` op de databestanden staat in `try/catch`, dus een corrupt bestand laat de API niet crashen.
 
 ## What's at risk
 
-Nothing. No SQL database present.
+Niets binnen deze categorie.
 
 ## What's already secure
 
-No database, no injection risk.
+Vaste bestandspaden, servergestuurde bestandsnamen, en foutafhandeling rond het inlezen.
 
 ## Recommendations
 
-No action required.
+Geen. Komt er ooit een database, dan geldt deze categorie opnieuw.

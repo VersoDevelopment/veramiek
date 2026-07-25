@@ -1,20 +1,26 @@
 # Auth Middleware Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-- `api/server.js` - Replace custom `loginAttempts` Map with `express-rate-limit` on the login route; add periodic cleanup for Map if keeping it as fallback.
+- `api/server.js` (regel 144-167) - vlag `totpEnrolled` toegevoegd: waar zodra de sleutel uit `.env` of uit een bestaand `totp_secret.txt` komt, onwaar bij een verse installatie die de sleutel nu pas aanmaakt.
+- `api/server.js` (`POST /admin/setup`) - geeft de sleutel alleen nog terug als 2FA nog niet is ingesteld, of als er naast het wachtwoord een geldige huidige TOTP-code wordt meegestuurd.
+- `api/server.js` (`GET /admin/setup`) - extra invoerveld voor de huidige code plus uitleg; de `setup()`-functie in de pagina stuurt `totp` mee.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] JWT used with 8h expiry
-- [x] All admin routes protected by `auth` middleware
-- [x] TOTP required at login
-- [x] bcrypt cost factor >= 10
-- [ ] Login rate limiting uses `express-rate-limit` (survives restarts better than in-memory Map)
-- [ ] No unbounded in-memory growth from scan attempts
+- [x] Elke route die klantdata teruggeeft of wijzigt heeft `auth` als eerste middleware
+- [x] Onbevoegde verzoeken naar `/api/admin/*` geven 401 (live getest op products, bookings, blocked-dates, content)
+- [x] `POST /admin/setup` weigert met alleen een wachtwoord zodra 2FA is ingesteld
+- [x] Een verse installatie kan nog steeds zonder code de eerste QR ophalen
+- [x] `node --check api/server.js` slaagt
 
 ## Manual verification (for Kenny)
 
-1. Attempt to log in with wrong password 6 times. Verify the 6th attempt returns 429.
-2. Restart the API container and try again immediately. With the fix, the counter persists (or resets to 0 and you get 5 more attempts before lockout). Note: without a persistent store restarts will reset counters regardless of which library is used, but using express-rate-limit at least standardises the approach.
-3. Log in successfully and verify the JWT in sessionStorage disappears when the tab is closed.
+Na het uitrollen: open `https://veramiek.nl/api/admin/setup`, vul alleen het wachtwoord in en klik op "QR-code ophalen". Verwacht: "2FA is al ingesteld. Vul ook je huidige verificatiecode in." Vul daarna wachtwoord plus de code uit je app in, dan hoort de QR gewoon te verschijnen.

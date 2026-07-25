@@ -1,20 +1,24 @@
 # Error Handling Fix Plan
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Changes
 
-- `api/server.js` - Add a global Express error handler at the bottom of the file.
-- `api/Dockerfile` - Set `NODE_ENV=production`.
-- `api/.env.example` - Document `NODE_ENV=production`.
+Geen doorgevoerd. De handler stond er al en werkt.
+
+## New files
+
+Geen.
 
 ## Verification goals
 
-- [x] Login errors do not distinguish password vs TOTP
-- [x] Auth errors are generic
-- [ ] NODE_ENV=production set in Dockerfile
-- [ ] Global error handler present to prevent stack trace leaks
+- [x] Globale error handler vangt onafgehandelde fouten
+- [x] Antwoorden aan de client bevatten alleen een generieke melding
+- [x] Volledige details alleen server-side gelogd
+- [x] Geen stacktrace of bestandspad in enig API-antwoord (live getest met kapotte JSON)
+- [x] `NODE_ENV=production` in beide containers
 
 ## Manual verification (for Kenny)
 
-1. Cause a deliberate 500 error (e.g., temporarily break a route handler).
-2. Verify the response body does NOT contain a stack trace.
-3. Verify the error IS logged in Docker logs (`docker logs veramiek_api_1`).
+Geen. Live getest tijdens de audit.

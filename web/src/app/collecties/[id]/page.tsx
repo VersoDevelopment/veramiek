@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "@/components/ui/ProductGallery";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { formatPrice, getProduct, normalizeCategory } from "@/lib/api";
+import { jsonLdScript } from "@/lib/jsonLd";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -67,7 +68,7 @@ export default async function ProductPage({ params }: Params) {
     <article className="px-5 pt-40 pb-28 md:px-10 md:pb-36">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(productJsonLd) }}
       />
       <div className="mx-auto max-w-6xl">
         <nav className="mb-10 text-base tracking-[0.03em] opacity-70">

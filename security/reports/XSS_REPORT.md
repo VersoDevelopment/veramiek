@@ -1,75 +1,37 @@
-# XSS (Cross-Site Scripting) Security Report
+# Xss Security Report
 
-## Status: MEDIUM
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
+## Status: MEDIUM (gefixt)
 
 ## Findings
 
-### Server-side (email generation)
+**Frontend (`web/src`).** Twee plekken met `dangerouslySetInnerHTML`, allebei JSON-LD:
 
-The server uses `escapeHtml()` for all user-supplied fields rendered in HTML emails:
+1. `web/src/app/layout.tsx:131` - organisatie-markup, volledig in de broncode geschreven. Veilig.
+2. `web/src/app/collecties/[id]/page.tsx:70` - product-markup, met `product.name`, `product.desc` en `product.images` uit de API.
 
-```javascript
-function escapeHtml(str) {
-  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-```
+Bij die tweede stond `JSON.stringify(productJsonLd)` en dat is niet genoeg. `JSON.stringify` laat `<` en `>` ongemoeid, dus een productnaam als `</script><img src=x onerror=...>` sluit het scriptblok vroegtijdig en de rest belandt als HTML in de pagina. Producten komen uit het adminpaneel, dus de injectie vraagt een ingelogde beheerder, maar het resultaat is opgeslagen XSS die bij elke bezoeker van die productpagina afgaat.
 
-All customer fields (`naam`, `email`, `tel`, `adres`, `bericht`, `onderwerp`) are passed through `escapeHtml()` before being placed in the email HTML. This is correct.
+Verder in de frontend: geen `innerHTML`, geen `eval`, geen `document.write`. React escapet de rest van de productvelden automatisch.
 
-### Frontend (index.html)
+**Adminpaneel (`api/admin.html`).** Gebruikt op zeven plekken `innerHTML` met data uit de API. De belangrijkste is `renderBookings()`, want boekingen komen van het publieke `POST /book`, dus een willekeurige bezoeker kan de inhoud bepalen. Alle vier de velden die daar terechtkomen (`naam`, `email`, `tel`, `bericht`) gaan door `esc()`, dus de aanval slaagt niet. Wel opgemerkt:
 
-**Issue 1 - MEDIUM: `innerHTML` with API data.**
+- `esc()` escapet `&`, `<`, `>` en `"`, maar niet `'`. Bij `confirmDelete('${p.id}', '${esc(p.name)}')` staat de waarde in een JavaScript-string met enkele quotes binnen een HTML-attribuut, dus een productnaam met een apostrof breekt daar uit. Alleen door een ingelogde beheerder te vullen, dus zelf-XSS.
+- `<img src="${p.images[0]}">` staat helemaal niet door `esc()`. Zelfde beperking: admin-only.
 
-In `loadContent()`, the site content loaded from `/api/content` is rendered via `setHtml()` for two fields:
-
-```javascript
-const setHtml = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.innerHTML = v }
-setHtml('heroTitle', h.title)   // allows <br> and <em>
-setHtml('aboutTitle', a.title)  // allows <br>
-```
-
-These fields allow limited HTML (`<br>`, `<em>`). If an attacker gains admin access and saves a malicious value like `<img src=x onerror=alert(1)>` to `hero.title`, it would execute as XSS on the public website.
-
-This is a **post-authentication XSS** - an attacker must already be an admin to exploit it. Given the single-admin design with 2FA, the realistic risk is low, but it is still a code quality concern.
-
-**Issue 2 - LOW: Product HTML injection in product grid.**
-
-In `renderProducts()`, product data is inserted into innerHTML:
-
-```javascript
-grid.innerHTML = products.map((p, i) => {
-  ...
-  return `<div class="product-card" data-cat="${p.cat}" ...>
-    ...
-    <h3>${p.name}</h3>
-    <p class="product-desc">${p.desc}</p>
-    ...
-    ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
-  `;
-```
-
-`p.name`, `p.desc`, and `p.badge` are inserted without HTML escaping. Since these come from the API (which is admin-controlled and stored in a JSON file), this is again post-authentication XSS. The admin could inject HTML/JS via product name or description.
-
-**Issue 3 - LOW: Cart render with `x.name` in innerHTML.**
-
-In `openCart()`, cart item names are rendered with `x.name` directly in a template literal inside innerHTML. Same concern as above.
-
-### Admin panel (admin.html)
-
-The admin panel has an `esc()` function used for product name/image alt text in the product grid render. However, product descriptions and other fields are placed in form inputs via `.value = p.desc`, which is safe (no innerHTML). The `esc()` function is used correctly where needed.
+**E-mails.** Alle bezoekersinvoer gaat door `escapeHtml()` voordat het in de mailtemplates komt.
 
 ## What's at risk
 
-- An attacker who compromises the admin panel (password + 2FA) could store XSS payloads in product names or site content fields that would execute on veramiek.nl for all visitors.
-- This requires full admin compromise first, which requires both password and TOTP.
+Voor de fix: een beheerder die een productnaam met `</script>` erin plakt (bijvoorbeeld gekopieerd uit een bron die dat bevat) publiceert daarmee ongemerkt uitvoerbare HTML op een publieke productpagina. Geen aanval vanaf de straat, wel een reeel foutscenario.
 
 ## What's already secure
 
-- All user-submitted form data (contact/order) is properly escaped before use in emails.
-- Admin panel uses `.value` assignment for form fields (safe).
-- `esc()` function used in admin panel renders.
+Boekingen en contactberichten (de enige velden die een willekeurige bezoeker vult) zijn overal geescaped: in het adminpaneel via `esc()` en in de mails via `escapeHtml()`. De frontend gebruikt verder alleen React-rendering.
 
 ## Recommendations
 
-1. In `index.html`, HTML-escape `p.name`, `p.desc`, and `p.badge` before injecting into innerHTML in `renderProducts()`.
-2. Consider restricting the `setHtml` fields to only allow `<br>` and `<em>` via a sanitizer, or switch to server-side rendering for those fields.
+1. JSON-LD escapen in plaats van kaal `JSON.stringify`. Gedaan.
+2. `esc()` in `admin.html` ook `'` laten escapen, en de `img src` erdoorheen halen. Lage prioriteit (admin-only), maar het is een regel werk.

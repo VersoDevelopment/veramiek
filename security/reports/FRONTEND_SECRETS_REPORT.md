@@ -1,28 +1,28 @@
 # Frontend Secrets Security Report
 
+**Project:** Veramiek (veramiek.nl)
+**Datum:** 25/07/2026
+
 ## Status: PASS
 
 ## Findings
 
-Reviewed `index.html` (2166 lines) and `api/admin.html` (953 lines) for any hardcoded secrets, API keys, or sensitive configuration.
+Onderzocht: alles onder `web/src/` en `web/public/`, plus `api/admin.html`.
 
-- No API keys embedded in either HTML file.
-- No third-party analytics tokens, payment tokens, or service credentials.
-- The only external service call from the frontend is to Google Fonts CDN (typography only).
-- `admin.html` stores the JWT token in `sessionStorage` (not `localStorage`), which is automatically cleared when the browser tab is closed.
-- The API base URL in admin.html is an empty string (`const API = ''`), meaning it calls the same origin - no hardcoded production URLs that could expose a staging environment.
-- The Google Site Verification meta tag (`raQYZq24jGUZ3ey3igdvBLjqZo31irVOl1s8InyFM54`) in index.html is public by design and not a secret.
+- De enige `NEXT_PUBLIC_*`-variabele is `NEXT_PUBLIC_API_BASE`. In productie is die `/api` (zie `docker-compose.yml`, build-arg op de `next`-service), dus een relatief pad en geen sleutel. Lokaal `http://localhost:3001`.
+- `web/src/lib/api.ts` scheidt bewust twee basis-URL's: `NEXT_PUBLIC_API_BASE` voor de browser en `API_BASE_INTERNAL` voor server-side fetches. Die tweede heeft geen `NEXT_PUBLIC_`-prefix en lekt dus niet naar de bundle.
+- Geen enkele fetch vanuit de browser gaat rechtstreeks naar een derde partij. Contact, bestelling en boeking gaan naar de eigen API, die daarna pas met Zoho SMTP praat.
+- `api/admin.html` bewaart het admintoken in `sessionStorage` (`vmk_token`) en stuurt het als `Authorization: Bearer`-header mee. Het token wordt door de server uitgegeven en staat niet in de broncode.
+- Geen sleutels, tokens of wachtwoorden hardcoded in enig bestand onder `web/src`.
 
 ## What's at risk
 
-Nothing. No secrets present in frontend code.
+Niets. De browser kan alleen dat wat de eigen API publiek aanbiedt.
 
 ## What's already secure
 
-- JWT stored in sessionStorage (clears on tab close).
-- No API keys or third-party tokens in HTML/JS.
-- Relative API URLs (same-origin).
+SMTP-credentials, JWT-geheim en de TOTP-sleutel blijven volledig server-side. Het adminpaneel gebruikt `sessionStorage` in plaats van `localStorage`, dus het token verdwijnt bij het sluiten van het tabblad.
 
 ## Recommendations
 
-No changes required.
+Geen.
