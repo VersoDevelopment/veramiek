@@ -55,6 +55,18 @@ export function Footer() {
           >
             Privacybeleid
           </Link>
+          <span aria-hidden>&middot;</span>
+          <span>
+            Ontwikkeld door{" "}
+            <a
+              href="https://versodevelopment.nl"
+              target="_blank"
+              rel="noopener"
+              className="transition-opacity hover:opacity-100"
+            >
+              Verso
+            </a>
+          </span>
         </p>
       </div>
     </footer>
