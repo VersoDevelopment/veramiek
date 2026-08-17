@@ -11,6 +11,7 @@ import {
 } from "@/lib/api";
 import { jsonLdScript } from "@/lib/jsonLd";
 import {
+  absoluteUrl,
   breadcrumbJsonLd,
   categoryPageForProduct,
   productDescription,
@@ -89,7 +90,9 @@ export default async function ProductPage({ params }: Params) {
     "@type": "Product",
     name: titel,
     description: product.desc || undefined,
-    image: product.images.length ? product.images : undefined,
+    image: product.images.length
+      ? product.images.map(absoluteUrl)
+      : undefined,
     sku: product.id,
     category: categorie,
     brand: { "@type": "Brand", name: "Veramiek" },

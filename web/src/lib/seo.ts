@@ -16,6 +16,16 @@ export const siteUrl = process.env.SITE_URL ?? "https://veramiek.nl";
 
 export const SITE_NAME = "Veramiek";
 
+/**
+ * Maakt een pad absoluut voor gebruik in JSON-LD. Anders dan bij `metadata`
+ * lost Next hier niets op: wat je in de markup zet, staat er letterlijk.
+ * Productfoto's zijn of een geüploade absolute URL, of een lokaal /images-pad
+ * (zie Product.images in lib/api.ts), dus beide gevallen moeten er doorheen.
+ */
+export function absoluteUrl(path: string): string {
+  return /^https?:\/\//i.test(path) ? path : `${siteUrl}${path}`;
+}
+
 /** Waar het atelier staat; gebruikt in descriptions en in de LocalBusiness-markup. */
 export const PLAATS = "Etten-Leur";
 
