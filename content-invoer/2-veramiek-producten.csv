@@ -1,0 +1,26 @@
+﻿id (niet wijzigen);naam;prijs;huidige omschrijving (ter info);collectie (leeg = graag invullen);hoogte in cm;diameter of breedte in cm;inhoud in ml (bij mok, kom, schaal);gewicht in gram (mag leeg);waar gebruik je het voor (1 zin);wat maakt dit stuk bijzonder (2 a 3 zinnen, eigen woorden);op voorraad of op bestelling;levertijd bij op bestelling
+p-pot;Pot;17,95;Veelzijdige pot;;;;;;;;;
+p-berry-bowl;Berry Bowl;17,95;Spoelkom voor fruit of groente;;;;;;;;;
+p-kopjes;Kopjes;9,95;Handgevormd keramiek;Kust Koraal;;;;;;;;
+p-theemok;(Thee)mok;14,95;Ruime mok voor thee of koffie;Kust Koraal;;;;;;;;
+p-gebaksbordje;Gebaksbordje;9,95;Klein bordje voor gebak of hapjes;;;;;;;;;
+p-diepbord;Diepbord;14,95;Voor soep, pasta of salade;Zeeuws Zand;;;;;;;;
+p-dinerbord;Dinerbord;17,95;Het complete dinerbord;;;;;;;;;
+p-kom;Kom;9,95;Sausbakje of tapasschaaltje;Kust Koraal;;;;;;;;
+p-chip-dip-zeeuws;Chip & Dip Bowl;39,95;Grote schaal met dipdoosje;Zeeuws Zand;;;;;;;;
+p-chip-dip-koraal;Chip & Dip Bowl;39,95;Grote schaal met dipdoosje;Kust Koraal;;;;;;;;
+p-chip-dip-boeren;Chip & Dip Bowl;39,95;Grote schaal met dipdoosje;Boeren Bontjes;;;;;;;;
+p-matcha-set;Matcha Set;39,95;Kom en houder, compleet setje;Zeeuws Zand;;;;;;;;
+p-matcha-set-boeren;Matcha Set;39,95;Kom en houder, compleet setje;Boeren Bontjes;;;;;;;;
+p-lepelhouder-koraal;Lepelhouder;12,95;Handgevormde keramiek lepelhouders;Kust Koraal;;;;;;;;
+p-lepelhouder-zeeuws;Lepelhouder;12,95;Handgevormde keramiek lepelhouders;Zeeuws Zand;;;;;;;;
+p-bubble-cups;Bubble Cups;14,95;Handgevormd met een speelse look;Kust Koraal;;;;;;;;
+p-bubble-cups-zeeuws;Bubble Cups;14,95;Handgevormd met een speelse look;Zeeuws Zand;;;;;;;;
+p-lunchbord;Lunchbord;14,95;Ideaal voor lunch;Zeeuws Zand;;;;;;;;
+p-schaal-koraal;Schaal;39,95;Serveerschaal;Kust Koraal;;;;;;;;
+p-schaal-zeeuws;Schaal;39,95;Serveerschaal;Zeeuws Zand;;;;;;;;
+p-kommen-boeren;Kommen;17,95;Handgevormde kommen, per stuk;Boeren Bontjes;;;;;;;;
+p-schaaltjes-boeren;Schaaltjes;9,95;Sausbakje of tapasschaaltje;Boeren Bontjes;;;;;;;;
+p-asbak-zeeuws;Asbak;17,95;Handgevormd keramiek;;;;;;;;;
+p-asbak-groen;Asbak;17,95;Handgevormd keramiek;;;;;;;;;
+p-schaaltje-2;Schaaltje;9,95;Klein schaaltje voor sausjes of hapjes;;;;;;;;;

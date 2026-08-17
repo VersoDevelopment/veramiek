@@ -1,0 +1,386 @@
+<title>Veramiek Invulwijzer</title>
+<style>
+  /* Palet komt uit Veramiek's eigen tokens (web/src/app/globals.css):
+     wine #2f0410, sage #cbd1a1, ivory #f8f4ec. De zachte inkt is een warm
+     grijs met een wijnzweem, zodat het niet als standaard grijs leest. */
+  :root {
+    --ground: #f8f4ec;
+    --panel: #fffdf8;
+    --ink: #2f0410;
+    --ink-soft: #7a5560;
+    --ink-faint: #a08791;
+    --accent: #cbd1a1;
+    --accent-deep: #8f9760;
+    --rule: #e4dccd;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #2f0410;
+      --panel: #3b0c19;
+      --ink: #f8f4ec;
+      --ink-soft: #d3bcc2;
+      --ink-faint: #9c7c85;
+      --accent: #cbd1a1;
+      --accent-deep: #cbd1a1;
+      --rule: #4d1f2b;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #2f0410;
+    --panel: #3b0c19;
+    --ink: #f8f4ec;
+    --ink-soft: #d3bcc2;
+    --ink-faint: #9c7c85;
+    --accent: #cbd1a1;
+    --accent-deep: #cbd1a1;
+    --rule: #4d1f2b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 43rem;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 7vw, 5rem) clamp(1.25rem, 5vw, 2rem) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 6vw, 2.9rem); line-height: 1.12; letter-spacing: -0.012em; }
+  h2 { font-size: clamp(1.4rem, 3.6vw, 1.75rem); line-height: 1.2; }
+  h3 { font-size: 1.12rem; line-height: 1.3; }
+  p { margin: 0; }
+
+  .lede { font-size: 1.1rem; color: var(--ink-soft); max-width: 36rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+
+  header { display: flex; flex-direction: column; gap: 1rem; }
+
+  section { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .intro { display: flex; flex-direction: column; gap: 0.9rem; }
+
+  /* Bestandskop: de twee bestanden zijn een volgorde, dus het nummer zegt iets. */
+  .filehead {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 2px solid var(--accent);
+  }
+  .filenum {
+    font-family: var(--display);
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--accent-deep);
+    font-variant-numeric: tabular-nums;
+  }
+  .filename {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 0.15rem;
+  }
+
+  /* Velden als definitielijst met haarlijnen, geen kaartjes met randen. */
+  .fields { display: flex; flex-direction: column; }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.15rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .field:last-child { border-bottom: 0; }
+
+  .col {
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 26%, transparent);
+    padding: 0.12rem 0.42rem;
+    border-radius: 2px;
+    align-self: flex-start;
+  }
+
+  .field p { color: var(--ink-soft); font-size: 0.97rem; }
+
+  .example {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 0.99rem;
+    color: var(--ink);
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--accent);
+    margin-top: 0.15rem;
+  }
+  .example b { font-style: normal; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-deep); display: block; margin-bottom: 0.2rem; }
+
+  .note {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    padding: 1.15rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .note h3 { font-size: 1rem; }
+  .note p, .note li { color: var(--ink-soft); font-size: 0.95rem; }
+
+  ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  li::marker { color: var(--accent-deep); }
+
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+  th, td { text-align: left; padding: 0.55rem 0.9rem 0.55rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); font-weight: 400; }
+  td:first-child { font-family: var(--mono); font-size: 0.84rem; white-space: nowrap; }
+
+  footer { color: var(--ink-faint); font-size: 0.88rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+
+  a { color: var(--ink); text-decoration-color: var(--accent-deep); text-underline-offset: 3px; }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Voor Vera</span>
+    <h1>Wat ik per stuk nodig heb</h1>
+    <p class="lede">
+      Twee bestanden om in te vullen. Als die klaar zijn, krijgt elk product op
+      de site een echte productbeschrijving in plaats van vier woorden.
+    </p>
+  </header>
+
+  <section class="intro">
+    <h2>Waarom dit uitmaakt</h2>
+    <p>
+      De productpagina's zijn nu ongeveer zestig woorden lang en de beschrijving
+      is meestal één regel, zoals "Grote schaal met dipdoosje". Google heeft
+      daardoor bijna niets om je op te vinden, en iemand die twijfelt tussen twee
+      mokken kan nergens zien hoeveel er in gaat of dat hij in de vaatwasser mag.
+    </p>
+    <p>
+      Alles hieronder is informatie die alleen jij hebt. Ik kan het niet
+      verzinnen, want als er straks "vaatwasserbestendig" staat en dat klopt
+      niet, dan is dat erger dan wanneer er niets stond.
+    </p>
+    <div class="note">
+      <h3>Drie dingen vooraf</h3>
+      <ul>
+        <li>Weet je iets niet zeker? Laat het leeg. Een leeg vakje is geen probleem, een gok wel.</li>
+        <li>Verander de kolom <span class="col">id</span> niet. Daarmee koppel ik jouw regel aan het juiste product.</li>
+        <li>Het hoeft niet in één keer. Vijf producten per keer is ook prima.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="filehead">
+      <span class="filenum">1</span>
+      <div>
+        <h2>Per collectie</h2>
+        <p class="filename">1-veramiek-collecties.csv &middot; 4 regels</p>
+      </div>
+    </div>
+    <p>
+      Begin hier, want dit scheelt het meeste werk. Alle stukken uit dezelfde
+      collectie delen de klei, het glazuur en de verzorging, dus dat vul je één
+      keer in plaats van vijfentwintig keer in. De vierde regel is voor de stukken
+      die nu bij geen enkele collectie horen.
+    </p>
+
+    <div class="fields">
+      <div class="field">
+        <span class="col">welke klei gebruik je</span>
+        <p>De kleisoort waar de stukken van gemaakt zijn.</p>
+        <div class="example"><b>Voorbeeld</b>Wit steengoed, gestookt op 1220 graden</div>
+      </div>
+
+      <div class="field">
+        <span class="col">glazuur: naam of kleur</span>
+        <p>Hoe het glazuur heet of hoe je de kleur zou omschrijven. Ook of het glanzend of mat is.</p>
+        <div class="example"><b>Voorbeeld</b>Zandbeige, mat, met een lichte spikkel</div>
+      </div>
+
+      <div class="field">
+        <span class="col">vaatwasserbestendig</span>
+        <span class="col">magnetronbestendig</span>
+        <span class="col">ovenbestendig</span>
+        <span class="col">voedselveilig</span>
+        <p>
+          Vier keer ja of nee. Dit zijn de vragen die klanten het vaakst stellen
+          en ze horen straks ook in de gegevens die Google uitleest. Twijfel je
+          bij de oven, zet dan "nee": dat is de veilige kant.
+        </p>
+      </div>
+
+      <div class="field">
+        <span class="col">hoe verzorg je het</span>
+        <p>Eén of twee zinnen. Wat moet iemand doen of juist laten om er lang plezier van te hebben?</p>
+        <div class="example"><b>Voorbeeld</b>Mag gewoon in de vaatwasser, maar met de hand afwassen houdt het glazuur langer diep van kleur. Zet er geen hete pan op.</div>
+      </div>
+
+      <div class="field">
+        <span class="col">wat kenmerkt deze collectie</span>
+        <p>
+          Twee of drie zinnen in je eigen woorden. Waar komt de naam vandaan,
+          welke kleuren zitten erin, en wat doet het glazuur dat je bij de andere
+          collecties niet ziet? Dit is het stukje dat je site anders maakt dan
+          elke webshop, dus schrijf het zoals je het aan iemand in het atelier zou
+          vertellen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="filehead">
+      <span class="filenum">2</span>
+      <div>
+        <h2>Per product</h2>
+        <p class="filename">2-veramiek-producten.csv &middot; 25 regels</p>
+      </div>
+    </div>
+    <p>
+      De naam, de prijs en de huidige omschrijving staan er al in, zodat je weet
+      welk stuk je voor je hebt. De rest is aan jou.
+    </p>
+
+    <div class="fields">
+      <div class="field">
+        <span class="col">collectie</span>
+        <p>
+          Al ingevuld waar het bekend is. Bij zeven stukken is dit vakje leeg:
+          Pot, Berry Bowl, Gebaksbordje, Dinerbord, Schaaltje en de twee Asbakken.
+          Bij de asbakken is het extra belangrijk, want die heten allebei gewoon
+          "Asbak" en zonder collectie kan ik ze op de site niet netjes uit elkaar
+          houden.
+        </p>
+      </div>
+
+      <div class="field">
+        <span class="col">hoogte in cm</span>
+        <span class="col">diameter of breedte in cm</span>
+        <p>
+          Bij een bord of kom de doorsnede, bij een schaal de langste kant.
+          Ongeveer is goed genoeg, handwerk is nu eenmaal niet overal identiek.
+          Eén cijfer achter de komma is ruim voldoende.
+        </p>
+        <div class="example"><b>Voorbeeld</b>Hoogte 8,5 &nbsp;&middot;&nbsp; diameter 9</div>
+      </div>
+
+      <div class="field">
+        <span class="col">inhoud in ml</span>
+        <p>
+          Alleen bij mokken, kommen en schalen. Makkelijkste manier: vul hem met
+          water tot ongeveer een centimeter onder de rand en giet dat in een
+          maatbeker. Dit is voor mokken echt de vraag die mensen hebben.
+        </p>
+        <div class="example"><b>Voorbeeld</b>300</div>
+      </div>
+
+      <div class="field">
+        <span class="col">gewicht in gram</span>
+        <p>Leuk als je een keukenweegschaal bij de hand hebt, maar mag ook leeg blijven.</p>
+      </div>
+
+      <div class="field">
+        <span class="col">waar gebruik je het voor</span>
+        <p>Eén zin. Waar is dit stuk voor bedoeld, of waar gebruik jij het zelf voor?</p>
+        <div class="example"><b>Voorbeeld</b>Voor je ochtendkoffie, met genoeg inhoud voor een grote cappuccino.</div>
+      </div>
+
+      <div class="field">
+        <span class="col">wat maakt dit stuk bijzonder</span>
+        <p>
+          Twee of drie zinnen, en het belangrijkste vakje van allemaal. Waarom heb
+          je dit gemaakt, wat is er lastig aan, waar moet je op letten bij het
+          draaien, wat vinden mensen er altijd van? Bij de drie Chip &amp; Dip
+          Bowls is dit meteen wat ze op de site van elkaar onderscheidt, want
+          verder zijn ze identiek.
+        </p>
+        <p>
+          Schrijf gerust rommelig. Ik maak er lopende tekst van en leg het je
+          voor voordat het live gaat.
+        </p>
+      </div>
+
+      <div class="field">
+        <span class="col">op voorraad of op bestelling</span>
+        <span class="col">levertijd bij op bestelling</span>
+        <p>
+          Staat het klaar in het atelier, of maak je het pas als iemand het
+          bestelt? En hoe lang duurt dat dan ongeveer? Draaien, drogen, twee keer
+          stoken, dat is een reële termijn en geen probleem om te noemen.
+        </p>
+        <div class="example"><b>Voorbeeld</b>Op bestelling &nbsp;&middot;&nbsp; ongeveer 3 weken</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Vier losse vragen</h2>
+    <p>
+      Deze horen bij geen enkel product, maar ik heb ze wel nodig. Een appje met
+      de antwoorden is genoeg.
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Vraag</th><th>Waarvoor</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Verzendkosten</td>
+            <td>Staat nu nergens, alleen "wordt na je bestelling afgestemd". Een vast bedrag mag ook in de gegevens die Google uitleest, en dat scheelt jou vragen.</td>
+          </tr>
+          <tr>
+            <td>Retourtermijn</td>
+            <td>Wettelijk is het veertien dagen bij online bestellen. Zodra dat ergens op de site staat, kan het ook in de productgegevens mee.</td>
+          </tr>
+          <tr>
+            <td>Datum van de twee blogs</td>
+            <td>Wanneer je "Hoe Veramiek ontstond" en "Nieuwe uitdaging vanaf september" hebt geschreven. Google zet die datum bij het zoekresultaat.</td>
+          </tr>
+          <tr>
+            <td>Sta je ergens ingeschreven?</td>
+            <td>Een Google Bedrijfsprofiel weegt voor lokaal gevonden worden zwaarder dan wat ik op de site kan doen. Als je er nog geen hebt, zet ik hem voor je op.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    De twee bestanden staan in <span style="font-family: var(--mono); font-size: 0.85em;">Websites/veramiek/content-invoer/</span>.
+    Openen kan met Excel of Google Sheets. Vragen tussendoor? Gewoon vragen, dan pas ik het sjabloon aan.
+  </footer>
+
+</div>
