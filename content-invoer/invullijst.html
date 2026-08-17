@@ -362,12 +362,74 @@
 
     const tekst = regels.join("\n").trim();
     const knop = e.currentTarget;
-    try {
-      await navigator.clipboard.writeText(tekst);
-      knop.textContent = "Gekopieerd";
-    } catch {
-      knop.textContent = "Kopiëren lukt niet";
+
+    if (!tekst || tekst === "VERAMIEK PRODUCTGEGEVENS") {
+      knop.textContent = "Nog niets ingevuld";
+      setTimeout(() => { knop.textContent = "Kopieer alles"; }, 2000);
+      return;
     }
-    setTimeout(() => { knop.textContent = "Kopieer alles"; }, 2000);
+
+    /*
+     * Drie manieren, want dit moet ook werken als Vera het bestand rechtstreeks
+     * opent in plaats van via een https-adres. navigator.clipboard bestaat dan
+     * niet: die vraagt een beveiligde context. Lukt ook de oude execCommand
+     * niet, dan komt de tekst gewoon in beeld zodat ze hem zelf kan selecteren.
+     */
+    let gelukt = false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(tekst);
+        gelukt = true;
+      }
+    } catch { /* valt door naar de methode hieronder */ }
+
+    if (!gelukt) {
+      const hulp = document.createElement("textarea");
+      hulp.value = tekst;
+      hulp.setAttribute("readonly", "");
+      hulp.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+      document.body.appendChild(hulp);
+      hulp.select();
+      try { gelukt = document.execCommand("copy"); } catch { gelukt = false; }
+      hulp.remove();
+    }
+
+    if (gelukt) {
+      knop.textContent = "Gekopieerd";
+      setTimeout(() => { knop.textContent = "Kopieer alles"; }, 2000);
+      return;
+    }
+
+    toonTekst(tekst);
+    knop.textContent = "Kopieer alles";
   });
+
+  /* Laatste redmiddel: tekst tonen zodat ze hem met de hand kan kopiëren. */
+  function toonTekst(tekst) {
+    const laag = document.createElement("div");
+    laag.style.cssText =
+      "position:fixed;inset:0;background:rgba(47,4,16,.6);display:flex;" +
+      "align-items:center;justify-content:center;padding:1.2rem;z-index:99";
+    const doos = document.createElement("div");
+    doos.style.cssText =
+      "background:var(--panel);border:1px solid var(--rule);padding:1rem;" +
+      "max-width:34rem;width:100%;display:flex;flex-direction:column;gap:.7rem";
+    const uitleg = document.createElement("p");
+    uitleg.style.fontSize = "0.9rem";
+    uitleg.textContent =
+      "Kopiëren lukt hier niet vanzelf. Selecteer de tekst hieronder en kopieer hem zelf.";
+    const veld = document.createElement("textarea");
+    veld.value = tekst;
+    veld.style.cssText = "min-height:14rem;font-size:.85rem";
+    const sluit = document.createElement("button");
+    sluit.type = "button";
+    sluit.className = "kopieer";
+    sluit.textContent = "Sluiten";
+    sluit.addEventListener("click", () => laag.remove());
+    doos.append(uitleg, veld, sluit);
+    laag.appendChild(doos);
+    laag.addEventListener("click", (ev) => { if (ev.target === laag) laag.remove(); });
+    document.body.appendChild(laag);
+    veld.select();
+  }
 </script>
