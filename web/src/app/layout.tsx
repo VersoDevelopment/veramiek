@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { jsonLdScript } from "@/lib/jsonLd";
+import { contact } from "@/lib/content";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -41,14 +42,9 @@ export const metadata: Metadata = {
     "Handgemaakt keramiek uit het atelier van Vera in Etten-Leur. Unieke stukken, workshops aan de draaischijf en verhalen uit het atelier.",
   applicationName: "Veramiek",
   authors: [{ name: "Veramiek" }],
-  keywords: [
-    "handgemaakt keramiek",
-    "keramiek Etten-Leur",
-    "keramiek workshop",
-    "pottenbakken workshop Brabant",
-    "handgedraaide mokken",
-    "Veramiek",
-  ],
+  // `keywords` stond hier, maar Google negeert de meta-keywords-tag al sinds
+  // 2009 en Bing behandelt hem als spamsignaal. Weggehaald: hij deed niets
+  // en wees concurrenten precies aan waar we op mikken.
   // Bewust GEEN alternates.canonical hier: metadata erft door, dus een
   // canonical in de layout zou elke pagina naar de homepage laten wijzen.
   // Elke pagina zet zijn eigen canonical.
@@ -104,16 +100,50 @@ const orgJsonLd = {
   url: siteUrl,
   image: `${siteUrl}/images/og-veramiek.jpg`,
   logo: `${siteUrl}/logo/logo-horizontal.png`,
+  telephone: contact.phone,
+  email: contact.email,
+  /**
+   * Vrije tekst; bewust een indicatie en geen concreet bereik, omdat de
+   * prijzen in het adminpaneel wijzigen en een hard bedrag hier dan gaat
+   * afwijken van de productpagina's.
+   */
+  priceRange: "€€",
+  founder: { "@type": "Person", name: "Vera" },
+  /**
+   * Geen streetAddress en geen openingsuren: het atelier is aan huis en die
+   * gegevens staan nergens op de site. Alleen invullen wat klopt, anders
+   * belooft de markup iets wat de pagina niet waarmaakt.
+   */
   address: {
     "@type": "PostalAddress",
     addressLocality: "Etten-Leur",
     addressRegion: "Noord-Brabant",
     addressCountry: "NL",
   },
+  areaServed: [
+    { "@type": "City", name: "Etten-Leur" },
+    { "@type": "AdministrativeArea", name: "Noord-Brabant" },
+    { "@type": "Country", name: "Nederland" },
+  ],
   sameAs: [
     "https://www.instagram.com/veramiek.nl",
     "https://www.tiktok.com/@veramiek",
   ],
+};
+
+/**
+ * Losse WebSite-node. Maakt de sitenaam expliciet, zodat Google in de
+ * zoekresultaten "Veramiek" boven het resultaat kan zetten in plaats van het
+ * kale domein.
+ */
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: "Veramiek",
+  url: siteUrl,
+  inLanguage: "nl-NL",
+  publisher: { "@id": `${siteUrl}/#veramiek` },
 };
 
 export default function RootLayout({
@@ -130,6 +160,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdScript(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd) }}
         />
         <a
           href="#main"

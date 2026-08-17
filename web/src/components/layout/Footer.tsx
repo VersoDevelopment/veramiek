@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { contact, navLinks } from "@/lib/content";
+import { contact, footerLinks } from "@/lib/content";
 
 /**
  * Minimalistische witte footer als adempauze onder het wijnrode vlak:
@@ -20,8 +20,11 @@ export function Footer() {
         />
 
         <nav aria-label="Footernavigatie">
+          {/* footerLinks in plaats van navLinks: /blog stond alleen in het
+              mobiele menu en in de sitemap, waardoor de blogartikelen vanaf
+              desktop nergens vandaan een interne link kregen. */}
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {navLinks.map((link) => (
+            {footerLinks.map((link) => (
               <li key={link.label}>
                 <Link
                   href={link.href}

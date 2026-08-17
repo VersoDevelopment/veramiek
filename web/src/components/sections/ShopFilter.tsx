@@ -12,6 +12,7 @@ import {
   type ShopCategory,
 } from "@/lib/api";
 import { fadeUp } from "@/lib/motion";
+import { productTitle } from "@/lib/seo";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 const ALL = "Alles";
@@ -196,7 +197,11 @@ export function ShopFilter({
                     exit={prefersReduced ? undefined : { opacity: 0 }}
                     className={span}
                   >
-                    <ProductTile product={product} aspectClass={aspect} />
+                    <ProductTile
+                      product={product}
+                      aspectClass={aspect}
+                      label={productTitle(product, products)}
+                    />
                   </motion.div>
                 );
               })}

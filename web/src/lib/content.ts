@@ -3,6 +3,8 @@
  * later zonder component-wijzigingen vervangen kunnen worden.
  */
 
+import { CATEGORY_PAGES } from "./seo";
+
 export type NavLink = {
   label: string;
   href: string;
@@ -24,6 +26,18 @@ export const mobileNavLinks: NavLink[] = navLinks.flatMap((link) =>
     ? [{ label: "Blogs", href: "/blog" }, link]
     : [link],
 );
+
+/**
+ * De footer toont Blogs wel. De desktopnav houdt bewust vier items, maar
+ * zonder een link hier waren /blog en de artikelen daaronder alleen via het
+ * mobiele menu en de sitemap te bereiken: te weinig interne links om Google
+ * te laten zien dat ze bij de site horen.
+ */
+export const footerLinks: NavLink[] = [
+  ...navLinks,
+  { label: "Blogs", href: "/blog" },
+  { label: "Atelier Etten-Leur", href: "/keramiek-etten-leur" },
+];
 
 export type Collection = {
   name: string;
@@ -80,16 +94,20 @@ export const collections: Collection[] = [
 
 /**
  * Product-categorieën voor de rechterkolom van het Collecties-megamenu.
- * De `soort`-query preselecteert het filter op de winkelpagina; labels
- * moeten sporen met SHOP_CATEGORIES in lib/api.ts.
+ *
+ * Wijzen sinds de SEO-ronde naar de eigen categoriepagina's onder /keramiek/
+ * in plaats van naar `/collecties?soort=...`. Die querystring zette alleen een
+ * client-side filter en was dus geen indexeerbare pagina: er viel niets te
+ * ranken op "handgemaakte mokken" en zoekmachines kregen geen interne links.
+ *
+ * "Overige" heeft bewust geen eigen pagina (restcategorie zonder zoekvraag) en
+ * blijft daarom het oude filter gebruiken.
  */
 export const productCategories: NavLink[] = [
-  { label: "Borden", href: "/collecties?soort=Borden" },
-  { label: "Mokken", href: "/collecties?soort=Mokken" },
-  { label: "Schalen", href: "/collecties?soort=Schalen" },
-  { label: "Kommen", href: "/collecties?soort=Kommen" },
-  { label: "Matcha set", href: "/collecties?soort=Matcha%20set" },
-  { label: "Lepelhouders", href: "/collecties?soort=Lepelhouders" },
+  ...CATEGORY_PAGES.map((c) => ({
+    label: c.categorie,
+    href: `/keramiek/${c.slug}`,
+  })),
   { label: "Overige", href: "/collecties?soort=Overige" },
 ];
 
@@ -109,6 +127,13 @@ export type BlogPost = {
   objectPosition?: string;
   /** URL-deel: /blog/<slug>. */
   slug: string;
+  /**
+   * Publicatiedatum als YYYY-MM-DD, voor de Article-markup op de blogpagina.
+   * Nog niet ingevuld: de echte datums zijn niet ergens vastgelegd en een
+   * geschatte datum zou in het zoekresultaat als feit worden getoond. Vult
+   * Vera ze aan, dan verschijnt `datePublished` vanzelf in de markup.
+   */
+  datePublished?: string;
   /**
    * De alinea's van het volledige artikel. Alleen posts met een body krijgen een
    * eigen pagina en een "Lees verder"-link; de rest is nog een placeholder
@@ -214,6 +239,11 @@ export const blogPosts: BlogPost[] = [
 export const contact = {
   /** Echt nummer, door Kenny aangeleverd. */
   whatsappUrl: "https://wa.me/31648145413",
+  /**
+   * Hetzelfde nummer in E.164, voor de LocalBusiness-markup in layout.tsx.
+   * Het staat via de WhatsApp-link toch al publiek op de site.
+   */
+  phone: "+31648145413",
   email: "info@veramiek.nl",
   instagramUrl: "https://www.instagram.com/veramiek.nl",
   instagramHandle: "@veramiek.nl",

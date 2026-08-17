@@ -66,6 +66,41 @@ services:
       - default
       - npm_default
 
+  # ── Nieuwe site: Next.js, proefversie ─────────────────────────────
+  # Zelfde broncode-map, maar een eigen image en container. Daar zit het hele
+  # punt: na een `git pull` staat de nieuwe code in de map, maar de draaiende
+  # `next`-container blijft zijn oude image gebruiken tot je hem herbouwt.
+  # Door alleen deze te herbouwen draait de proefversie op de nieuwe code
+  # terwijl veramiek.nl onaangeroerd op de oude blijft.
+  #
+  #   docker compose build next-preview && docker compose up -d next-preview
+  #
+  # nginx-app.conf stuurt alleen veramiek.versodevelopment.nl hierheen; dat
+  # domein zit achter het wachtwoord en de X-Robots-Tag. Akkoord van Kenny?
+  # Dan dezelfde stap voor `next`, en deze container mag daarna weg.
+  next-preview:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_BASE: /api
+    container_name: veramiek-next-preview-1
+    environment:
+      API_BASE_INTERNAL: http://veramiek-api-1:3001
+      # Bewust dezelfde SITE_URL als productie: dan zijn de canonicals op de
+      # proefversie exact wat ze straks live worden, en die te kunnen nakijken
+      # is juist het doel. Indexering wordt tegengehouden door het wachtwoord
+      # en de X-Robots-Tag op het stagingdomein, niet door deze waarde.
+      SITE_URL: https://veramiek.nl
+      NODE_ENV: production
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - api
+    networks:
+      - default
+      - npm_default
+
   # ── API (gedeeld door oude en nieuwe site) ────────────────────────
   api:
     build: ./api

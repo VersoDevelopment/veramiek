@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealSection } from "@/components/ui/RevealSection";
 import { findPost, publishedPosts } from "@/lib/content";
+import { jsonLdScript } from "@/lib/jsonLd";
+import { breadcrumbJsonLd, siteUrl } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -34,8 +36,43 @@ export default async function BlogPostPage({ params }: Props) {
   const post = findPost(slug);
   if (!post) notFound();
 
+  /**
+   * Article-markup. Ontbrak volledig: de artikelen waren voor Google gewoon
+   * pagina's, zonder auteur, uitgever of onderwerp.
+   *
+   * `datePublished` staat er alleen bij als het in content.ts is ingevuld.
+   * Google toont graag een datum, maar een verzonnen datum is erger dan geen
+   * datum: die belandt in het zoekresultaat en klopt dan niet.
+   */
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    image: `${siteUrl}${post.image}`,
+    inLanguage: "nl-NL",
+    author: { "@type": "Person", name: "Vera" },
+    publisher: { "@id": `${siteUrl}/#veramiek` },
+    mainEntityOfPage: `${siteUrl}/blog/${post.slug}`,
+    ...(post.datePublished ? { datePublished: post.datePublished } : {}),
+  };
+
+  const crumbs = [
+    { naam: "Home", pad: "/" },
+    { naam: "Blogs", pad: "/blog" },
+    { naam: post.title, pad: `/blog/${post.slug}` },
+  ];
+
   return (
     <RevealSection className="px-6 pt-44 pb-28 md:pb-36">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd(crumbs)) }}
+      />
       <article className="mx-auto max-w-[65ch]">
         <p className="text-base tracking-[0.22em] text-white/55 uppercase">
           {post.meta}

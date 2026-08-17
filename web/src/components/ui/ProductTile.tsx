@@ -12,11 +12,20 @@ import { formatPrice, type Product } from "@/lib/api";
 export function ProductTile({
   product,
   aspectClass = "aspect-[3/4]",
+  label,
 }: {
   product: Product;
   aspectClass?: string;
+  /**
+   * Onderscheidende naam, bv. "Chip & Dip Bowl, Zeeuws Zand". Zes productnamen
+   * komen meerdere keren voor; zonder dit staan er drie tegels met exact
+   * dezelfde tekst en dezelfde alt-tekst onder elkaar. Valt terug op de kale
+   * productnaam waar dat niet speelt.
+   */
+  label?: string;
 }) {
   const image = product.images[0] ?? null;
+  const naam = label ?? product.name;
 
   return (
     <Link
@@ -27,7 +36,7 @@ export function ProductTile({
         {image ? (
           <Image
             src={image}
-            alt={product.name}
+            alt={naam}
             fill
             sizes="(min-width: 768px) 40vw, 100vw"
             className="object-cover transition-transform duration-700 ease-out group-hover/tile:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100"
@@ -45,11 +54,11 @@ export function ProductTile({
         )}
 
         <span className="absolute bottom-4 left-1/2 hidden max-w-[calc(100%-2rem)] -translate-x-1/2 truncate bg-white/90 px-5 py-1.5 text-sm tracking-[0.06em] text-wine transition-colors duration-300 group-hover/tile:bg-wine group-hover/tile:text-white md:block">
-          {product.name}
+          {naam}
         </span>
       </div>
       <div className="mt-3 flex items-start justify-between gap-3 text-base tracking-[0.03em] opacity-85 md:block">
-        <p className="min-w-0 truncate md:hidden">{product.name}</p>
+        <p className="min-w-0 truncate md:hidden">{naam}</p>
         <p className="shrink-0 md:mt-3">{formatPrice(product.price)}</p>
       </div>
     </Link>

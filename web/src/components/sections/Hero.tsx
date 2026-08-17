@@ -81,14 +81,23 @@ export function Hero() {
         }}
         className="absolute bottom-24 left-5 z-20 inline-block sm:bottom-8 sm:left-6 md:bottom-10 md:left-12"
       >
-        <motion.p
+        {/* Dit wordmark is de H1 van de homepage. Die ontbrak volledig: de
+            belangrijkste pagina van de site had alleen H2's. "VERAMIEK" alleen
+            zegt Google niets over wat hier gemaakt wordt, dus de kop loopt
+            door in een regel die alleen voor schermlezers en zoekmachines
+            zichtbaar is. Die tekst staat verderop op de pagina ook gewoon
+            uitgeschreven, dus het is een samenvatting en geen verstopte
+            trefwoorden. Visueel verandert er niets: alle typografie komt van
+            de utility-classes, niet van de h1-basisstijl. */}
+        <motion.h1
           initial={instant ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: TEXT_FADE_DURATION, ease: luxEase, delay: introDelay }}
           className="origin-bottom-left scale-y-125 font-display text-[clamp(3.7rem,16vw,18rem)] leading-[0.9] font-bold tracking-[0.05em] text-white sm:text-[clamp(7rem,11.8vw,18rem)]"
         >
           VERAMIEK
-        </motion.p>
+          <span className="sr-only"> handgemaakt keramiek uit Etten-Leur</span>
+        </motion.h1>
 
         <motion.span
           initial={instant ? false : { opacity: 0 }}

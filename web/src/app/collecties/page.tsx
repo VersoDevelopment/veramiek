@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ShopFilter } from "@/components/sections/ShopFilter";
 import { getProducts } from "@/lib/api";
+import { CATEGORY_PAGES } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Collecties",
@@ -33,6 +35,24 @@ export default async function CollectiesPage({
           Elk stuk is met de hand gedraaid en uniek. Kleine verschillen in vorm
           en glazuur horen erbij, dat maakt het handwerk.
         </p>
+
+        {/* Ingang naar de categoriepagina's. Het filter hieronder werkt met een
+            querystring en levert dus geen aparte pagina op; deze links doen dat
+            wel, en zijn meteen de enige interne verwijzing ernaartoe. */}
+        <nav aria-label="Categorieën" className="mt-10">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+            {CATEGORY_PAGES.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/keramiek/${c.slug}`}
+                  className="text-base tracking-[0.03em] underline decoration-sage/60 decoration-1 underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
+                >
+                  {c.categorie}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </header>
 
       {products.length === 0 ? (

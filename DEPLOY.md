@@ -41,6 +41,44 @@ opnieuw aanmaken:
 docker rm -f veramiek-app-1 && docker compose up -d app
 ```
 
+## Eerst bekijken, dan pas live (proefversie)
+
+Sinds de cutover bedienen `veramiek-app-1` en `veramiek-next-1` zowel
+veramiek.nl als het stagingdomein. `docker compose build next` is daardoor
+meteen een productie-deploy: er is geen tussenstap meer om iets te bekijken.
+
+Daarvoor is `next-preview` er. Die bouwt uit dezelfde map, maar in een eigen
+image. Na een `git pull` staat de nieuwe code wel in de map, maar draait de
+`next`-container nog op zijn oude image, dus alleen de proefversie verandert:
+
+```bash
+ssh kenny@versodevelopment.nl
+cd /var/www/veramiek
+git pull
+docker compose build next-preview
+docker compose up -d next-preview
+docker network connect npm_default veramiek-next-preview-1 2>/dev/null || true
+
+# nginx-app.conf is een single-file mount: opnieuw aanmaken, niet reloaden.
+docker rm -f veramiek-app-1 && docker compose up -d app
+```
+
+Bekijken op `https://veramiek.versodevelopment.nl` (wachtwoord `vera`). Dat
+domein heeft `X-Robots-Tag: noindex, nofollow, noarchive`, dus het komt niet
+in Google terecht.
+
+Controleer daarna dat de live site nog op de oude versie staat:
+
+```bash
+curl -sI https://veramiek.nl/ | head -3
+```
+
+Akkoord? Dan pas de stap hieronder. Daarna mag de proefversie weg:
+
+```bash
+docker compose down next-preview
+```
+
 ## Nieuwe versie uitrollen
 
 ```bash
