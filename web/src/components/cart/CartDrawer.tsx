@@ -141,7 +141,7 @@ export function CartDrawer() {
                     onClick={close}
                     className="mt-6 block w-full rounded-full bg-wine px-8 py-3 text-center text-base tracking-[0.03em] text-white transition-opacity hover:opacity-85"
                   >
-                    Naar afrekenen ({count})
+                    Naar bestellen ({count})
                   </Link>
                 </footer>
               </>
