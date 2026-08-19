@@ -72,7 +72,7 @@ export function ZomermarktPopup() {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[80] grid place-items-center p-5"
+          className="fixed inset-0 z-[80] grid place-items-center p-4 sm:p-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -95,7 +95,7 @@ export function ZomermarktPopup() {
             animate={paneelZichtbaar}
             exit={paneelVerborgen}
             transition={{ duration: 0.42, ease: luxEase }}
-            className="relative max-h-[calc(100vh-2.5rem)] w-full max-w-[30rem] overflow-y-auto bg-white px-7 pt-11 pb-9 text-wine sm:px-10 sm:pb-10"
+            className="relative max-h-[calc(100vh-2rem)] w-full max-w-[30rem] overflow-y-auto bg-white px-6 pt-9 pb-7 text-wine sm:max-h-[calc(100vh-2.5rem)] sm:px-10 sm:pt-11 sm:pb-10"
           >
             <button
               type="button"
@@ -111,35 +111,41 @@ export function ZomermarktPopup() {
              * Daarom niet paneelvullend, maar met witruimte en een sage
              * haarlijn eromheen, zodat hij als flyer leest en niet als
              * onderdeel van de site.
+             *
+             * Op een telefoon een vaste verhouding 579:270 in plaats van een
+             * vaste pixelhoogte: anders hangt van de schermbreedte af hoeveel
+             * van de poster je ziet en snijdt de rand dwars door de regel
+             * "16:00-21:00". Zo valt de snede altijd net onder de tijd.
+             * Vanaf sm is de poster weer heel, met 40vh als vangnet voor een
+             * laag venster (liggende telefoon, klein laptopscherm).
              */}
             <Image
               src="/images/zomermarkt.jpg"
               alt="Poster van de Zwoele Zomermarkt op zaterdag 22 augustus 2026, van 16:00 tot 21:00"
               width={579}
               height={386}
-              className="mb-7 h-auto w-full border border-sage/90 object-cover object-top [@media(max-height:760px)]:max-h-[36vh]"
+              className="mb-5 aspect-[579/270] h-auto w-full border border-sage/90 object-cover object-top sm:mb-7 sm:aspect-auto sm:max-h-[40vh]"
               priority
             />
 
             <h2
               id="zomermarkt-titel"
-              className="mb-4 font-display text-2xl leading-[1.25] tracking-[0.02em] sm:text-3xl"
+              className="mb-3 font-display text-2xl leading-[1.25] tracking-[0.02em] sm:mb-4 sm:text-3xl"
             >
               Veramiek staat op de Zwoele Zomermarkt
             </h2>
 
             <p className="opacity-85">
               Zaterdag 22 augustus van 16:00 tot 21:00 bij STEK aan de
-              Veilingkade in Breda. Kom het keramiek in het echt zien en voelen,
-              samen met zo&apos;n dertig andere makers.
+              Veilingkade in Breda. Kom het keramiek in het echt zien.
             </p>
 
-            <p className="mt-7 flex items-center gap-4 border-t border-sage/70 pt-5">
+            <p className="mt-5 flex items-center gap-4 border-t border-sage/70 pt-4 sm:mt-7 sm:pt-5">
               <MapPin size={21} strokeWidth={1.5} className="shrink-0 text-sage" />
               <span>STEK, Veilingkade 9A, Breda</span>
             </p>
 
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap gap-3 sm:mt-7">
               <CtaButton
                 href="https://www.google.com/maps/search/?api=1&query=STEK+Veilingkade+9A+Breda"
                 external
