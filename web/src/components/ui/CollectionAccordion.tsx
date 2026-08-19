@@ -16,7 +16,7 @@ export function CollectionAccordion({ collections }: { collections: Collection[]
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <div className="group/gallery mx-auto flex h-[520px] w-[1869px] max-w-[calc(100vw-3rem)] gap-[2px] md:h-[880px]">
+    <div className="group/gallery mx-auto flex h-[420px] w-[1869px] max-w-[calc(100vw-3rem)] gap-[2px] md:h-[600px] xl:h-[880px]">
       {collections.map((collection, index) => {
         const isActive = index === activeIndex;
         return (
