@@ -5,6 +5,8 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+// Tijdelijk: aankondiging Zwoele Zomermarkt 22/08/2026, verwijdert zichzelf na die datum
+import { ZomermarktPopup } from "@/components/ui/ZomermarktPopup";
 import { jsonLdScript } from "@/lib/jsonLd";
 import { contact } from "@/lib/content";
 
@@ -178,6 +180,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <CartDrawer />
+          <ZomermarktPopup />
         </CartProvider>
       </body>
     </html>
