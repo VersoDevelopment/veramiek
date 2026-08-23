@@ -9,7 +9,6 @@ type Materiaal = NonNullable<SiteContent["material"]>;
 
 const LEEG: Materiaal = {
   clay: "",
-  glaze: "",
   dishwasher: "",
   microwave: "",
   oven: "",
@@ -21,6 +20,9 @@ const LEEG: Materiaal = {
  * elk product: Vera zou ze dan vijfentwintig keer moeten invullen en bij een
  * andere klei ook vijfentwintig keer moeten bijwerken. De productpagina zet ze
  * onder de eigen specificaties van het stuk.
+ *
+ * Glazuur hoort hier bewust niet bij: dat verschilt per collectie en staat dus
+ * op het product zelf.
  */
 export function MateriaalForm() {
   const [waarden, setWaarden] = useState<Materiaal>(LEEG);
@@ -82,24 +84,14 @@ export function MateriaalForm() {
         elk product, onder de gegevens van het stuk zelf.
       </p>
 
-      <div className="grid gap-8 sm:grid-cols-2">
-        <Field
-          id="m-klei"
-          name="klei"
-          label="Klei"
-          value={waarden.clay ?? ""}
-          onChange={(v) => zet("clay", v)}
-          placeholder="wit steengoed"
-        />
-        <Field
-          id="m-glazuur"
-          name="glazuur"
-          label="Glazuur"
-          value={waarden.glaze ?? ""}
-          onChange={(v) => zet("glaze", v)}
-          placeholder="zandbeige, mat"
-        />
-      </div>
+      <Field
+        id="m-klei"
+        name="klei"
+        label="Klei"
+        value={waarden.clay ?? ""}
+        onChange={(v) => zet("clay", v)}
+        placeholder="wit steengoed"
+      />
 
       <div className="grid gap-8 sm:grid-cols-3">
         <Field

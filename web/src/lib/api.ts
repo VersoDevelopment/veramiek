@@ -57,6 +57,8 @@ export type Product = {
   size?: string;
   /** Inhoud in ml, alleen bij iets om uit te eten of drinken. */
   volume?: string;
+  /** Glazuur van dit stuk; verschilt per collectie, dus niet gedeeld. */
+  glaze?: string;
   /** Een zin over waar het voor is. */
   purpose?: string;
   /** Het langere verhaal bij het stuk; dit draagt de productpagina. */
@@ -156,7 +158,6 @@ export type SiteContent = {
   /** Geldt voor het hele assortiment, niet per product. */
   material?: {
     clay?: string;
-    glaze?: string;
     dishwasher?: string;
     microwave?: string;
     oven?: string;

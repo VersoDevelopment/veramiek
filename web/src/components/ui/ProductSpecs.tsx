@@ -7,9 +7,9 @@ type Props = {
 
 /**
  * De harde gegevens onder de productomschrijving. Twee bronnen lopen hier
- * samen: wat per stuk verschilt (afmeting, inhoud, waarvoor) staat op het
- * product zelf, wat voor het hele assortiment geldt (klei, glazuur,
- * vaatwasser) komt uit de site-content. Vera vult dat laatste dus een keer in
+ * samen: wat per stuk verschilt (afmeting, inhoud, waarvoor, glazuur) staat op
+ * het product zelf, wat voor het hele assortiment geldt (klei, vaatwasser)
+ * komt uit de site-content. Vera vult dat laatste dus een keer in
  * en niet bij vijfentwintig producten.
  *
  * Lege waarden vallen weg in plaats van dat er "onbekend" komt te staan: een
@@ -21,8 +21,8 @@ export function ProductSpecs({ product, material }: Props) {
     ["Afmeting", product.size],
     ["Inhoud", product.volume],
     ["Waarvoor", product.purpose],
+    ["Glazuur", product.glaze],
     ["Klei", material?.clay],
-    ["Glazuur", material?.glaze],
     ["Vaatwasser", material?.dishwasher],
     ["Magnetron", material?.microwave],
     ["Oven", material?.oven],

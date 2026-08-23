@@ -23,6 +23,7 @@ type Formulier = {
   badge: string;
   size: string;
   volume: string;
+  glaze: string;
   purpose: string;
   stock: string;
   available: boolean;
@@ -40,6 +41,7 @@ function naarFormulier(product: Product | null): Formulier {
     badge: product?.badge ?? "",
     size: product?.size ?? "",
     volume: product?.volume ?? "",
+    glaze: product?.glaze ?? "",
     purpose: product?.purpose ?? "",
     /* Niets ingevuld blijft leeg: "niet geteld" is geen "nul". */
     stock: product?.stock == null ? "" : String(product.stock),
@@ -102,6 +104,7 @@ export function ProductForm({ product, onKlaar, onAnnuleer }: Props) {
       badge: waarden.badge.trim() || null,
       size: waarden.size.trim(),
       volume: waarden.volume.trim(),
+      glaze: waarden.glaze.trim(),
       purpose: waarden.purpose.trim(),
       stock: waarden.stock.trim() === "" ? null : Number(waarden.stock),
       available: waarden.available,
@@ -223,6 +226,14 @@ export function ProductForm({ product, onKlaar, onAnnuleer }: Props) {
             placeholder="300 ml"
           />
         </div>
+        <Field
+          id="p-glazuur"
+          name="glazuur"
+          label="Glazuur"
+          value={waarden.glaze}
+          onChange={(v) => zet("glaze", v)}
+          placeholder="zandbeige, mat"
+        />
         <Field
           id="p-waarvoor"
           name="waarvoor"

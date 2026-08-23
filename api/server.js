@@ -79,9 +79,10 @@ const DEFAULT_CONTENT = {
   },
   // Geldt voor het hele assortiment, dus een keer invullen in plaats van bij
   // 25 producten. De productpagina toont dit onder de eigen specificaties.
+  // Glazuur hoort hier bewust NIET bij: dat verschilt per collectie en dus per
+  // stuk, en staat op het product zelf.
   material: {
     clay: '',
-    glaze: '',
     dishwasher: '',
     microwave: '',
     oven: '',
@@ -478,6 +479,7 @@ function bouwProduct(body, id) {
     stock: voorraadGetal(body.stock),
     size: tekst(body.size, 80),
     volume: tekst(body.volume, 80),
+    glaze: tekst(body.glaze, 120),
     purpose: tekst(body.purpose, 200),
     story: tekst(body.story, 2000)
   };
