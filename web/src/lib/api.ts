@@ -178,6 +178,18 @@ export async function getBlogs(): Promise<BlogPost[]> {
   }
 }
 
+/**
+ * Een stuk waarvan er nul op voorraad liggen kun je niet in de winkelwagen
+ * leggen, maar wel aanvragen: Vera maakt alles met de hand, dus ze kan het
+ * opnieuw maken.
+ *
+ * Let op het verschil met `stock == null`: dat betekent "niet geteld" en zegt
+ * dus niets over beschikbaarheid. Alleen een harde nul telt.
+ */
+export function isOpAanvraag(product: Product): boolean {
+  return product.stock === 0;
+}
+
 /** Alleen de artikelen met een geschreven tekst; die krijgen een eigen pagina. */
 export function metArtikel(posts: BlogPost[]): BlogPost[] {
   return posts.filter((post) => post.body?.length);

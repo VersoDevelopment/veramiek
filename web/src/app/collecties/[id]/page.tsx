@@ -8,6 +8,7 @@ import {
   formatPrice,
   getContent,
   getProducts,
+  isOpAanvraag,
   normalizeCategory,
   type Product,
 } from "@/lib/api";
@@ -107,8 +108,12 @@ export default async function ProductPage({ params }: Params) {
       priceCurrency: "EUR",
       priceValidUntil: geldigTot.toISOString().slice(0, 10),
       itemCondition: "https://schema.org/NewCondition",
-      availability:
-        product.available === false
+      /* BackOrder en niet OutOfStock: het stuk bestaat nog, het moet alleen
+         gemaakt worden. Dat is precies wat de pagina zegt, en markup die iets
+         anders beweert dan de pagina levert een mismatch op. */
+      availability: isOpAanvraag(product)
+        ? "https://schema.org/BackOrder"
+        : product.available === false
           ? "https://schema.org/OutOfStock"
           : "https://schema.org/InStock",
       seller: { "@type": "Organization", name: "Veramiek" },

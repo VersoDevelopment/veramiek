@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Product } from "@/lib/api";
+import { isOpAanvraag, type Product } from "@/lib/api";
 
 /** Eén regel in de winkelwagen: het minimale product plus een aantal. */
 export type CartItem = {
@@ -75,6 +75,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const add = useCallback((product: Product, qty = 1) => {
+    /* De knop is al vervangen door een aanvraag, maar een pagina die al open
+       stond kan verouderde voorraad tonen. Dan hier alsnog weigeren, anders
+       bestelt iemand iets wat er niet ligt. */
+    if (isOpAanvraag(product)) return;
     setItems((current) => {
       const existing = current.find((i) => i.id === product.id);
       if (existing) {

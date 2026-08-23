@@ -17,7 +17,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default async function ContactPage() {
+/*
+ * `?over=<productnaam>` komt van de aanvraagknop bij een uitverkocht stuk.
+ * Het onderwerp staat dan al ingevuld, zodat Vera meteen ziet waar het over
+ * gaat en de bezoeker niets hoeft over te typen.
+ */
+type Props = { searchParams: Promise<{ over?: string }> };
+
+export default async function ContactPage({ searchParams }: Props) {
+  const { over } = await searchParams;
+  const startOnderwerp = over ? `Aanvraag: ${over.slice(0, 120)}` : "";
   const content = await getContent();
   const c = content.contact ?? {};
 
@@ -98,7 +107,7 @@ export default async function ContactPage() {
 
           {/* Formulier op een witte adempauze-kaart (leesbaarheid) */}
           <div className="bg-white p-7 md:p-9">
-            <ContactForm />
+            <ContactForm startOnderwerp={startOnderwerp} />
           </div>
         </div>
       </div>

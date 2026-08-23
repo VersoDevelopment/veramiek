@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice, type Product } from "@/lib/api";
+import { formatPrice, isOpAanvraag, type Product } from "@/lib/api";
 
 /**
  * Producttegel in galeriestijl (zelfde taal als CollectionTile): staand
@@ -59,7 +59,14 @@ export function ProductTile({
       </div>
       <div className="mt-3 flex items-start justify-between gap-3 text-base tracking-[0.03em] opacity-85 md:block">
         <p className="min-w-0 truncate md:hidden">{naam}</p>
-        <p className="shrink-0 md:mt-3">{formatPrice(product.price)}</p>
+        <p className="shrink-0 md:mt-3">
+          {formatPrice(product.price)}
+          {/* Zonder dit klikt iemand door op een prijs en ontdekt hij pas op de
+              productpagina dat het stuk er niet ligt. */}
+          {isOpAanvraag(product) && (
+            <span className="ml-2 whitespace-nowrap opacity-60">op aanvraag</span>
+          )}
+        </p>
       </div>
     </Link>
   );

@@ -11,10 +11,15 @@ type Status = "idle" | "sending" | "done" | "error";
  * API (/send-contact) een bericht naar Vera + een bevestiging naar de
  * bezoeker stuurt. Status wordt in een aria-live-regio gemeld.
  */
-export function ContactForm() {
+export function ContactForm({
+  startOnderwerp = "",
+}: {
+  /** Vooringevuld onderwerp, bv. bij een aanvraag vanaf een productpagina. */
+  startOnderwerp?: string;
+}) {
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
-  const [onderwerp, setOnderwerp] = useState("");
+  const [onderwerp, setOnderwerp] = useState(startOnderwerp);
   const [bericht, setBericht] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<Status>("idle");
