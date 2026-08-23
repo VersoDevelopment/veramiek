@@ -31,6 +31,19 @@ scp "web/public/videos/hero-breda-warmrays.mp4" \
   kenny@versodevelopment.nl:/var/www/veramiek/web/public/videos/
 ```
 
+**3. De api-container herbouwen breekt `/api/` tot je `app` opnieuw aanmaakt.**
+`veramiek-api-1` krijgt bij een herbouw een nieuw IP, en de nginx in
+`veramiek-app-1` heeft de oude naar-IP-vertaling nog vast. Je krijgt dan een
+**502 op alles onder `/api/`**, dus ook de webshop. Er is niets stuk, alleen de
+voorkant kijkt naar het verkeerde adres:
+
+```bash
+docker network connect npm_default veramiek-api-1 2>/dev/null || true
+docker rm -f veramiek-app-1 && docker compose up -d app
+```
+
+Doe die stap standaard na elke `docker compose build api`.
+
 **2. Bind-mounts van losse bestanden overleven een reload niet.**
 `nginx-app.conf` en `.htpasswd` zijn single-file mounts. `git pull` vervangt het
 bestand door een nieuwe inode, maar de draaiende container blijft de oude zien.
