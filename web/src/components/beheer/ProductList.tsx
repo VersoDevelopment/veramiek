@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { formatPrice, type Product } from "@/lib/api";
+import { Knop } from "./Veld";
 
 type Props = {
   producten: Product[];
@@ -10,7 +11,7 @@ type Props = {
   onVerwijder: (product: Product) => void;
 };
 
-/** Toont de voorraad, of een streepje als er nooit een aantal is ingevuld. */
+/** Toont de voorraad, of dat er nooit een aantal is ingevuld. */
 function voorraadTekst(product: Product): string {
   if (product.stock == null) return "niet geteld";
   if (product.stock === 0) return "op";
@@ -20,55 +21,50 @@ function voorraadTekst(product: Product): string {
 export function ProductList({ producten, bezigId, onBewerk, onVerwijder }: Props) {
   if (producten.length === 0) {
     return (
-      <p className="py-10 text-base text-wine/70">
+      <p className="py-10 text-[0.95rem] text-wine/60">
         Er staan nog geen producten in de webshop.
       </p>
     );
   }
 
   return (
-    <ul>
+    <ul className="overflow-hidden rounded-lg border border-wine/12 bg-white">
       {producten.map((product) => (
         <li
           key={product.id}
-          className="flex items-center gap-4 border-b border-wine/10 py-4"
+          className="flex items-center gap-4 border-b border-wine/8 px-4 py-3 last:border-b-0"
         >
           {product.images[0] ? (
             <Image
               src={product.images[0]}
               alt=""
-              width={56}
-              height={56}
+              width={48}
+              height={48}
               unoptimized
-              className="h-14 w-14 shrink-0 rounded object-cover"
+              className="h-12 w-12 shrink-0 rounded object-cover"
             />
           ) : (
-            <div className="h-14 w-14 shrink-0 rounded bg-wine/10" />
+            <div className="h-12 w-12 shrink-0 rounded bg-wine/8" />
           )}
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base text-wine">{product.name}</p>
-            <p className="text-sm text-wine/60">
+            <p className="truncate text-[0.95rem] text-wine">{product.name}</p>
+            <p className="text-[0.85rem] text-wine/50">
               {formatPrice(product.price)} &middot; {voorraadTekst(product)}
               {product.available === false && " · verborgen"}
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onBewerk(product)}
-            className="cursor-pointer text-base text-wine underline decoration-sage decoration-1 underline-offset-4 transition-opacity hover:opacity-70"
-          >
+          <Knop type="button" onClick={() => onBewerk(product)}>
             Bewerk
-          </button>
-          <button
+          </Knop>
+          <Knop
             type="button"
             onClick={() => onVerwijder(product)}
             disabled={bezigId === product.id}
-            className="cursor-pointer text-base text-wine/60 transition-opacity hover:opacity-100 disabled:opacity-40"
           >
             {bezigId === product.id ? "Bezig..." : "Verwijder"}
-          </button>
+          </Knop>
         </li>
       ))}
     </ul>

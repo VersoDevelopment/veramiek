@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { RevealSection } from "@/components/ui/RevealSection";
-import { publishedPosts } from "@/lib/content";
+import { getBlogs, metArtikel } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Blogs",
@@ -12,11 +12,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * Overzicht van de blogs. Toont alleen posts met een geschreven artikel; de
- * placeholders in blogPosts blijven hier dus buiten.
+ * Overzicht van de blogs. Toont alleen artikelen met een geschreven tekst; de
+ * aankondigingen zonder tekst blijven hier dus buiten. De artikelen komen live
+ * uit de API, zodat een nieuw stuk uit het beheerscherm er meteen staat.
  */
-export default function BlogIndexPage() {
-  const posts = publishedPosts();
+export default async function BlogIndexPage() {
+  const posts = metArtikel(await getBlogs());
 
   return (
     <RevealSection className="px-6 pt-44 pb-28 md:pb-36">

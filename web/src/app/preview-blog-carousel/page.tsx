@@ -1,17 +1,18 @@
 import { BlogCarousel } from "@/components/ui/BlogCarousel";
-import { blogPosts, CAROUSEL_POST_COUNT } from "@/lib/content";
+import { getBlogs } from "@/lib/api";
+import { CAROUSEL_POST_COUNT } from "@/lib/content";
 
 /**
  * Speelveld voor de blogcarrousel, naast de echte sectie (BlogTeaser).
- * Leest dezelfde data uit content.ts, zodat preview en site niet uit elkaar
+ * Leest dezelfde artikelen uit de API, zodat preview en site niet uit elkaar
  * lopen. De wijnrode variant is degene die op de homepage staat.
  */
-const items = blogPosts.slice(0, CAROUSEL_POST_COUNT).map((post) => ({
-  ...post,
-  href: post.body?.length ? `/blog/${post.slug}` : undefined,
-}));
+export default async function PreviewBlogCarouselPage() {
+  const items = (await getBlogs()).slice(0, CAROUSEL_POST_COUNT).map((post) => ({
+    ...post,
+    href: post.body?.length ? `/blog/${post.slug}` : undefined,
+  }));
 
-export default function PreviewBlogCarouselPage() {
   return (
     <main className="pt-[92px]">
       <section className="bg-white px-5 py-24 md:px-10 md:py-32">

@@ -8,7 +8,7 @@
  * sessionStorage staat in een try/catch, want in de privemodus van iOS gooit
  * de enkele aanroep al een SecurityError en dan valt de hele pagina om.
  */
-import type { Product, SiteContent } from "@/lib/api";
+import type { BlogPost, Product, SiteContent } from "@/lib/api";
 
 const SLEUTEL = "veramiek-beheer-token";
 
@@ -131,6 +131,29 @@ export function bewerkProduct(id: string, product: Partial<Product>): Promise<Pr
 
 export function verwijderProduct(id: string): Promise<{ ok: true }> {
   return verzoek<{ ok: true }>(`/admin/products/${id}`, { method: "DELETE" });
+}
+
+/** Alle blogartikelen, dus ook de niet-zichtbare. */
+export function haalBlogs(): Promise<BlogPost[]> {
+  return verzoek<BlogPost[]>("/admin/blogs");
+}
+
+export function maakBlog(blog: Partial<BlogPost>): Promise<BlogPost> {
+  return verzoek<BlogPost>("/admin/blogs", {
+    method: "POST",
+    body: JSON.stringify(blog),
+  });
+}
+
+export function bewerkBlog(id: string, blog: Partial<BlogPost>): Promise<BlogPost> {
+  return verzoek<BlogPost>(`/admin/blogs/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(blog),
+  });
+}
+
+export function verwijderBlog(id: string): Promise<{ ok: true }> {
+  return verzoek<{ ok: true }>(`/admin/blogs/${id}`, { method: "DELETE" });
 }
 
 export function haalContent(): Promise<SiteContent> {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { BlogPost } from "@/lib/content";
+import type { BlogPost } from "@/lib/api";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 const WAVE_VIEWBOX_WIDTH = 1000;

@@ -417,3 +417,18 @@
 .bt-reduced-motion * {
   transition: none !important;
 }
+
+/*
+ * Beheerscherm (/beheer). Geen galeriepagina maar een werkscherm, en Gruppo
+ * leest daar slecht: dun, breed, en op 19px onnodig groot voor een formulier
+ * van vijftien velden dat wekelijks ingevuld wordt. Binnen dit vlak dus een
+ * systeemletter. De koppen houden Playfair via font-display, zodat het scherm
+ * nog steeds bij Veramiek hoort.
+ */
+.beheer {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}

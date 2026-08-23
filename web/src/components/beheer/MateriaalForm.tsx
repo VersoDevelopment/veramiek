@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Field, TextAreaField } from "@/components/ui/Field";
 import type { SiteContent } from "@/lib/api";
 import { BeheerFout, bewaarContent, haalContent } from "@/lib/beheer";
+import { Blok, Knop, Tekstvlak, Veld } from "./Veld";
 
 type Materiaal = NonNullable<SiteContent["material"]>;
 
@@ -74,76 +74,70 @@ export function MateriaalForm() {
   }
 
   if (laden) {
-    return <p className="py-10 text-base text-wine/70">Bezig met laden...</p>;
+    return (
+      <p className="py-10 text-[0.95rem] text-wine/60">Bezig met laden...</p>
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-8">
-      <p className="text-base text-wine/70">
-        Dit hoef je maar een keer in te vullen. Het verschijnt op de pagina van
-        elk product, onder de gegevens van het stuk zelf.
-      </p>
-
-      <Field
-        id="m-klei"
-        name="klei"
-        label="Klei"
-        value={waarden.clay ?? ""}
-        onChange={(v) => zet("clay", v)}
-        placeholder="wit steengoed"
-      />
-
-      <div className="grid gap-8 sm:grid-cols-3">
-        <Field
-          id="m-vaatwasser"
-          name="vaatwasser"
-          label="Vaatwasser"
-          value={waarden.dishwasher ?? ""}
-          onChange={(v) => zet("dishwasher", v)}
-          placeholder="ja"
-        />
-        <Field
-          id="m-magnetron"
-          name="magnetron"
-          label="Magnetron"
-          value={waarden.microwave ?? ""}
-          onChange={(v) => zet("microwave", v)}
-          placeholder="ja"
-        />
-        <Field
-          id="m-oven"
-          name="oven"
-          label="Oven"
-          value={waarden.oven ?? ""}
-          onChange={(v) => zet("oven", v)}
-          placeholder="nee"
-        />
-      </div>
-
-      <TextAreaField
-        id="m-onderhoud"
-        name="onderhoud"
-        label="Hoe houdt iemand het mooi"
-        rows={3}
-        value={waarden.maintenance ?? ""}
-        onChange={(v) => zet("maintenance", v)}
-        placeholder="Mag in de vaatwasser, maar met de hand afwassen houdt de kleur langer diep."
-      />
-
-      <div aria-live="polite" className="min-h-[1.5rem]">
-        {fout && <p className="text-base text-wine">{fout}</p>}
-        {bewaard && !fout && (
-          <p className="text-base text-wine/70">Opgeslagen.</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        disabled={bezig}
-        className="inline-flex cursor-pointer items-center rounded-full bg-wine px-10 py-4 text-lg tracking-[0.03em] text-white transition-opacity duration-300 hover:opacity-85 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <Blok
+        titel="Materiaal en gebruik"
+        uitleg="Een keer invullen. Dit verschijnt op de pagina van elk product, onder de gegevens van het stuk zelf."
       >
-        {bezig ? "Opslaan..." : "Opslaan"}
-      </button>
+        <Veld
+          id="m-klei"
+          label="Klei"
+          waarde={waarden.clay ?? ""}
+          onChange={(v) => zet("clay", v)}
+          placeholder="wit steengoed"
+        />
+
+        <div className="grid gap-5 sm:grid-cols-3">
+          <Veld
+            id="m-vaatwasser"
+            label="Vaatwasser"
+            waarde={waarden.dishwasher ?? ""}
+            onChange={(v) => zet("dishwasher", v)}
+            placeholder="ja"
+          />
+          <Veld
+            id="m-magnetron"
+            label="Magnetron"
+            waarde={waarden.microwave ?? ""}
+            onChange={(v) => zet("microwave", v)}
+            placeholder="ja"
+          />
+          <Veld
+            id="m-oven"
+            label="Oven"
+            waarde={waarden.oven ?? ""}
+            onChange={(v) => zet("oven", v)}
+            placeholder="nee"
+          />
+        </div>
+
+        <Tekstvlak
+          id="m-onderhoud"
+          label="Hoe houdt iemand het mooi"
+          regels={3}
+          waarde={waarden.maintenance ?? ""}
+          onChange={(v) => zet("maintenance", v)}
+          placeholder="Mag in de vaatwasser, maar met de hand afwassen houdt de kleur langer diep."
+        />
+      </Blok>
+
+      <div className="flex items-center gap-4">
+        <Knop type="submit" soort="vol" disabled={bezig}>
+          {bezig ? "Opslaan..." : "Opslaan"}
+        </Knop>
+        <div aria-live="polite">
+          {fout && <span className="text-[0.9rem] text-wine">{fout}</span>}
+          {bewaard && !fout && (
+            <span className="text-[0.9rem] text-wine/60">Opgeslagen.</span>
+          )}
+        </div>
+      </div>
     </form>
   );
 }

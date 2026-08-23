@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function BeheerPage() {
   return (
-    <div className="min-h-dvh bg-ivory text-wine">
+    <div className="beheer min-h-dvh bg-[#faf7f2] text-wine">
       <BeheerApp />
     </div>
   );

@@ -19,6 +19,7 @@ const CONTENT_F   = path.join(DATA_DIR, 'site_content.json');
 const WORKSHOPS_F = path.join(DATA_DIR, 'workshops.json');
 const BOOKINGS_F  = path.join(DATA_DIR, 'bookings.json');
 const BLOCKED_F   = path.join(DATA_DIR, 'blocked_dates.json');
+const BLOGS_F     = path.join(DATA_DIR, 'blogs.json');
 const TOTP_F      = path.join(DATA_DIR, 'totp_secret.txt');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
@@ -35,6 +36,17 @@ if (fs.existsSync(PRODUCTS_F)) {
 }
 function saveProducts() {
   fs.writeFileSync(PRODUCTS_F, JSON.stringify(products, null, 2));
+}
+
+// ── Blogs ──
+let blogs = [];
+if (fs.existsSync(BLOGS_F)) {
+  try { blogs = JSON.parse(fs.readFileSync(BLOGS_F, 'utf8')); } catch (_) {}
+} else {
+  fs.writeFileSync(BLOGS_F, '[]');
+}
+function saveBlogs() {
+  fs.writeFileSync(BLOGS_F, JSON.stringify(blogs, null, 2));
 }
 
 // ── Site content ──
@@ -513,6 +525,110 @@ app.delete('/admin/products/:id', auth, (req, res) => {
   if (idx === -1) return res.status(404).json({ error: 'Product niet gevonden' });
   products.splice(idx, 1);
   saveProducts();
+  res.json({ ok: true });
+});
+
+// ── Blogs ──
+/*
+ * Een slug moet in een URL passen en uniek zijn: hij bepaalt /blog/<slug>.
+ * Vera typt een titel, wij maken daar een net pad van als ze zelf niets
+ * invult. Botst hij met een bestaande, dan komt er een cijfer achter, want
+ * twee artikelen op hetzelfde adres betekent dat er een onbereikbaar wordt.
+ */
+function maakSlug(tekst) {
+  return String(tekst || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+function vrijeSlug(gewenst, titel, eigenId) {
+  const basis = maakSlug(gewenst) || maakSlug(titel) || 'artikel';
+  let slug = basis;
+  let n = 2;
+  while (blogs.some(b => b.slug === slug && b.id !== eigenId)) {
+    slug = basis + '-' + n;
+    n += 1;
+  }
+  return slug;
+}
+
+function bouwBlog(body, id, bestaand) {
+  const alinea = Array.isArray(body.body)
+    ? body.body.map(t => String(t).trim()).filter(Boolean)
+    : [];
+  const gallerij = Array.isArray(body.gallery)
+    ? body.gallery
+        .filter(g => g && typeof g.src === 'string' && FOTO_OK.test(g.src))
+        .map(g => ({ src: g.src, alt: tekst(g.alt, 200) }))
+    : [];
+  return {
+    id,
+    slug: vrijeSlug(body.slug, body.title, id),
+    title: tekst(body.title, 140),
+    excerpt: tekst(body.excerpt, 400),
+    meta: tekst(body.meta, 80),
+    image: typeof body.image === 'string' && FOTO_OK.test(body.image) ? body.image : '',
+    alt: tekst(body.alt, 200),
+    /* Alleen een echte datum, anders liever leeg: een geschatte datum komt in
+       de zoekresultaten als feit te staan. */
+    datePublished: /^\d{4}-\d{2}-\d{2}$/.test(String(body.datePublished || '').trim())
+      ? String(body.datePublished).trim()
+      : '',
+    body: alinea,
+    gallery: gallerij,
+    published: body.published === true,
+    /* Opmaakdetails staan niet in het beheerscherm maar mogen ook niet
+       verdwijnen bij een bewerking. */
+    tinted: body.tinted !== undefined ? body.tinted === true : (bestaand ? bestaand.tinted === true : false),
+    objectPosition: body.objectPosition !== undefined
+      ? tekst(body.objectPosition, 40)
+      : (bestaand ? bestaand.objectPosition || '' : '')
+  };
+}
+
+/*
+ * Publiek: alles wat op zichtbaar staat, in de volgorde waarin het is
+ * opgeslagen. Bewust geen sortering op datum: de datums zijn grotendeels leeg
+ * en dan zou de volgorde omslaan zodra er een wordt ingevuld.
+ *
+ * Let op het verschil tussen zichtbaar en af: een artikel zonder alinea's
+ * verschijnt wel als tegel op de homepage maar krijgt geen eigen pagina. Dat
+ * is hoe de site het al deed en dat blijft zo.
+ */
+app.get('/blogs', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.json(blogs.filter(b => b.published));
+});
+
+app.get('/admin/blogs', auth, (req, res) => res.json(blogs));
+
+app.post('/admin/blogs', auth, (req, res) => {
+  const body = req.body || {};
+  if (!body.title) return res.status(400).json({ error: 'Een titel is verplicht' });
+  const blog = bouwBlog(body, crypto.randomUUID(), null);
+  blogs.push(blog);
+  saveBlogs();
+  res.json(blog);
+});
+
+app.put('/admin/blogs/:id', auth, (req, res) => {
+  const idx = blogs.findIndex(b => b.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Artikel niet gevonden' });
+  const body = req.body || {};
+  if (!body.title) return res.status(400).json({ error: 'Een titel is verplicht' });
+  blogs[idx] = bouwBlog(body, blogs[idx].id, blogs[idx]);
+  saveBlogs();
+  res.json(blogs[idx]);
+});
+
+app.delete('/admin/blogs/:id', auth, (req, res) => {
+  const idx = blogs.findIndex(b => b.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Artikel niet gevonden' });
+  blogs.splice(idx, 1);
+  saveBlogs();
   res.json({ ok: true });
 });
 

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { Field, TextAreaField } from "@/components/ui/Field";
 import { SHOP_CATEGORIES, type Product } from "@/lib/api";
 import { BeheerFout, bewerkProduct, maakProduct, uploadFoto } from "@/lib/beheer";
+import { Blok, FotoKiezer, Keuze, Knop, Tekstvlak, Veld } from "./Veld";
 
 type Props = {
   product: Product | null;
@@ -124,138 +124,120 @@ export function ProductForm({ product, onKlaar, onAnnuleer }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-10">
-      <section className="space-y-8">
-        <Field
+    <form onSubmit={handleSubmit} className="space-y-5 pb-28">
+      <Blok titel="Het product">
+        <Veld
           id="p-naam"
-          name="naam"
           label="Naam"
-          required
-          value={waarden.name}
+          verplicht
+          waarde={waarden.name}
           onChange={(v) => zet("name", v)}
         />
-        <div className="grid gap-8 sm:grid-cols-2">
-          <Field
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Veld
             id="p-prijs"
-            name="prijs"
             label="Prijs in euro"
-            value={waarden.price}
+            waarde={waarden.price}
             onChange={(v) => zet("price", v)}
             inputMode="numeric"
             placeholder="14,95"
           />
-          <Field
+          <Veld
             id="p-voorraad"
-            name="voorraad"
             label="Voorraad"
-            value={waarden.stock}
+            waarde={waarden.stock}
             onChange={(v) => zet("stock", v)}
             inputMode="numeric"
-            placeholder="leeg = niet geteld"
+            placeholder="3"
+            uitleg="Leeg laten betekent: niet geteld."
           />
         </div>
-        <div className="grid gap-8 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="p-categorie"
-              className="text-sm tracking-[0.14em] text-wine/70 uppercase"
-            >
-              Categorie
-            </label>
-            <select
-              id="p-categorie"
-              value={waarden.category}
-              onChange={(e) => zet("category", e.target.value)}
-              className="mt-2 w-full border-b border-wine/25 bg-transparent pb-2 text-base text-wine focus:border-wine focus:outline-none"
-            >
-              {SHOP_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Field
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Keuze
+            id="p-categorie"
+            label="Categorie"
+            waarde={waarden.category}
+            onChange={(v) => zet("category", v)}
+            opties={SHOP_CATEGORIES}
+          />
+          <Veld
             id="p-collectie"
-            name="collectie"
             label="Collectie"
-            value={waarden.collection}
+            waarde={waarden.collection}
             onChange={(v) => zet("collection", v)}
             placeholder="Zeeuws Zand"
           />
         </div>
-      </section>
+      </Blok>
 
-      <section className="space-y-8 border-t border-wine/10 pt-10">
-        <h3 className="text-sm tracking-[0.14em] text-wine/50 uppercase">
-          Op de productpagina
-        </h3>
-        <TextAreaField
+      <Blok
+        titel="Teksten"
+        uitleg="Dit staat op de productpagina en in Google."
+      >
+        <Tekstvlak
           id="p-desc"
-          name="desc"
           label="Korte omschrijving"
-          rows={2}
-          value={waarden.desc}
+          regels={2}
+          waarde={waarden.desc}
           onChange={(v) => zet("desc", v)}
-          placeholder="Een of twee zinnen, dit staat ook in Google."
+          placeholder="Een of twee zinnen."
         />
-        <TextAreaField
+        <Tekstvlak
           id="p-story"
-          name="story"
           label="Het verhaal bij dit stuk"
-          rows={6}
-          value={waarden.story}
+          regels={7}
+          waarde={waarden.story}
           onChange={(v) => zet("story", v)}
           placeholder="Waarom is dit stuk bijzonder, hoe is het gemaakt, waar past het bij."
+          uitleg="Hoe uitgebreider, hoe beter de pagina in Google komt. Mik op honderd woorden."
         />
-        <div className="grid gap-8 sm:grid-cols-2">
-          <Field
+      </Blok>
+
+      <Blok
+        titel="Gegevens van het stuk"
+        uitleg="Wat leeg blijft, verschijnt niet op de pagina."
+      >
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Veld
             id="p-maat"
-            name="maat"
             label="Afmeting"
-            value={waarden.size}
+            waarde={waarden.size}
             onChange={(v) => zet("size", v)}
             placeholder="9 x 8 cm"
           />
-          <Field
+          <Veld
             id="p-inhoud"
-            name="inhoud"
             label="Inhoud"
-            value={waarden.volume}
+            waarde={waarden.volume}
             onChange={(v) => zet("volume", v)}
             placeholder="300 ml"
           />
         </div>
-        <Field
+        <Veld
           id="p-glazuur"
-          name="glazuur"
           label="Glazuur"
-          value={waarden.glaze}
+          waarde={waarden.glaze}
           onChange={(v) => zet("glaze", v)}
           placeholder="zandbeige, mat"
         />
-        <Field
+        <Veld
           id="p-waarvoor"
-          name="waarvoor"
           label="Waar is het voor"
-          value={waarden.purpose}
+          waarde={waarden.purpose}
           onChange={(v) => zet("purpose", v)}
           placeholder="Voor je ochtendkoffie."
         />
-        <Field
+        <Veld
           id="p-badge"
-          name="badge"
           label="Labeltje"
-          value={waarden.badge}
+          waarde={waarden.badge}
           onChange={(v) => zet("badge", v)}
           placeholder="Nieuw"
+          uitleg="Klein tekstje op de foto in de webshop."
         />
-      </section>
+      </Blok>
 
-      <section className="space-y-5 border-t border-wine/10 pt-10">
-        <h3 className="text-sm tracking-[0.14em] text-wine/50 uppercase">
-          Foto&apos;s
-        </h3>
+      <Blok titel="Foto's">
         {waarden.images.length > 0 && (
           <ul className="flex flex-wrap gap-3">
             {waarden.images.map((url) => (
@@ -266,12 +248,12 @@ export function ProductForm({ product, onKlaar, onAnnuleer }: Props) {
                   width={96}
                   height={96}
                   unoptimized
-                  className="h-24 w-24 rounded object-cover"
+                  className="h-24 w-24 rounded-md object-cover"
                 />
                 <button
                   type="button"
                   onClick={() => verwijderFoto(url)}
-                  className="absolute -top-2 -right-2 h-7 w-7 cursor-pointer rounded-full bg-wine text-sm text-white"
+                  className="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-wine text-[0.8rem] leading-none text-white"
                   aria-label="Deze foto weghalen"
                 >
                   &times;
@@ -280,49 +262,41 @@ export function ProductForm({ product, onKlaar, onAnnuleer }: Props) {
             ))}
           </ul>
         )}
-        <input
-          ref={bestandKiezer}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          onChange={handleUpload}
-          className="block text-base text-wine/70 file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-wine/10 file:px-5 file:py-2 file:text-base file:text-wine"
+        <FotoKiezer
+          id="p-foto"
+          label="Foto toevoegen"
+          bezig={uploadBezig}
+          onKies={handleUpload}
+          invoerRef={bestandKiezer}
         />
-        {uploadBezig && (
-          <p className="text-base text-wine/70">Bezig met uploaden...</p>
-        )}
-      </section>
+      </Blok>
 
-      <section className="border-t border-wine/10 pt-10">
-        <label className="flex cursor-pointer items-center gap-3 text-base text-wine">
+      <Blok titel="Zichtbaarheid">
+        <label className="flex cursor-pointer items-center gap-3 text-[0.95rem] text-wine">
           <input
             type="checkbox"
             checked={waarden.available}
             onChange={(e) => zet("available", e.target.checked)}
-            className="h-5 w-5 accent-wine"
+            className="h-4 w-4 accent-wine"
           />
           Zichtbaar in de webshop
         </label>
-      </section>
+      </Blok>
 
-      <div aria-live="polite" className="min-h-[1.5rem]">
-        {fout && <p className="text-base text-wine">{fout}</p>}
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        <button
-          type="submit"
-          disabled={bezig}
-          className="inline-flex cursor-pointer items-center rounded-full bg-wine px-10 py-4 text-lg tracking-[0.03em] text-white transition-opacity duration-300 hover:opacity-85 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {bezig ? "Opslaan..." : "Opslaan"}
-        </button>
-        <button
-          type="button"
-          onClick={onAnnuleer}
-          className="cursor-pointer text-base text-wine/70 underline decoration-sage decoration-1 underline-offset-4 transition-opacity hover:opacity-100"
-        >
-          Annuleren
-        </button>
+      {/* Opslaan staat vast onderin: het formulier is lang en anders moet ze
+          na elke wijziging helemaal naar beneden scrollen. */}
+      <div className="fixed inset-x-0 bottom-0 border-t border-wine/12 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-3xl items-center gap-3 px-5 py-3">
+          <Knop type="submit" soort="vol" disabled={bezig}>
+            {bezig ? "Opslaan..." : "Opslaan"}
+          </Knop>
+          <Knop type="button" onClick={onAnnuleer}>
+            Annuleren
+          </Knop>
+          <div aria-live="polite" className="flex-1 text-right">
+            {fout && <span className="text-[0.9rem] text-wine">{fout}</span>}
+          </div>
+        </div>
       </div>
     </form>
   );

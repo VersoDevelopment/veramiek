@@ -138,6 +138,51 @@ export async function getProduct(id: string): Promise<Product | null> {
 
 /* ── Site-content ──────────────────────────────────────────────────── */
 
+/**
+ * Een blogartikel zoals de API het bewaart.
+ *
+ * Let op het verschil tussen twee soorten "af": `published` bepaalt of het
+ * artikel op de site verschijnt, `body` of het een eigen pagina krijgt. Een
+ * zichtbaar artikel zonder alinea's is een aankondiging op de homepage waar
+ * de tekst nog voor moet komen. Zo deed de site het al voordat blogs in het
+ * beheerscherm kwamen.
+ */
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  /** Klein bovenschrift, bv. "Het begin, 2025". */
+  meta: string;
+  image: string;
+  alt: string;
+  /** YYYY-MM-DD, leeg als er geen echte datum bekend is. */
+  datePublished?: string;
+  body?: string[];
+  gallery?: { src: string; alt: string; objectPosition?: string }[];
+  published?: boolean;
+  /** Wine-duotoon over het beeld, opmaakdetail uit de oorspronkelijke opzet. */
+  tinted?: boolean;
+  /** Uitsnedepunt voor staande foto's in een liggend kader. */
+  objectPosition?: string;
+};
+
+/** Alle zichtbare blogartikelen; lege lijst bij een fout. */
+export async function getBlogs(): Promise<BlogPost[]> {
+  try {
+    const res = await fetch(apiUrl("/blogs"), { cache: "no-store" });
+    if (!res.ok) return [];
+    return (await res.json()) as BlogPost[];
+  } catch {
+    return [];
+  }
+}
+
+/** Alleen de artikelen met een geschreven tekst; die krijgen een eigen pagina. */
+export function metArtikel(posts: BlogPost[]): BlogPost[] {
+  return posts.filter((post) => post.body?.length);
+}
+
 export type SiteContent = {
   hero?: Record<string, string>;
   about?: Record<string, string>;

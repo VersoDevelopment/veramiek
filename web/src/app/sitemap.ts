@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getProducts } from "@/lib/api";
-import { publishedPosts } from "@/lib/content";
+import { getBlogs, getProducts, metArtikel } from "@/lib/api";
 import { CATEGORY_PAGES, siteUrl } from "@/lib/seo";
 
 /**
@@ -12,8 +11,8 @@ import { CATEGORY_PAGES, siteUrl } from "@/lib/seo";
  * iedere aanvraag de huidige tijd mee en beweerde net gewijzigd te zijn. Google
  * vergelijkt dat met wat er werkelijk verandert, ziet de tegenspraak en negeert
  * daarna de lastmod van de hele site. Een ontbrekende datum is een eerlijk
- * "onbekend" en is beter dan een datum die altijd liegt. Zodra de API of de
- * blogposts een echte wijzigingsdatum bijhouden, kan hij hier per URL terug.
+ * "onbekend" en is beter dan een datum die altijd liegt. Zodra de API een echte
+ * wijzigingsdatum bijhoudt, kan hij hier per URL terug.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -38,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const posts: MetadataRoute.Sitemap = publishedPosts().map((post) => ({
+  const posts: MetadataRoute.Sitemap = metArtikel(await getBlogs()).map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
     changeFrequency: "yearly",
     priority: 0.5,

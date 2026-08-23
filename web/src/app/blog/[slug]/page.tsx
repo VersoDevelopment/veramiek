@@ -3,19 +3,24 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { RevealSection } from "@/components/ui/RevealSection";
-import { findPost, publishedPosts } from "@/lib/content";
+import { getBlogs, metArtikel } from "@/lib/api";
 import { jsonLdScript } from "@/lib/jsonLd";
-import { breadcrumbJsonLd, siteUrl } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, siteUrl } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return publishedPosts().map((post) => ({ slug: post.slug }));
+/*
+ * Geen generateStaticParams meer: de artikelen komen nu uit de API en een
+ * nieuw stuk moet meteen bereikbaar zijn, zonder de site opnieuw te bouwen.
+ */
+async function vindArtikel(slug: string) {
+  const posts = metArtikel(await getBlogs());
+  return posts.find((post) => post.slug === slug);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = findPost(slug);
+  const post = await vindArtikel(slug);
   if (!post) return {};
   return {
     title: post.title,
@@ -33,14 +38,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = findPost(slug);
+  const post = await vindArtikel(slug);
   if (!post) notFound();
 
   /**
    * Article-markup. Ontbrak volledig: de artikelen waren voor Google gewoon
    * pagina's, zonder auteur, uitgever of onderwerp.
    *
-   * `datePublished` staat er alleen bij als het in content.ts is ingevuld.
+   * `datePublished` staat er alleen bij als het in het beheerscherm is
+   * ingevuld.
    * Google toont graag een datum, maar een verzonnen datum is erger dan geen
    * datum: die belandt in het zoekresultaat en klopt dan niet.
    */
@@ -49,7 +55,7 @@ export default async function BlogPostPage({ params }: Props) {
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: `${siteUrl}${post.image}`,
+    image: absoluteUrl(post.image),
     inLanguage: "nl-NL",
     author: { "@type": "Person", name: "Vera" },
     publisher: { "@id": `${siteUrl}/#veramiek` },

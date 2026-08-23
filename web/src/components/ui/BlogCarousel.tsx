@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { BlogPost } from "@/lib/content";
+import type { BlogPost } from "@/lib/api";
 import { luxEase } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
@@ -97,7 +97,10 @@ export function BlogCarousel({
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const total = posts.length;
-  const active = posts[activeIndex];
+  /* Bij een lege of gekrompen lijst zou posts[activeIndex] undefined zijn en
+     verderop op .meta stuklopen. Terugvallen op de eerste is genoeg; is die er
+     ook niet, dan rendert de component onderaan niets. */
+  const active = posts[activeIndex] ?? posts[0];
 
   useEffect(() => {
     const element = imageContainerRef.current;
@@ -140,6 +143,10 @@ export function BlogCarousel({
       goTo(1);
     }
   };
+
+  /* Na alle hooks, zodat de volgorde gelijk blijft: zonder artikelen valt er
+     niets te tonen. Gebeurt in de praktijk alleen als de API wegvalt. */
+  if (!active) return null;
 
   function imageStyle(index: number): React.CSSProperties {
     const gap = containerWidth * CARD_OFFSET;
