@@ -155,6 +155,12 @@
   .prijs { font-size: 0.82rem; color: var(--ink-faint); }
 
   .velden { display: flex; flex-direction: column; gap: 0.65rem; }
+  /* Voorraad is het enige veld dat blijft veranderen, dus staat het bovenaan
+     en scheidt een streepje het van de vaste gegevens. Smal, er past maar een
+     getal in. */
+  .voorraad { padding-bottom: 0.65rem; border-bottom: 1px dashed var(--rule); }
+  .voorraad input { max-width: 7rem; }
+
   .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
   @media (max-width: 26rem) { .duo { grid-template-columns: 1fr; } }
 
@@ -196,6 +202,10 @@
     <p>
       Klaar of tussendoor even stoppen? Druk onderaan op <strong>Kopieer
       alles</strong> en plak het in een appje naar Kenny.
+    </p>
+    <p>
+      Bovenaan elk stuk staat hoeveel je er nu van hebt liggen. Dat mag je
+      later opnieuw doorgeven zodra er iets verkocht of bijgemaakt is.
     </p>
     <p class="tip">
       Weet je iets niet? Sla over. Een leeg vakje is prima, een gok niet, want
@@ -268,6 +278,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-pot-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-pot-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-pot-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-pot-collectie" data-veld="collectie">
@@ -302,6 +316,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-berry-bowl-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-berry-bowl-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-berry-bowl-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-berry-bowl-collectie" data-veld="collectie">
@@ -336,6 +354,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-kopjes-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-kopjes-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-kopjes-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -366,6 +388,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-theemok-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-theemok-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-theemok-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -396,6 +422,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-gebaksbordje-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-gebaksbordje-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-gebaksbordje-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-gebaksbordje-collectie" data-veld="collectie">
@@ -430,6 +460,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-diepbord-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-diepbord-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-diepbord-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -460,6 +494,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-dinerbord-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-dinerbord-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-dinerbord-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-dinerbord-collectie" data-veld="collectie">
@@ -494,6 +532,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-kom-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-kom-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-kom-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -524,6 +566,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-chip-dip-zeeuws-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-chip-dip-zeeuws-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-chip-dip-zeeuws-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -554,6 +600,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-chip-dip-koraal-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-chip-dip-koraal-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-chip-dip-koraal-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -584,6 +634,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-chip-dip-boeren-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-chip-dip-boeren-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-chip-dip-boeren-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -614,6 +668,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-matcha-set-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-matcha-set-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-matcha-set-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -644,6 +702,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-matcha-set-boeren-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-matcha-set-boeren-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-matcha-set-boeren-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -674,6 +736,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-lepelhouder-koraal-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-lepelhouder-koraal-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-lepelhouder-koraal-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -704,6 +770,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-lepelhouder-zeeuws-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-lepelhouder-zeeuws-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-lepelhouder-zeeuws-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -734,6 +804,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-bubble-cups-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-bubble-cups-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-bubble-cups-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -764,6 +838,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-bubble-cups-zeeuws-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-bubble-cups-zeeuws-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-bubble-cups-zeeuws-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -794,6 +872,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-lunchbord-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-lunchbord-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-lunchbord-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -824,6 +906,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-schaal-koraal-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-schaal-koraal-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-schaal-koraal-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -854,6 +940,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-schaal-zeeuws-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-schaal-zeeuws-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-schaal-zeeuws-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -884,6 +974,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-kommen-boeren-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-kommen-boeren-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-kommen-boeren-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -914,6 +1008,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-schaaltjes-boeren-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-schaaltjes-boeren-voorraad" data-veld="voorraad">
+          </div>
             <div class="duo">
           <div class="vraag">
             <label for="p-schaaltjes-boeren-maat">Hoe groot is het? <span class="hint">hoogte x breedte in cm</span></label>
@@ -944,6 +1042,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-asbak-zeeuws-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-asbak-zeeuws-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-asbak-zeeuws-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-asbak-zeeuws-collectie" data-veld="collectie">
@@ -978,6 +1080,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-asbak-groen-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-asbak-groen-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-asbak-groen-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-asbak-groen-collectie" data-veld="collectie">
@@ -1012,6 +1118,10 @@
             <div class="vink" aria-hidden="true">&#10003;</div>
           </div>
           <div class="velden">
+          <div class="vraag voorraad">
+            <label for="p-schaaltje-2-voorraad">Hoeveel heb je er nu van? <span class="hint">aantal stuks dat klaar ligt, 0 als het op is</span></label>
+            <input type="text" inputmode="numeric" id="p-schaaltje-2-voorraad" data-veld="voorraad">
+          </div>
           <div class="vraag">
             <label for="p-schaaltje-2-collectie">Bij welke collectie hoort dit? <span class="hint">Zeeuws Zand, Kust Koraal of Boeren Bontjes</span></label>
             <input type="text" id="p-schaaltje-2-collectie" data-veld="collectie">
@@ -1130,7 +1240,8 @@
   /* ── Voortgang ── */
   function ingevuld(id) {
     var d = data[id] || {};
-    return String(d.waarvoor || "").trim() !== "" && String(d.bijzonder || "").trim() !== "";
+    return String(d.voorraad || "").trim() !== "" && String(d.waarvoor || "").trim() !== ""
+      && String(d.bijzonder || "").trim() !== "";
   }
 
   function tel() {
@@ -1159,7 +1270,7 @@
       var naam = kaart.getAttribute("data-naam");
       var d = data[id] || {};
       var eigen = [];
-      [["collectie", "Collectie"], ["maat", "Groot"], ["inhoud", "Inhoud"],
+      [["voorraad", "Voorraad"], ["collectie", "Collectie"], ["maat", "Groot"], ["inhoud", "Inhoud"],
        ["waarvoor", "Waarvoor"], ["bijzonder", "Bijzonder"]].forEach(function (paar) {
         if (String(d[paar[0]] || "").trim()) eigen.push(paar[1] + ": " + String(d[paar[0]]).trim());
       });
