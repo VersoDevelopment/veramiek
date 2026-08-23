@@ -76,6 +76,16 @@ const DEFAULT_CONTENT = {
   },
   footer: {
     tagline: 'Handgemaakt keramiek met ziel, elk stuk een verhaal, met de hand gevormd en met het hart gebakken.'
+  },
+  // Geldt voor het hele assortiment, dus een keer invullen in plaats van bij
+  // 25 producten. De productpagina toont dit onder de eigen specificaties.
+  material: {
+    clay: '',
+    glaze: '',
+    dishwasher: '',
+    microwave: '',
+    oven: '',
+    maintenance: ''
   }
 };
 
@@ -428,24 +438,59 @@ app.get('/content', (req, res) => {
 });
 
 // ── Admin: producten CRUD ──
+/*
+ * POST en PUT bouwden allebei hun eigen productobject. Dat is nu een functie,
+ * anders landt een nieuw veld in de een wel en in de ander niet.
+ *
+ * Meteen een bug eruit: de fotofilter liet alleen http-URL's door, terwijl
+ * alle 25 bestaande producten een lokaal pad hebben (/images/producten/...).
+ * Een product bewerken wiste dus zijn foto. Lokale paden mogen er nu bij,
+ * maar alleen uit die twee mappen, zodat er geen willekeurige waarde in de
+ * data belandt.
+ */
+const FOTO_OK = /^(https?:\/\/|\/images\/|\/uploads\/)/;
+
+function tekst(waarde, max) {
+  return String(waarde == null ? '' : waarde).trim().slice(0, max);
+}
+
+/* Leeg laten is iets anders dan nul: "niet geteld" mag geen "uitverkocht"
+   worden. Vandaar null in plaats van 0 als er niets is ingevuld. */
+function voorraadGetal(waarde) {
+  if (waarde === '' || waarde == null) return null;
+  const n = Math.floor(Number(waarde));
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function bouwProduct(body, id) {
+  return {
+    id,
+    name: tekst(body.name, 120),
+    desc: tekst(body.desc, 600),
+    price: Math.max(0, Number(body.price) || 0),
+    category: String(body.category || 'overige'),
+    collection: tekst(body.collection, 80),
+    badge: body.badge ? tekst(body.badge, 40) : null,
+    images: Array.isArray(body.images)
+      ? body.images.filter(u => typeof u === 'string' && FOTO_OK.test(u))
+      : [],
+    available: body.available !== false,
+    stock: voorraadGetal(body.stock),
+    size: tekst(body.size, 80),
+    volume: tekst(body.volume, 80),
+    purpose: tekst(body.purpose, 200),
+    story: tekst(body.story, 2000)
+  };
+}
+
 app.get('/admin/products', auth, (req, res) => {
   res.json(products);
 });
 
 app.post('/admin/products', auth, (req, res) => {
-  const { name, desc, price, category, collection, badge, images, available } = req.body || {};
-  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
-  const p = {
-    id: crypto.randomUUID(),
-    name: String(name).trim(),
-    desc: String(desc || '').trim(),
-    price: Math.max(0, Number(price) || 0),
-    category: String(category || 'overige'),
-    collection: collection ? String(collection).trim() : '',
-    badge: badge ? String(badge).trim() : null,
-    images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
-    available: available !== false
-  };
+  const body = req.body || {};
+  if (!body.name) return res.status(400).json({ error: 'Naam is verplicht' });
+  const p = bouwProduct(body, crypto.randomUUID());
   products.push(p);
   saveProducts();
   res.json(p);
@@ -454,19 +499,9 @@ app.post('/admin/products', auth, (req, res) => {
 app.put('/admin/products/:id', auth, (req, res) => {
   const idx = products.findIndex(p => p.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Product niet gevonden' });
-  const { name, desc, price, category, collection, badge, images, available } = req.body || {};
-  if (!name) return res.status(400).json({ error: 'Naam is verplicht' });
-  products[idx] = {
-    id: products[idx].id,
-    name: String(name).trim(),
-    desc: String(desc || '').trim(),
-    price: Math.max(0, Number(price) || 0),
-    category: String(category || 'overige'),
-    collection: collection ? String(collection).trim() : '',
-    badge: badge ? String(badge).trim() : null,
-    images: Array.isArray(images) ? images.filter(u => typeof u === 'string' && u.startsWith('http')) : [],
-    available: available !== false
-  };
+  const body = req.body || {};
+  if (!body.name) return res.status(400).json({ error: 'Naam is verplicht' });
+  products[idx] = bouwProduct(body, products[idx].id);
   saveProducts();
   res.json(products[idx]);
 });
@@ -481,12 +516,13 @@ app.delete('/admin/products/:id', auth, (req, res) => {
 
 // ── Admin: content bijwerken ──
 app.put('/admin/content', auth, (req, res) => {
-  const { hero, about, workshop, contact, footer } = req.body || {};
+  const { hero, about, workshop, contact, footer, material } = req.body || {};
   if (hero)     siteContent.hero     = { ...siteContent.hero,     ...hero };
   if (about)    siteContent.about    = { ...siteContent.about,    ...about };
   if (workshop) siteContent.workshop = { ...siteContent.workshop, ...workshop };
   if (contact)  siteContent.contact  = { ...siteContent.contact,  ...contact };
   if (footer)   siteContent.footer   = { ...siteContent.footer,   ...footer };
+  if (material) siteContent.material = { ...siteContent.material, ...material };
   saveContent();
   res.json(siteContent);
 });

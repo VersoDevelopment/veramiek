@@ -17,8 +17,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Winkelwagen heeft geen zoekwaarde; de preview-routes zijn werkpagina's.
-        disallow: ["/winkelwagen", "/preview-"],
+        // Winkelwagen heeft geen zoekwaarde; de preview-routes zijn werkpagina's
+        // en /beheer is het afgeschermde beheerscherm.
+        disallow: ["/winkelwagen", "/preview-", "/beheer"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

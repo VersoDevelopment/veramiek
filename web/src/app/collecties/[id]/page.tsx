@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductGallery } from "@/components/ui/ProductGallery";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { ProductSpecs } from "@/components/ui/ProductSpecs";
 import {
   formatPrice,
+  getContent,
   getProducts,
   normalizeCategory,
   type Product,
@@ -62,7 +64,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Params) {
   const { id } = await params;
-  const found = await loadProduct(id);
+  const [found, content] = await Promise.all([loadProduct(id), getContent()]);
 
   if (!found) notFound();
 
@@ -95,6 +97,8 @@ export default async function ProductPage({ params }: Params) {
       : undefined,
     sku: product.id,
     category: categorie,
+    material: content.material?.clay || undefined,
+    size: product.size || undefined,
     brand: { "@type": "Brand", name: "Veramiek" },
     offers: {
       "@type": "Offer",
@@ -178,9 +182,17 @@ export default async function ProductPage({ params }: Params) {
               </p>
             )}
 
+            {product.story && (
+              <p className="mt-6 max-w-[46ch] text-lg text-white/90">
+                {product.story}
+              </p>
+            )}
+
             <div className="mt-12">
               <AddToCartButton product={product} />
             </div>
+
+            <ProductSpecs product={product} material={content.material} />
 
             <p className="mt-10 max-w-[46ch] text-base opacity-70">
               Elk stuk is met de hand gemaakt, kleine verschillen in vorm, kleur

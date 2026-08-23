@@ -51,6 +51,16 @@ export type Product = {
   /** Absolute http(s)-URLs naar geüploade foto's, of lokale /images-paden bij seed. */
   images: string[];
   available?: boolean;
+  /** Aantal dat op voorraad ligt; null of undefined betekent niet geteld. */
+  stock?: number | null;
+  /** Afmeting zoals Vera 'm opgeeft, bv. "9 x 8 cm". */
+  size?: string;
+  /** Inhoud in ml, alleen bij iets om uit te eten of drinken. */
+  volume?: string;
+  /** Een zin over waar het voor is. */
+  purpose?: string;
+  /** Het langere verhaal bij het stuk; dit draagt de productpagina. */
+  story?: string;
 };
 
 /**
@@ -143,6 +153,15 @@ export type SiteContent = {
     tiktokHandle?: string;
   };
   footer?: Record<string, string>;
+  /** Geldt voor het hele assortiment, niet per product. */
+  material?: {
+    clay?: string;
+    glaze?: string;
+    dishwasher?: string;
+    microwave?: string;
+    oven?: string;
+    maintenance?: string;
+  };
 };
 
 /** Haalt de redactionele site-content op; leeg object bij een fout. */
