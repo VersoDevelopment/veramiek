@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Minus, Plus, X } from "lucide-react";
-import { useCart } from "./CartProvider";
+import { maxAantal, useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/api";
 import { menuTransition } from "@/lib/motion";
 import { useDialogFocus } from "@/lib/useDialogFocus";
@@ -119,6 +119,7 @@ export function CartDrawer() {
                             qty={item.qty}
                             onChange={(q) => setQty(item.id, q)}
                             label={item.name}
+                            max={maxAantal(item.stock)}
                           />
                           <span className="ml-auto text-base">
                             {formatPrice(item.price * item.qty)}
@@ -163,11 +164,14 @@ export function QtyStepper({
   onChange,
   label,
   tone = "dark",
+  max = Infinity,
 }: {
   qty: number;
   onChange: (qty: number) => void;
   label: string;
   tone?: "dark" | "light";
+  /** Hoogste aantal dat besteld kan worden; standaard geen grens. */
+  max?: number;
 }) {
   const border = tone === "light" ? "border-white/30" : "border-wine/25";
   const hover =
@@ -192,9 +196,10 @@ export function QtyStepper({
       </span>
       <button
         type="button"
-        onClick={() => onChange(qty + 1)}
+        onClick={() => onChange(Math.min(qty + 1, max))}
+        disabled={qty >= max}
         aria-label={`Meer ${label}`}
-        className={`inline-flex cursor-pointer items-center justify-center p-3.5 transition-colors ${hover}`}
+        className={`inline-flex cursor-pointer items-center justify-center p-3.5 transition-colors ${hover} disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent`}
       >
         <Plus size={16} strokeWidth={1.5} />
       </button>

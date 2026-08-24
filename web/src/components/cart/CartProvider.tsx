@@ -18,7 +18,21 @@ export type CartItem = {
   price: number;
   image: string | null;
   qty: number;
+  /**
+   * Hoeveel er van dit stuk lagen toen het in de winkelwagen ging. null of
+   * undefined betekent "niet geteld" en dus geen limiet.
+   *
+   * Deze waarde kan verouderen: de winkelwagen leeft in localStorage en kan
+   * dagen blijven staan. De winkelwagenpagina haalt daarom bij het openen de
+   * actuele voorraad op en trekt de aantallen zo nodig recht.
+   */
+  stock?: number | null;
 };
+
+/** Hoogste aantal dat je van dit stuk mag bestellen. */
+export function maxAantal(stock: number | null | undefined): number {
+  return typeof stock === "number" && stock > 0 ? stock : Infinity;
+}
 
 type CartContextValue = {
   items: CartItem[];
@@ -29,6 +43,12 @@ type CartContextValue = {
   add: (product: Product, qty?: number) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
+  /** Past aantallen aan op de actuele voorraad; geeft terug wat er veranderde. */
+  stemAfOpVoorraad: (producten: Product[]) => {
+    name: string;
+    van: number;
+    naar: number;
+  }[];
   clear: () => void;
   /** UI-state van de cart-drawer. */
   isOpen: boolean;
@@ -79,11 +99,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
        stond kan verouderde voorraad tonen. Dan hier alsnog weigeren, anders
        bestelt iemand iets wat er niet ligt. */
     if (isOpAanvraag(product)) return;
+    const max = maxAantal(product.stock);
     setItems((current) => {
       const existing = current.find((i) => i.id === product.id);
       if (existing) {
+        /* Niet stilzwijgend meer toevoegen dan er ligt. Vera heeft er maar
+           een, dus acht bestellen kan niet, ook niet in twee klikken. */
         return current.map((i) =>
-          i.id === product.id ? { ...i, qty: i.qty + qty } : i,
+          i.id === product.id
+            ? { ...i, qty: Math.min(i.qty + qty, max), stock: product.stock }
+            : i,
         );
       }
       return [
@@ -93,7 +118,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           name: product.name,
           price: product.price,
           image: product.images[0] ?? null,
-          qty,
+          qty: Math.min(qty, max),
+          stock: product.stock,
         },
       ];
     });
@@ -108,8 +134,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((current) =>
       qty <= 0
         ? current.filter((i) => i.id !== id)
-        : current.map((i) => (i.id === id ? { ...i, qty } : i)),
+        : current.map((i) =>
+            i.id === id ? { ...i, qty: Math.min(qty, maxAantal(i.stock)) } : i,
+          ),
     );
+  }, []);
+
+  /*
+   * Trekt de winkelwagen recht met de voorraad van dit moment. De winkelwagen
+   * kan dagen in localStorage staan; zonder deze stap bestelt iemand alsnog
+   * drie stuks waarvan er nog een ligt. Geeft terug wat er is aangepast, zodat
+   * de pagina het kan melden in plaats van stilletjes te wijzigen.
+   */
+  const stemAfOpVoorraad = useCallback((producten: Product[]) => {
+    const gewijzigd: { name: string; van: number; naar: number }[] = [];
+    setItems((current) =>
+      current.flatMap((item) => {
+        const product = producten.find((p) => p.id === item.id);
+        /* Product bestaat niet meer of staat niet meer in de webshop: laten
+           staan met de bekende voorraad, dan valt het tenminste op. */
+        if (!product) return [item];
+        const max = maxAantal(product.stock);
+        const nieuw = Math.min(item.qty, max);
+        if (product.stock === 0) {
+          gewijzigd.push({ name: item.name, van: item.qty, naar: 0 });
+          return [];
+        }
+        if (nieuw !== item.qty) {
+          gewijzigd.push({ name: item.name, van: item.qty, naar: nieuw });
+        }
+        return [{ ...item, stock: product.stock, qty: nieuw }];
+      }),
+    );
+    return gewijzigd;
   }, []);
 
   const clear = useCallback(() => setItems([]), []);
@@ -126,12 +183,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       add,
       remove,
       setQty,
+      stemAfOpVoorraad,
       clear,
       isOpen,
       open,
       close,
     };
-  }, [items, isOpen, add, remove, setQty, clear, open, close]);
+  }, [items, isOpen, add, remove, setQty, stemAfOpVoorraad, clear, open, close]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }

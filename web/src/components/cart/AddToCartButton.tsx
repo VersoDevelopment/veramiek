@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useCart } from "./CartProvider";
+import { maxAantal, useCart } from "./CartProvider";
 import { QtyStepper } from "./CartDrawer";
 import { isOpAanvraag, type Product } from "@/lib/api";
 
@@ -38,13 +38,21 @@ export function AddToCartButton({ product }: { product: Product }) {
     );
   }
 
+  const max = maxAantal(product.stock);
+  /* Alleen melden als het krap is. "Nog 8 beschikbaar" leest als een
+     waarschuwing die er geen is, en bij niet-getelde stukken weten we het
+     simpelweg niet. */
+  const krap = typeof product.stock === "number" && product.stock <= 3;
+
   return (
-    <div className="flex flex-wrap items-center gap-4">
+    <div>
+      <div className="flex flex-wrap items-center gap-4">
       <QtyStepper
         qty={qty}
-        onChange={(q) => setQty(Math.max(1, q))}
+        onChange={(q) => setQty(Math.min(Math.max(1, q), max))}
         label={product.name}
         tone="light"
+        max={max}
       />
       <button
         type="button"
@@ -53,6 +61,14 @@ export function AddToCartButton({ product }: { product: Product }) {
       >
         In winkelwagen
       </button>
+      </div>
+      {krap && (
+        <p className="mt-4 text-base opacity-70">
+          {product.stock === 1
+            ? "Hier is er nog een van."
+            : `Hier zijn er nog ${product.stock} van.`}
+        </p>
+      )}
     </div>
   );
 }

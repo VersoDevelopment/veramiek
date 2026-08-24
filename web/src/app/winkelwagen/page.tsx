@@ -2,16 +2,42 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { useCart } from "@/components/cart/CartProvider";
+import { useEffect, useState } from "react";
+import { maxAantal, useCart } from "@/components/cart/CartProvider";
 import { QtyStepper } from "@/components/cart/CartDrawer";
 import { Field, Honeypot } from "@/components/ui/Field";
-import { formatPrice, sendOrder, type OrderItem } from "@/lib/api";
+import { formatPrice, getProducts, sendOrder, type OrderItem } from "@/lib/api";
 
 type Status = "idle" | "sending" | "done" | "error";
 
 export default function WinkelwagenPage() {
-  const { items, total, setQty, remove, clear } = useCart();
+  const { items, total, setQty, remove, clear, stemAfOpVoorraad } = useCart();
+  const [bijgesteld, setBijgesteld] = useState<
+    { name: string; van: number; naar: number }[]
+  >([]);
+
+  /*
+   * De winkelwagen leeft in localStorage en kan dagen blijven staan. Hier, op
+   * de laatste stap voor de bestelling, halen we de actuele voorraad op en
+   * trekken we de aantallen recht. Zonder dit bestelt iemand alsnog drie stuks
+   * waarvan er nog een ligt, en dat merkt Vera pas als de mail binnen is.
+   */
+  useEffect(() => {
+    let actief = true;
+    getProducts()
+      .then((producten) => {
+        if (!actief || producten.length === 0) return;
+        const gewijzigd = stemAfOpVoorraad(producten);
+        if (gewijzigd.length) setBijgesteld(gewijzigd);
+      })
+      .catch(() => {
+        /* Voorraad niet op te halen: dan liever de winkelwagen laten staan
+           zoals hij is dan de bezoeker met een lege pagina opzadelen. */
+      });
+    return () => {
+      actief = false;
+    };
+  }, [stemAfOpVoorraad]);
 
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
@@ -90,6 +116,23 @@ export default function WinkelwagenPage() {
           </div>
         ) : (
           <div className="mt-14 grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:gap-20">
+            {bijgesteld.length > 0 && (
+              <p
+                role="status"
+                className="max-w-[60ch] border border-sage/40 px-5 py-4 text-base lg:col-span-2"
+              >
+                {bijgesteld
+                  .map((r) => {
+                    if (r.naar === 0) {
+                      return `${r.name} is inmiddels uitverkocht en is uit je winkelwagen gehaald.`;
+                    }
+                    return r.naar === 1
+                      ? `Van ${r.name} is er nog een, dus het aantal is aangepast.`
+                      : `Van ${r.name} zijn er nog ${r.naar}, dus het aantal is aangepast.`;
+                  })
+                  .join(" ")}
+              </p>
+            )}
             {/* Regels */}
             <div>
               <ul className="divide-y divide-sage/30 border-y border-sage/30">
@@ -135,6 +178,7 @@ export default function WinkelwagenPage() {
                           onChange={(q) => setQty(item.id, q)}
                           label={item.name}
                           tone="light"
+                          max={maxAantal(item.stock)}
                         />
                         <span className="ml-auto text-lg">
                           {formatPrice(item.price * item.qty)}
