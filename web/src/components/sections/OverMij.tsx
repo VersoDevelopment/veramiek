@@ -133,14 +133,14 @@ export function OverMij() {
                 />
               </div>
               <div aria-hidden className="mx-auto mt-8 h-px w-10 bg-sage/60" />
-              <p className="mx-auto mt-6 max-w-[58%] font-display text-xl leading-snug tracking-[0.02em] text-white italic">
+              <p className="mx-auto mt-6 max-w-[90%] font-display text-base leading-snug tracking-[0.02em] text-white italic md:max-w-[58%] md:text-xl">
                 Een tijd geleden zat ik niet goed in mijn vel. Ik voelde druk
                 om carrière te maken zoals mensen om me heen dat deden, maar
                 wist niet wat mijn eigen pad was. Toen kwam ik een cursus
                 pottenbakken tegen. Voor velen maar iets kleins, maar het
                 raakte meteen iets in mij.
               </p>
-              <p className="mx-auto mt-3 max-w-[58%] text-sm tracking-[0.05em] text-white/60">
+              <p className="mx-auto mt-3 max-w-[90%] text-sm tracking-[0.05em] text-white/60 md:max-w-[58%]">
                 Aan de draaischijf in het atelier, Etten-Leur.
               </p>
             </div>
